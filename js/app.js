@@ -560,6 +560,7 @@ function getHomeHTML(params) {
             </div>
           </div>
         </div>
+      </div>
     </div>
 
     <!-- Trending Products Grid -->
