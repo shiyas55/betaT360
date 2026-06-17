@@ -893,12 +893,12 @@ function renderHomeBrandAndProducts() {
     `;
   }).join('');
 
-  // Filter trending products
+  // Filter trending products to match Django's is_trending and newest-first default ordering
   let filtered = products;
   if (appState.homeActiveBrand) {
     filtered = products.filter(p => p.brand === appState.homeActiveBrand);
   } else {
-    filtered = products.slice(0, 8);
+    filtered = products.filter(p => p.dealHighlight).slice().reverse().slice(0, 8);
   }
 
   // Render product grid
