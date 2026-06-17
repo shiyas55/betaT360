@@ -4,6 +4,7 @@
 const appState = {
   comparedProductIds: ['zoho-crm', 'quickbooks'], // default compared
   homeActiveBrand: null,
+  wishlist: [],
   filters: {
     search: '',
     category: '',
@@ -11,7 +12,8 @@ const appState = {
     price: '',
     rating: 0,
     deployment: [],
-    support: []
+    support: [],
+    sort: 'newest'
   },
   aiRecom: {
     step: 1,
@@ -968,26 +970,40 @@ function getListingHTML() {
       <!-- Top banner -->
       <div style="margin-bottom: 1.5rem;">
         <span style="font-size: 0.75rem; color: var(--slate-500);"><a href="#home" style="color: inherit; text-decoration: none;">Home</a> &gt; Explore Catalog</span>
-        <h1 style="font-size: 1.75rem; margin-top: 0.25rem;">B2B Software & Hardware Catalog</h1>
+        <h1 style="font-size: 1.75rem; margin-top: 0.25rem; font-weight: 800; color: var(--slate-900);">B2B Software & Hardware Catalog</h1>
       </div>
 
       <!-- Main listing layout -->
       <div class="listing-layout">
         
         <!-- Left Filter panel (desktop) -->
-        <aside class="filter-sidebar" style="top: 20px; border-radius: var(--radius-lg);">
+        <aside class="filter-sidebar card" style="padding: 1.25rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200); background-color: var(--white); top: 20px;">
           ${getFilterSidebarHTML()}
         </aside>
 
         <!-- Right Listings pane -->
         <div>
-          <!-- Search box + Mobile Filter trigger -->
-          <div style="display: flex; gap: 0.75rem; margin-bottom: 1rem; flex-wrap: wrap;">
+          <!-- Search box + Mobile Filter trigger + Sort By Dropdown -->
+          <div style="display: flex; gap: 0.75rem; margin-bottom: 1.5rem; align-items: center; flex-wrap: wrap;">
             <div style="flex: 1; position: relative; display: flex; align-items: center; min-width: 200px;">
-              <i data-lucide="search" style="position: absolute; left: 1rem; color: var(--slate-400); width: 1.1rem;"></i>
+              <i data-lucide="search" style="position: absolute; left: 1rem; color: var(--slate-400); width: 1.1rem; height: 1.1rem;"></i>
               <input type="text" id="listing-search-box" value="${appState.filters.search}" placeholder="Search products, brands, services..." style="width: 100%; padding: 0.65rem 1rem 0.65rem 2.5rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); outline: none; background-color: var(--white); font-size: 0.85rem; min-height: 44px;">
             </div>
-            <button class="btn btn-outline btn-sm" id="mobile-filter-drawer-btn" style="min-height: 44px;"><i data-lucide="filter"></i> Filters</button>
+            
+            <button class="btn btn-outline btn-sm" id="mobile-filter-drawer-btn" style="align-items: center; gap: 0.5rem; min-height: 44px; padding: 0 1rem; border-radius: var(--radius-md); font-weight: 600;">
+              <i data-lucide="filter" style="width: 1rem; height: 1rem;"></i> Filters
+            </button>
+
+            <div style="display: flex; align-items: center; gap: 0.5rem;">
+              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-500); white-space: nowrap;">Sort By:</span>
+              <select id="listing-sort-select" onchange="setListingSort(this.value)" class="form-select" style="padding: 0.5rem; font-size: 0.8rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); min-width: 130px; min-height: 44px; color: var(--slate-700); background-color: var(--white);">
+                <option value="newest" ${appState.filters.sort === 'newest' ? 'selected' : ''}>Newest</option>
+                <option value="name" ${appState.filters.sort === 'name' ? 'selected' : ''}>Name</option>
+                <option value="price_asc" ${appState.filters.sort === 'price_asc' ? 'selected' : ''}>Price: Low to High</option>
+                <option value="price_desc" ${appState.filters.sort === 'price_desc' ? 'selected' : ''}>Price: High to Low</option>
+                <option value="rating" ${appState.filters.sort === 'rating' ? 'selected' : ''}>Rating</option>
+              </select>
+            </div>
           </div>
 
           <!-- Active filters chips bar -->
@@ -1222,6 +1238,25 @@ function runListingsFilter() {
     return true;
   });
 
+  // Apply client-side sorting
+  const sortVal = f.sort || 'newest';
+  if (sortVal === 'price_asc') {
+    filtered.sort((a, b) => a.price - b.price);
+  } else if (sortVal === 'price_desc') {
+    filtered.sort((a, b) => b.price - a.price);
+  } else if (sortVal === 'name') {
+    filtered.sort((a, b) => a.name.localeCompare(b.name));
+  } else if (sortVal === 'rating') {
+    filtered.sort((a, b) => (b.rating || 0) - (a.rating || 0));
+  } else {
+    // default/newest: maintain default index in products array
+    filtered.sort((a, b) => {
+      const idxA = products.findIndex(p => p.id === a.id);
+      const idxB = products.findIndex(p => p.id === b.id);
+      return idxA - idxB;
+    });
+  }
+
   // Cancel any pending stagger/render timeouts
   if (window._listingsTimeout) clearTimeout(window._listingsTimeout);
   if (window._staggerTimeouts) {
@@ -1248,7 +1283,13 @@ function runListingsFilter() {
         const isCompared = appState.comparedProductIds.includes(prod.id);
         const brandClass = 'brand-' + prod.brand.toLowerCase().replace(/[^a-z0-9]/g, '-');
         const formattedPrice = prod.price > 0 ? 'INR ' + (prod.price * 82.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Get Quote';
-        const dealTagHTML = prod.dealHighlight ? `<span class="product-card-deal-tag">${prod.dealHighlight}</span>` : '';
+        let dealTagHTML = '';
+        if (prod.originalPrice && prod.originalPrice > prod.price) {
+          const discountPercent = Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100);
+          dealTagHTML = `<span class="product-card-deal-tag">Save ${discountPercent}%</span>`;
+        } else if (prod.dealHighlight) {
+          dealTagHTML = `<span class="product-card-deal-tag">${prod.dealHighlight}</span>`;
+        }
         const originalPriceHTML = prod.originalPrice ? `<span class="product-card-t360__price-original">INR ${(prod.originalPrice * 82.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>` : '';
         
         const cardHTML = `
@@ -1376,7 +1417,8 @@ function clearAllFilters() {
     price: '',
     rating: 0,
     deployment: [],
-    support: []
+    support: [],
+    sort: 'newest'
   };
   const searchBox = document.getElementById('listing-search-box');
   if (searchBox) searchBox.value = '';
@@ -1418,6 +1460,11 @@ function toggleFilterDeployment(dep) {
   runListingsFilter();
 }
 
+function setListingSort(val) {
+  appState.filters.sort = val;
+  runListingsFilter();
+}
+
 // ----------------------------------------------------
 // PAGE 3: PRODUCT DETAIL PAGE HTML & LOGIC
 // ----------------------------------------------------
@@ -1426,14 +1473,39 @@ function getDetailHTML(productId) {
   const isCompared = appState.comparedProductIds.includes(prod.id);
   const alternatives = products.filter(p => p.categoryId === prod.categoryId && p.id !== prod.id).slice(0, 3);
   const brandUpper = prod.brand.toUpperCase();
+
+  const stockQty = prod.stockQty !== undefined ? prod.stockQty : 25; // default 25
+  const lowStockLevel = 5;
+  const stockStatus = stockQty <= 0 ? 'out_of_stock' : (stockQty <= lowStockLevel ? 'low_stock' : 'in_stock');
   
+  let stockStatusHTML = '';
+  if (stockStatus === 'in_stock') {
+    stockStatusHTML = `
+      <span style="font-size: 0.75rem; color: var(--primary-green); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--primary-green); display: inline-block;"></span> In Stock (${stockQty} left)
+      </span>
+    `;
+  } else if (stockStatus === 'low_stock') {
+    stockStatusHTML = `
+      <span style="font-size: 0.75rem; color: #d97706; font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #f59e0b; display: inline-block;"></span> Low Stock (${stockQty} left)
+      </span>
+    `;
+  } else {
+    stockStatusHTML = `
+      <span style="font-size: 0.75rem; color: var(--error-red); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+        <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--error-red); display: inline-block;"></span> Out of Stock
+      </span>
+    `;
+  }
+
   return `
     <div style="padding-top: 0.5rem; padding-bottom: 4rem;">
       
       <!-- Breadcrumb -->
       <div style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--slate-500);">
         <a href="#home" style="color: inherit; text-decoration: none;">Home</a> &gt; 
-        <a href="#listing" style="color: inherit; text-decoration: none;">Software & Brands</a> &gt; 
+        <a href="#listing" style="color: inherit; text-decoration: none;">Catalog</a> &gt; 
         <a href="#listing?brand=${prod.brand}" style="color: inherit; text-decoration: none;">${prod.brand}</a> &gt; 
         <span>${prod.name}</span>
       </div>
@@ -1454,15 +1526,11 @@ function getDetailHTML(productId) {
                 <span class="case-study-badge" style="background-color: rgba(255, 20, 100, 0.08); color: var(--accent); border: none; font-size: 0.65rem; padding: 0.2rem 0.6rem; letter-spacing: 0.5px; margin: 0; font-weight: 700;">${brandUpper} VERIFIED PARTNER</span>
                 ${prod.demoAvailable ? `<span class="badge badge-video" style="font-size: 0.65rem;"><i data-lucide="video" style="width: 0.75rem;"></i> Sandbox Enabled</span>` : ''}
               </div>
-              <h1 style="font-size: 1.85rem; line-height: 1.2; font-weight: 800; color: var(--ink-strong);">${prod.name}</h1>
+              <h1 style="font-size: 1.85rem; line-height: 1.2; font-weight: 800; color: var(--ink-strong); margin: 0;">${prod.name}</h1>
               
               <!-- Review Row -->
               <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.82rem; flex-wrap: wrap; color: var(--muted); font-weight: 500;">
                 <div style="display: flex; align-items: center; gap: 0.15rem; color: #f59e0b;">
-                  <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
-                  <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
-                  <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
-                  <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
                   <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
                 </div>
                 <strong style="color: var(--ink-strong); font-weight: 700;">${prod.rating}</strong>
@@ -1526,30 +1594,29 @@ function getDetailHTML(productId) {
           <div class="tabs-nav">
             <button class="tab-btn active" onclick="switchDetailTab('overview', this)">Overview</button>
             <button class="tab-btn" onclick="switchDetailTab('features', this)">Key Features</button>
-            <button class="tab-btn" onclick="switchDetailTab('pricing', this)">Pricing Plans</button>
+            <button class="tab-btn" onclick="switchDetailTab('pricing', this)">Specs & Info</button>
             <button class="tab-btn" onclick="switchDetailTab('reviews', this)">Reviews (${prod.reviewsCount})</button>
-            <button class="tab-btn" onclick="switchDetailTab('faq', this)">FAQs</button>
           </div>
 
           <!-- Tab Content Panels -->
           <div>
             <!-- Tab 1: Overview -->
             <div class="tab-content-panel active" id="detail-tab-overview">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Product Summary</h3>
-              <p style="color: var(--slate-600); line-height: 1.5; margin-bottom: 1.5rem; font-size: 0.85rem;">${prod.longDesc}</p>
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Product Summary</h3>
+              <p style="color: var(--slate-600); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.85rem;">${prod.longDesc}</p>
               
               <!-- Pros & Cons -->
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Vendor Assessment</h3>
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Vendor Assessment</h3>
               <div class="form-grid-2" style="margin-bottom: 1.5rem;">
                 <div style="background-color: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 1rem;">
-                  <h4 style="color: var(--primary-green); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;"><i data-lucide="thumbs-up" style="width: 0.95rem;"></i> Highlighted Pros</h4>
-                  <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem;">
+                  <h4 style="color: var(--primary-green); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-up" style="width: 0.95rem;"></i> Highlighted Pros</h4>
+                  <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
                     ${prod.pros.map(pro => `<li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> ${pro}</li>`).join('')}
                   </ul>
                 </div>
                 <div style="background-color: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); padding: 1rem;">
-                  <h4 style="color: #ef4444; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem;"><i data-lucide="thumbs-down" style="width: 0.95rem;"></i> Considerations</h4>
-                  <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem;">
+                  <h4 style="color: #ef4444; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-down" style="width: 0.95rem;"></i> Considerations</h4>
+                  <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
                     ${prod.cons.map(con => `<li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="alert-circle" style="color: #ef4444; width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> ${con}</li>`).join('')}
                   </ul>
                 </div>
@@ -1558,75 +1625,64 @@ function getDetailHTML(productId) {
 
             <!-- Tab 2: Features -->
             <div class="tab-content-panel" id="detail-tab-features">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Core Capabilities</h3>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem;">
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Core Capabilities</h3>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1.5rem; padding-left: 0;">
                 ${prod.features.map((feat, idx) => `
                   <li style="display: flex; gap: 0.75rem; align-items: start; padding: 0.75rem; background-color: var(--slate-50); border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
                     <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">0${idx + 1}</span>
                     <div>
-                      <h4 style="font-size: 0.85rem; margin-bottom: 0.15rem; color: var(--slate-900);">${feat.split(':')[0]}</h4>
-                      <p style="font-size: 0.75rem; color: var(--slate-600);">${feat.split(':')[1] || feat}</p>
+                      <h4 style="font-size: 0.85rem; margin: 0 0 0.15rem 0; color: var(--slate-900); font-weight: 700;">${feat.split(':')[0]}</h4>
+                      <p style="font-size: 0.75rem; color: var(--slate-600); margin: 0;">${feat.split(':')[1] || feat}</p>
                     </div>
                   </li>
                 `).join('')}
               </ul>
             </div>
 
-            <!-- Tab 3: Pricing -->
+            <!-- Tab 3: Specs -->
             <div class="tab-content-panel" id="detail-tab-pricing">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Select Pricing Tiers</h3>
-              <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem;">
-                ${prod.plans.map((plan, i) => `
-                  <div class="card" style="padding: 1.25rem; text-align: center; border-radius: var(--radius-md);">
-                    <h4 style="margin-bottom: 0.35rem; font-size: 0.95rem;">${plan.name}</h4>
-                    <div style="margin-bottom: 0.75rem;">
-                      <span style="font-size: 1.5rem; font-weight: 800; color: var(--slate-900);">${plan.price}</span>
-                      <span style="font-size: 0.7rem; color: var(--slate-400);">/ ${plan.period}</span>
-                    </div>
-                    <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; text-align: left; font-size: 0.75rem; color: var(--slate-600); margin-bottom: 1rem; padding-top: 0.75rem; border-top: 1px solid var(--slate-100);">
-                      ${plan.features.slice(0, 3).map(f => `<li style="display: flex; align-items: center; gap: 0.25rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.75rem;"></i> ${f}</li>`).join('')}
-                    </ul>
-                    <button type="button" onclick="switchDetailPlanTier(${i}, document.querySelectorAll('.plan-tab-btn')[${i}])" class="btn btn-secondary btn-sm" style="width: 100%; font-size:0.75rem; padding: 0.4rem;">Choose Plan</button>
-                  </div>
-                `).join('')}
+              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Technical Specifications</h3>
+              <div style="border: 1px solid var(--slate-200); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem;">
+                <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
+                  <tbody>
+                    <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
+                      <td style="padding: 0.75rem; font-weight: 700; width: 180px; color: var(--slate-600);">Deployment Model</td>
+                      <td style="padding: 0.75rem; color: var(--slate-800);">${prod.deployment || 'Cloud / SaaS'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--slate-200);">
+                      <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">Business Size Class</td>
+                      <td style="padding: 0.75rem; color: var(--slate-800);">${prod.businessType || 'Enterprise & Mid-Market'}</td>
+                    </tr>
+                    <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
+                      <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SLA Technical Support</td>
+                      <td style="padding: 0.75rem; color: var(--slate-800);">${prod.support || '24/7 Live Support'}</td>
+                    </tr>
+                    <tr style="border-bottom: none;">
+                      <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SKU Code</td>
+                      <td style="padding: 0.75rem; color: var(--slate-800); font-family: monospace;">${prod.id.toUpperCase()}-SKU</td>
+                    </tr>
+                  </tbody>
+                </table>
               </div>
             </div>
 
             <!-- Tab 4: Reviews -->
             <div class="tab-content-panel" id="detail-tab-reviews">
-              <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">Client Endorsements</h3>
+              <h3 style="font-size: 1.15rem; margin-bottom: 1rem; font-weight: 800;">Customer Reviews</h3>
               <div style="display: flex; flex-direction: column; gap: 1rem;">
                 <div style="display: flex; gap: 0.75rem; align-items: start; padding: 1rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md);">
                   <div style="background-color: var(--accent); color: white; border-radius: 50%; width: 2.25rem; height: 2.25rem; display: flex; align-items: center; justify-content: center; font-weight: 700; flex-shrink: 0; font-size:0.85rem;">JD</div>
                   <div style="flex: 1;">
                     <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 0.35rem;">
                       <div>
-                        <h4 style="font-size: 0.85rem;">John Doe, CTO</h4>
+                        <h4 style="font-size: 0.85rem; font-weight: 700; margin: 0;">John Doe, CTO</h4>
                         <span style="font-size: 0.7rem; color: var(--slate-400);">Apex Financial</span>
                       </div>
                       <span class="rating-stars" style="font-size:0.8rem; color: #f59e0b;"><i data-lucide="star" style="width: 0.75rem; fill: currentColor;"></i> 5.0</span>
                     </div>
-                    <p style="font-size: 0.75rem; color: var(--slate-600); line-height: 1.4;">"Migrating our operations to this platform simplified our internal financial workflows instantly. The compliance and deployment support was stellar."</p>
+                    <p style="font-size: 0.75rem; color: var(--slate-600); line-height: 1.4; margin: 0;">"Migrating our operations to this platform simplified our internal financial workflows instantly. The compliance and deployment support was stellar."</p>
                   </div>
                 </div>
-              </div>
-            </div>
-
-            <!-- Tab 5: FAQ -->
-            <div class="tab-content-panel" id="detail-tab-faq">
-              <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem;">Frequently Asked Questions</h3>
-              <div style="display: flex; flex-direction: column;">
-                ${prod.faqs.map(faq => `
-                  <div class="faq-item">
-                    <button class="faq-trigger" onclick="toggleFaqAccordion(this)">
-                      <h4 style="font-size: 0.85rem; font-weight: 700; color: var(--slate-900); margin: 0;">${faq.q}</h4>
-                      <i data-lucide="chevron-down" style="width: 1rem; height: 1rem; color: var(--slate-500);"></i>
-                    </button>
-                    <div class="faq-content">
-                      <p style="font-size: 0.78rem; color: var(--slate-600); margin-top: 0.5rem; line-height: 1.4;">${faq.a}</p>
-                    </div>
-                  </div>
-                `).join('')}
               </div>
             </div>
 
@@ -1644,108 +1700,124 @@ function getDetailHTML(productId) {
             </div>
           </div>
 
-          <!-- Alternatives -->
-          <div style="margin-top: 2.5rem; padding-top: 1.5rem; border-top: 1px solid var(--slate-200);">
-            <h3 style="font-size: 1.15rem; margin-bottom: 1rem;">Similar Alternatives</h3>
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 1rem;">
-              ${alternatives.map(alt => `
-                <div class="card" onclick="navigateToProduct('${alt.id}', event)" style="padding: 1rem; display: flex; flex-direction: column; justify-content: space-between; border-radius: var(--radius-md); cursor: pointer;">
-                  <div>
-                    <h4 style="font-size: 0.85rem; margin-bottom: 0.15rem;"><a href="#detail?id=${alt.id}" style="color: inherit; text-decoration: none;">${alt.name}</a></h4>
-                    <span style="font-size: 0.65rem; color: var(--slate-400); font-weight: 600;">${alt.brand}</span>
+          <!-- Related Alternatives Section -->
+          <div style="margin-top: 2rem; border-top: 1px solid var(--slate-200); padding-top: 1.5rem;">
+            <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--slate-900);">Alternatives & Solutions</h3>
+            <div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.5rem; padding: 0.5rem 0.25rem 1.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: thin; -ms-overflow-style: -ms-autohiding-scrollbar;">
+              ${alternatives.map(alt => {
+                const formattedAltPrice = alt.price > 0 ? 'INR ' + (alt.price * 82.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Get Quote';
+                const altBrandClass = 'brand-' + alt.brand.toLowerCase().replace(/[^a-z0-9]/g, '-');
+                const altCompared = appState.comparedProductIds.includes(alt.id);
+                let altDealTagHTML = '';
+                if (alt.originalPrice && alt.originalPrice > alt.price) {
+                  const altDiscount = Math.round(((alt.originalPrice - alt.price) / alt.originalPrice) * 100);
+                  altDealTagHTML = `<span class="product-card-deal-tag">Save ${altDiscount}%</span>`;
+                } else if (alt.dealHighlight) {
+                  altDealTagHTML = `<span class="product-card-deal-tag">${alt.dealHighlight}</span>`;
+                }
+                const altOriginalPriceHTML = alt.originalPrice ? `<span class="product-card-t360__price-original">INR ${(alt.originalPrice * 82.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span>` : '';
+
+                return `
+                  <div style="flex: 0 0 280px; scroll-snap-align: start; display: flex; flex-direction: column;">
+                    <div class="product-card-t360 ${altBrandClass}" onclick="navigateToProduct('${alt.id}', event)" style="opacity: 1; transform: translateY(0); cursor: pointer;">
+                      ${altDealTagHTML}
+                      <button onclick="toggleCompareState('${alt.id}', this)" class="compare-circle-btn ${altCompared ? 'active' : ''}" title="Add to Compare Matrix">
+                        <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i>
+                      </button>
+                      <div class="product-card-t360__logo-container">
+                        <img src="${alt.imageUrl || 'assets/zoho_crm.png'}" alt="${alt.name}" loading="lazy">
+                      </div>
+                      <h3 class="product-card-t360__title">${alt.name}</h3>
+                      <div class="product-card-t360__vendor">By ${alt.brand}</div>
+                      <hr class="product-card-t360__divider">
+                      <div class="product-card-t360__footer">
+                        <div class="product-card-t360__price-wrapper">
+                          <span class="product-card-t360__price-label">Starting at</span>
+                          <span class="product-card-t360__price-value">${formattedAltPrice} ${altOriginalPriceHTML}</span>
+                        </div>
+                        <button class="product-card-t360__btn" aria-label="View Product">
+                          <i data-lucide="arrow-right"></i>
+                        </button>
+                      </div>
+                    </div>
                   </div>
-                  <div style="margin-top: 0.75rem; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--slate-100); padding-top: 0.5rem;">
-                    <span style="font-size: 0.75rem; font-weight: 700; color: var(--slate-900);">INR ${(alt.price * 82.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}/mo</span>
-                    <a href="#detail?id=${alt.id}" style="font-size: 0.7rem; color: var(--accent); font-weight: 600; text-decoration: none;">View</a>
-                  </div>
-                </div>
-              `).join('')}
+                `;
+              }).join('')}
             </div>
           </div>
 
         </div>
 
-        <!-- Right Sidebar Plan Selector widget -->
-        <aside>
-          <div class="plan-selector-card">
-            <div class="plan-tabs-header">
-              <button class="plan-tab-btn active" onclick="switchDetailPlanTier(0, this)">Basic</button>
-              <button class="plan-tab-btn" onclick="switchDetailPlanTier(1, this)">Standard</button>
-              <button class="plan-tab-btn" onclick="switchDetailPlanTier(2, this)">Premium</button>
+        <!-- Right Column: Sidebar (Pricing, Actions) -->
+        <aside style="display: flex; flex-direction: column; gap: 1.5rem;">
+          
+          <!-- Procurement Action Card -->
+          <div class="card" style="padding: 1.5rem; border-radius: var(--radius-lg); background-color: var(--white); border-color: var(--slate-200);">
+            
+            <div style="margin-bottom: 1.25rem;">
+              <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Procurement Starting at</span>
+              <div style="display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.15rem;">
+                <span id="detail-price-value" style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">
+                  ${prod.price > 0 ? 'INR ' + (prod.price * 82.5).toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 }) : 'Get Quote'}
+                </span>
+                <span id="detail-price-period" style="font-size: 0.75rem; color: var(--slate-400);">${prod.price > 0 ? '/ month' : ''}</span>
+              </div>
+              ${prod.originalPrice && prod.originalPrice > prod.price ? `
+                <div style="font-size: 0.75rem; color: var(--error-red); font-weight: 600; margin-top: 0.15rem;">
+                  Regular price: <span style="text-decoration: line-through;">INR ${(prod.originalPrice * 82.5).toLocaleString('en-IN', { maximumFractionDigits: 0 })}</span> (Save ${Math.round(((prod.originalPrice - prod.price) / prod.originalPrice) * 100)}%)
+                </div>
+              ` : ''}
             </div>
-            <div class="plan-selector-body">
-              <div style="margin-bottom: 1.25rem;">
-                <span style="font-size: 0.65rem; color: var(--slate-400); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;">Choose Your Plan</span>
-                <div style="display: flex; align-items: baseline; gap: 0.25rem; margin-top: 0.25rem;">
-                  <span id="plan-display-price" style="font-size: 1.65rem; font-weight: 800; color: var(--slate-900);">INR 0.00</span>
-                  <span id="plan-display-period" style="font-size: 0.75rem; color: var(--muted); font-weight: 500;">/ user / mo</span>
+
+            <hr style="border: none; border-top: 1px solid var(--slate-100); margin: 0 0 1.25rem 0;">
+
+            <!-- Stock Status -->
+            <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-500);">Inventory Level:</span>
+              ${stockStatusHTML}
+            </div>
+
+            <!-- Forms for Add to Cart -->
+            ${stockStatus !== 'out_of_stock' ? `
+              <div style="display: flex; flex-direction: column; gap: 0.75rem;">
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
+                  <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">Billing Cycle:</span>
+                  <select id="detail-plan-select" style="border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none; direction: rtl; cursor: pointer; color: var(--slate-900);">
+                    <option value="monthly">Monthly Plan</option>
+                    <option value="yearly">Yearly Plan (Save 10%)</option>
+                  </select>
                 </div>
-                <!-- B2B Volume Discount Alert area -->
-                <div id="volume-discount-alert-area" style="margin-top: 0.35rem;"></div>
-                <p id="plan-display-desc" style="font-size: 0.78rem; color: var(--slate-600); line-height: 1.4; margin-top: 0.5rem;"></p>
-              </div>
-
-              <!-- Quantity counter -->
-              <div class="qty-counter-container">
-                <span class="qty-counter-label">License Quantity</span>
-                <div class="qty-counter-box">
-                  <button type="button" class="qty-btn" onclick="changeQty(-1)">-</button>
-                  <input type="text" class="qty-input" id="qty-input-box" value="1" readonly>
-                  <button type="button" class="qty-btn" onclick="changeQty(1)">+</button>
+                <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
+                  <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">User Licenses:</span>
+                  <input type="number" id="detail-qty-input" value="1" min="1" max="${stockQty}" style="width: 60px; border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none;">
                 </div>
-              </div>
-
-              <!-- Billing cycle toggle -->
-              <div class="billing-toggle-container">
-                <span class="billing-toggle-label">Billing Cycle</span>
-                <div class="billing-toggle-bar">
-                  <button type="button" id="billing-cycle-monthly" class="billing-toggle-btn active" onclick="switchBillingCycle('monthly')">Monthly</button>
-                  <button type="button" id="billing-cycle-annually" class="billing-toggle-btn" onclick="switchBillingCycle('annually')">
-                    Annually <span class="billing-discount-badge">Save 16%</span>
-                  </button>
-                </div>
-              </div>
-
-              <!-- Checklist of trust statements -->
-              <ul class="plan-trust-checklist">
-                <li class="plan-trust-item"><i data-lucide="check"></i> Official ${prod.brand} License</li>
-                <li class="plan-trust-item"><i data-lucide="check"></i> Instant Digital Delivery</li>
-                <li class="plan-trust-item"><i data-lucide="check"></i> 1 Year Updates Included</li>
-                <li class="plan-trust-item"><i data-lucide="check"></i> 24/7 Priority Support</li>
-                <li class="plan-trust-item"><i data-lucide="check"></i> Secure & Encrypted Payment</li>
-              </ul>
-
-              <!-- Buy buttons -->
-              <div style="display: flex; flex-direction: column; gap: 0.65rem; margin-top: 1.25rem;">
-                <button onclick="handleAddToCartClick()" class="btn btn-primary" style="width: 100%; padding: 0.75rem; background-color: var(--accent); border: none; font-weight: 700; display: flex; align-items: center; justify-content: center; gap: 0.5rem;">
-                  Continue <i data-lucide="arrow-right" style="width: 1.1rem; height: 1.1rem; stroke-width: 2.5;"></i>
+                
+                <button onclick="handleSPAAdaToCart()" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem;">
+                  Add to Procurement Cart
                 </button>
-                <a href="#demo?product=${prod.id}" class="btn btn-outline" style="width: 100%; padding: 0.75rem; border-color: var(--line-strong); color: var(--slate-700); font-weight: 600; text-decoration: none;">
-                  Contact Sales
-                </a>
+                <button onclick="handleSPABuyNow()" class="btn btn-secondary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem; background-color: var(--slate-900); color: white; border-color: var(--slate-900);">
+                  Buy Now
+                </button>
               </div>
+            ` : `
+              <button class="btn btn-primary btn-sm" disabled style="width: 100%; padding: 0.65rem;">Out of Stock</button>
+            `}
 
-              <p style="font-size: 0.72rem; color: var(--muted); text-align: center; margin-top: 1rem; line-height: 1.3;">
-                Need a custom plan for your team? <a href="#demo?product=${prod.id}&custom=true" style="color: var(--accent); font-weight: 700; text-decoration: none;">Request a Quote &rarr;</a>
-              </p>
+            <!-- Compare and Wishlist actions stacked -->
+            <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+              <!-- Compare Matrix Button -->
+              <button onclick="toggleCompareState('${prod.id}', this)" class="btn btn-outline btn-xs ${isCompared ? 'active' : ''}" style="text-align: center; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i> ${isCompared ? 'Compared' : 'Compare Spec'}
+              </button>
+
+              <!-- Wishlist Button -->
+              <button onclick="toggleSPAWishlist('${prod.id}', this)" id="detail-wishlist-btn" class="btn btn-outline btn-xs" style="text-align: center; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack
+              </button>
             </div>
 
-            <!-- Bottom hourly hire card (Image 3) -->
-            <div class="hourly-hire-box">
-              <div class="hourly-hire-profile">
-                <img src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=100&h=100&q=80" alt="Consultant Profile" class="hourly-hire-avatar">
-                <div>
-                  <h4>Need flexibility when hiring?</h4>
-                  <span style="font-size: 0.65rem; color: var(--muted); font-weight: 600;">Dedicated B2B Setup Service</span>
-                </div>
-              </div>
-              <p class="hourly-hire-desc">Hire by the hour, ideal for long-term projects with flexible hours and weekly payments.</p>
-              <div class="hourly-hire-price-row">
-                <span class="hourly-hire-price">INR 8,030.51 / hour</span>
-                <a href="#demo?product=${prod.id}&hourly=true" class="hourly-hire-link">Request Hourly Offer</a>
-              </div>
-            </div>
           </div>
+
         </aside>
 
       </div>
@@ -1753,16 +1825,18 @@ function getDetailHTML(productId) {
     </div>
   `;
 }
+}
 
 function setupDetailEvents(productId) {
   const prod = products.find(p => p.id === productId) || products[0];
   appState.detailState = {
     activeProduct: prod,
-    activeTier: 0,
     quantity: 1,
     billingCycle: 'monthly'
   };
-  updateDetailPriceDisplay();
+
+  // Initialize display price
+  updateSPADetailPrice();
 
   // 1. Hover Zoom Magnifier Effect
   const primaryImg = document.getElementById('detail-primary-image');
@@ -1873,6 +1947,30 @@ function setupDetailEvents(productId) {
       isDragging = false;
     });
   }
+
+  // 3. E-commerce select/input bindings
+  const planSelect = document.getElementById('detail-plan-select');
+  if (planSelect) {
+    planSelect.addEventListener('change', (e) => {
+      appState.detailState.billingCycle = e.target.value;
+      updateSPADetailPrice();
+    });
+  }
+
+  const qtyInput = document.getElementById('detail-qty-input');
+  if (qtyInput) {
+    qtyInput.addEventListener('change', (e) => {
+      let val = parseInt(e.target.value);
+      const stockQty = prod.stockQty !== undefined ? prod.stockQty : 25;
+      if (isNaN(val) || val < 1) val = 1;
+      if (val > stockQty) val = stockQty;
+      e.target.value = val;
+      appState.detailState.quantity = val;
+    });
+  }
+
+  // Initialize wishlist state representation
+  updateSPAWishlistBtnState(prod.id);
 }
 
 function switchDetailTab(tabName, btnElement) {
@@ -3089,129 +3187,105 @@ window.addEventListener('DOMContentLoaded', () => {
 // DYNAMIC PRICING AND DETAIL VIEW CONTROLLERS (Image 3 & 4)
 // ----------------------------------------------------
 
-function updateDetailPriceDisplay() {
+function updateSPADetailPrice() {
+  const planSelect = document.getElementById('detail-plan-select');
+  const priceValue = document.getElementById('detail-price-value');
+  const pricePeriod = document.getElementById('detail-price-period');
+  if (!planSelect || !priceValue || !pricePeriod) return;
+
+  const ds = appState.detailState;
+  if (!ds || !ds.activeProduct) return;
+  const basePrice = ds.activeProduct.price;
+  const basePriceInr = basePrice * 82.5;
+
+  if (planSelect.value === 'yearly') {
+    const yearlyPrice = basePriceInr * 12 * 0.90;
+    priceValue.textContent = 'INR ' + yearlyPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    pricePeriod.textContent = '/ year';
+  } else {
+    priceValue.textContent = 'INR ' + basePriceInr.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    pricePeriod.textContent = '/ month';
+  }
+}
+
+function handleSPAAdaToCart() {
   const ds = appState.detailState;
   if (!ds || !ds.activeProduct) return;
 
   const prod = ds.activeProduct;
-  const tier = ds.activeTier;
   const qty = ds.quantity;
   const cycle = ds.billingCycle;
-
-  // Find the selected plan, fallback if tier doesn't exist
-  const plan = prod.plans[tier] || prod.plans[0] || { name: "Standard", price: "$15.00", period: "user/month" };
-
-  // Parse numeric base price
-  let basePrice = parseFloat(plan.price.replace(/[^0-9.]/g, ''));
-  if (isNaN(basePrice)) basePrice = prod.price || 15.00;
-
-  // Convert USD to INR (rate 82.5)
-  let basePriceInr = basePrice * 82.5;
-
-  // 16% discount for annual billing
-  let discount = 1.0;
-  if (cycle === 'annually') {
-    discount = 0.84;
+  const basePrice = prod.price;
+  const basePriceInr = basePrice * 82.5;
+  
+  let unitPrice = basePriceInr;
+  let periodStr = 'month';
+  if (cycle === 'yearly') {
+    unitPrice = basePriceInr * 12 * 0.90;
+    periodStr = 'year';
   }
+  const total = unitPrice * qty;
+  const formattedTotal = 'INR ' + total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  // Volume pricing discounts (B2B Volume savings)
-  let volumeDiscount = 1.0;
-  let volumeDiscountLabel = '';
-  if (qty >= 50) {
-    volumeDiscount = 0.8; // 20% discount
-    volumeDiscountLabel = 'Volume Discount (Save 20%)';
-  } else if (qty >= 10) {
-    volumeDiscount = 0.9; // 10% discount
-    volumeDiscountLabel = 'Volume Discount (Save 10%)';
-  }
-
-  const finalPricePerUnit = basePriceInr * discount * volumeDiscount;
-  const totalPrice = finalPricePerUnit * qty;
-
-  const priceValEl = document.getElementById('plan-display-price');
-  const pricePeriodEl = document.getElementById('plan-display-period');
-  const priceDescEl = document.getElementById('plan-display-desc');
-  const alertArea = document.getElementById('volume-discount-alert-area');
-
-  if (priceValEl) {
-    priceValEl.innerText = 'INR ' + totalPrice.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-    priceValEl.classList.remove('price-update-pop');
-    void priceValEl.offsetWidth; // Trigger reflow
-    priceValEl.classList.add('price-update-pop');
-  }
-  if (pricePeriodEl) {
-    pricePeriodEl.innerText = cycle === 'annually' ? `/ user / mo (Billed Annually)` : `/ user / mo`;
-  }
-  if (priceDescEl) {
-    priceDescEl.innerText = `${plan.name} Package. ${prod.shortDesc}`;
-  }
-
-  if (alertArea) {
-    if (volumeDiscountLabel) {
-      alertArea.innerHTML = `<span class="volume-discount-badge"><i data-lucide="sparkles" style="width:0.8rem;height:0.8rem;"></i> ${volumeDiscountLabel} Active!</span>`;
-      if (window.lucide) window.lucide.createIcons();
-    } else {
-      alertArea.innerHTML = '';
-    }
-  }
+  showToast(`Added ${qty} license(s) of ${prod.name} (${cycle} plan) to procurement cart! Total: ${formattedTotal}`, "success");
 }
 
-function changeQty(delta) {
+function handleSPABuyNow() {
   const ds = appState.detailState;
-  if (!ds) return;
+  if (!ds || !ds.activeProduct) return;
 
-  let qty = ds.quantity + delta;
-  if (qty < 1) qty = 1;
-  ds.quantity = qty;
+  const prod = ds.activeProduct;
+  const qty = ds.quantity;
+  const cycle = ds.billingCycle;
+  const basePrice = prod.price;
+  const basePriceInr = basePrice * 82.5;
+  
+  let unitPrice = basePriceInr;
+  let periodStr = 'month';
+  if (cycle === 'yearly') {
+    unitPrice = basePriceInr * 12 * 0.90;
+    periodStr = 'year';
+  }
+  const total = unitPrice * qty;
+  const formattedTotal = 'INR ' + total.toLocaleString('en-IN', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
 
-  const qtyInput = document.getElementById('qty-input-box');
-  if (qtyInput) qtyInput.value = qty;
-  updateDetailPriceDisplay();
+  showToast(`Proceeding to checkout for ${qty} license(s) of ${prod.name}. Total: ${formattedTotal}`, "success");
 }
 
-function switchDetailPlanTier(tier, btnEl) {
-  const ds = appState.detailState;
-  if (!ds) return;
-
-  ds.activeTier = tier;
-  if (btnEl) {
-    btnEl.parentNode.querySelectorAll('.plan-tab-btn').forEach(b => b.classList.remove('active'));
-    btnEl.classList.add('active');
+function toggleSPAWishlist(productId, btnEl) {
+  if (!appState.wishlist) {
+    appState.wishlist = [];
   }
-  updateDetailPriceDisplay();
+  const idx = appState.wishlist.indexOf(productId);
+  const prod = products.find(p => p.id === productId);
+  if (idx > -1) {
+    appState.wishlist.splice(idx, 1);
+    showToast(`Removed ${prod ? prod.name : productId} from your Saved Stack`, 'info');
+  } else {
+    appState.wishlist.push(productId);
+    showToast(`Added ${prod ? prod.name : productId} to your Saved Stack`, 'success');
+  }
+  updateSPAWishlistBtnState(productId, btnEl);
 }
 
-function switchBillingCycle(cycle) {
-  const ds = appState.detailState;
-  if (!ds) return;
-
-  ds.billingCycle = cycle;
-  const mBtn = document.getElementById('billing-cycle-monthly');
-  const aBtn = document.getElementById('billing-cycle-annually');
-  if (mBtn && aBtn) {
-    mBtn.classList.remove('active');
-    aBtn.classList.remove('active');
-    if (cycle === 'monthly') {
-      mBtn.classList.add('active');
-    } else {
-      aBtn.classList.add('active');
-    }
+function updateSPAWishlistBtnState(productId, btnEl) {
+  const el = btnEl || document.getElementById('detail-wishlist-btn');
+  if (!el) return;
+  if (!appState.wishlist) appState.wishlist = [];
+  
+  const isSaved = appState.wishlist.includes(productId);
+  if (isSaved) {
+    el.classList.add('active');
+    el.style.color = 'var(--error-red)';
+    el.style.borderColor = 'var(--error-red)';
+    el.innerHTML = `<i data-lucide="heart" style="width: 0.8rem; height: 0.8rem; fill: currentColor;"></i> Saved`;
+  } else {
+    el.classList.remove('active');
+    el.style.color = '';
+    el.style.borderColor = '';
+    el.innerHTML = `<i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack`;
   }
-
-  // Trigger spring badge pop on the discount badge
-  const discountBadge = document.querySelector('.billing-discount-badge');
-  if (discountBadge && cycle === 'annually') {
-    discountBadge.style.transition = 'none';
-    discountBadge.style.transform = 'scale(1)';
-    void discountBadge.offsetWidth; // Reflow
-    discountBadge.style.transition = 'transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.5)';
-    discountBadge.style.transform = 'scale(1.15)';
-    setTimeout(() => {
-      discountBadge.style.transform = 'scale(1)';
-    }, 400);
-  }
-
-  updateDetailPriceDisplay();
+  if (window.lucide) window.lucide.createIcons();
 }
 
 function switchDetailThumbnail(src, frameElement) {
@@ -3228,17 +3302,6 @@ function switchDetailThumbnail(src, frameElement) {
     frameElement.parentNode.querySelectorAll('.thumb-frame').forEach(f => f.classList.remove('active'));
     frameElement.classList.add('active');
   }
-}
-
-function handleAddToCartClick() {
-  const ds = appState.detailState;
-  if (!ds || !ds.activeProduct) return;
-
-  const prod = ds.activeProduct;
-  const planName = (prod.plans[ds.activeTier] || prod.plans[0]).name;
-  const total = document.getElementById('plan-display-price').innerText;
-
-  showToast(`Added ${prod.name} (${planName} tier) to cart! Total: ${total}`, "success");
 }
 
 // ==========================================================================
