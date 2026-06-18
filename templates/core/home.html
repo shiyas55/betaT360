@@ -231,32 +231,10 @@
 </section>
 
 <!-- AI-Powered Solutions Banner -->
-<section class="ai-banner-section">
-  <div>
-    <span class="section-kicker">AI-POWERED SOLUTIONS</span>
-    <h2>AI-Powered Solutions for a Smarter Tomorrow</h2>
-    <p>Discover next-generation intelligent solutions designed to automate, analyze, and accelerate your business growth.</p>
-    
-    <div class="ai-banner-features">
-      <div class="ai-feature-item">
-        <i data-lucide="check-circle" style="color: var(--accent); width: 1rem; height: 1rem;"></i> AI Chatbots & Virtual Assistants
-      </div>
-      <div class="ai-feature-item">
-        <i data-lucide="check-circle" style="color: var(--accent); width: 1rem; height: 1rem;"></i> Intelligent Document Processing
-      </div>
-      <div class="ai-feature-item">
-        <i data-lucide="check-circle" style="color: var(--accent); width: 1rem; height: 1rem;"></i> Predictive Analytics & Insights
-      </div>
-      <div class="ai-feature-item">
-        <i data-lucide="check-circle" style="color: var(--accent); width: 1rem; height: 1rem;"></i> Workflow Automation
-      </div>
-    </div>
-    
-    <a href="{% url 'product_list' %}?category=ai-tools" class="btn btn-primary btn-sm">Explore AI Solutions</a>
-  </div>
-  <div class="ai-banner-illustration">
-    <img src="{% static 'assets/chatgpt_image_jun_16.png' %}" alt="AI Brain Model">
-  </div>
+<section style="margin-top: 4rem; margin-bottom: 4rem;">
+  <a href="{% url 'product_list' %}?category=ai-tools" style="display: block; width: 100%; border-radius: 28px; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+    <img src="{% static 'assets/chatgpt_image_jun_16.png' %}" alt="AI-Powered Solutions for a Smarter Tomorrow" style="width: 100%; display: block; height: auto; object-fit: cover;">
+  </a>
 </section>
 
 <!-- Solution Bundles Section -->
