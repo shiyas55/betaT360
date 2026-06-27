@@ -1,0 +1,1962 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Quotation - #New Quotation — TechnoStore360 Admin</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Material Symbols for Premium Icons -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet" />
+
+  <style>
+    /* Premium Modern UI/UX Design System */
+    :root {
+      --font-body: 'Inter', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+
+      /* Colors */
+      --color-sidebar-bg: #0b132b;
+      --color-sidebar-text: #94a3b8;
+      --color-sidebar-active-bg: rgba(226, 26, 97, 0.12);
+      --color-sidebar-active-text: #ffffff;
+
+      --color-bg-main: #f3f4f6;
+      /* Soft light-grey */
+      --color-bg-card: #ffffff;
+      --color-border: #e5e7eb;
+
+      --color-pink-primary: #e21a61;
+      --color-pink-hover: #c4124e;
+      --color-pink-light: #fdf2f8;
+
+      --color-text-dark: #1f2937;
+      --color-text-muted: #9ca3af;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --sidebar-width: 250px;
+    }
+
+    /* Dark Mode Theme Overrides */
+    html[data-theme="dark"] {
+      --color-bg-main: #0b0f19;
+      --color-bg-card: #111827;
+      --color-border: #1f2937;
+      --color-text-dark: #f3f4f6;
+      --color-text-muted: #9ca3af;
+      --color-sidebar-bg: #030712;
+      --color-sidebar-text: #9ca3af;
+      --color-sidebar-active-bg: rgba(226, 26, 97, 0.2);
+      --color-pink-light: rgba(226, 26, 97, 0.15);
+      --color-success: #34d399;
+      --color-warning: #fbbf24;
+      --color-danger: #f87171;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg-main);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Outlined fixed Sidebar styling */
+    aside.admin-sidebar {
+      background-color: var(--color-sidebar-bg);
+      width: var(--sidebar-width);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 32px;
+      padding-left: 12px;
+      transition: all 0.3s;
+    }
+
+    .sidebar-header .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-header .logo-text {
+      font-family: var(--font-display);
+      font-size: 22px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar-header .logo-text span {
+      color: var(--color-pink-primary);
+    }
+
+    .sidebar-header .sub-logo {
+      font-size: 11px;
+      color: var(--color-sidebar-text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-grow: 1;
+    }
+
+    .menu-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 12px 16px;
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      font-size: 14px;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .menu-item a:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+
+    .menu-item.active a {
+      background-color: var(--color-sidebar-active-bg);
+      color: var(--color-sidebar-active-text);
+      border-left: 3px solid var(--color-pink-primary);
+    }
+
+    .menu-item a .material-symbols-outlined {
+      font-size: 22px;
+      transition: margin 0.2s;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 16px;
+    }
+
+    /* Collapsed Sidebar overrides */
+    body.sidebar-collapsed {
+      --sidebar-width: 80px;
+    }
+
+    body.sidebar-collapsed .sidebar-header {
+      padding-left: 0;
+      align-items: center;
+    }
+
+    body.sidebar-collapsed .sidebar-header .logo-text span:not(.logo-mini) {
+      display: none;
+    }
+
+    body.sidebar-collapsed .sidebar-header .logo-mini {
+      display: inline-block;
+      font-size: 24px;
+      color: var(--color-pink-primary);
+      font-weight: 900;
+    }
+
+    body.sidebar-collapsed .logo-mini-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    body.sidebar-collapsed .sidebar-header .sub-logo {
+      display: none;
+    }
+
+    body.sidebar-collapsed .menu-item a span:not(.material-symbols-outlined) {
+      opacity: 0;
+      display: none;
+    }
+
+    body.sidebar-collapsed .menu-item a {
+      justify-content: center;
+      padding: 12px;
+    }
+
+    body.sidebar-collapsed .sidebar-footer a span:not(.material-symbols-outlined) {
+      display: none;
+    }
+
+    /* Layout Content Wrapper */
+    .content-wrapper {
+      margin-left: var(--sidebar-width);
+      flex-grow: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Professional Top Navbar */
+    .top-navbar {
+      height: 70px;
+      background-color: var(--color-bg-card);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-grow: 1;
+      max-width: 520px;
+    }
+
+    .search-bar-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-bar-wrapper .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-size: 20px;
+    }
+
+    .search-input-top {
+      width: 100%;
+      background-color: var(--color-bg-main);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px 10px 42px;
+      font-size: 14px;
+      outline: none;
+      font-family: var(--font-body);
+      color: var(--color-text-dark);
+      transition: all 0.2s;
+    }
+
+    .search-input-top:focus {
+      background-color: var(--color-bg-card);
+      border-color: var(--color-pink-primary);
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-icon-btn {
+      color: var(--color-text-dark);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+
+    .nav-icon-btn:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .nav-icon-btn .badge-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-pink-primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      border: 2px solid var(--color-bg-card);
+    }
+
+    .user-avatar-btn {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background-color: var(--color-pink-primary);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #ffffff;
+      cursor: pointer;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      font-family: var(--font-display);
+    }
+
+    /* Dropdowns Styles */
+    .dropdown-container {
+      position: relative;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 8px;
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      z-index: 250;
+      overflow: hidden;
+      animation: dropdownFadeIn 0.2s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .user-dropdown {
+      min-width: 220px;
+    }
+
+    .user-dropdown-header {
+      padding: 16px;
+      background-color: var(--color-bg-main);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .user-dropdown-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--color-text-dark);
+    }
+
+    .user-dropdown-email {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-size: 13.5px;
+      transition: background-color 0.2s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .dropdown-item span.material-symbols-outlined {
+      font-size: 18px;
+      color: var(--color-text-muted);
+    }
+
+    .dropdown-divider {
+      border: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .text-danger {
+      color: var(--color-danger) !important;
+    }
+
+    .text-danger span {
+      color: var(--color-danger) !important;
+    }
+
+    /* Notifications Dropdown */
+    .notifications-dropdown {
+      width: 320px;
+    }
+
+    .dropdown-header {
+      padding: 12px 16px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 14px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-dark);
+    }
+
+    .dropdown-body {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+      transition: background-color 0.2s;
+    }
+
+    .notification-item:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .notification-item .info-icon {
+      color: var(--color-pink-primary);
+      font-size: 20px;
+    }
+
+    .notification-item .success-icon {
+      color: var(--color-success);
+      font-size: 20px;
+    }
+
+    .notification-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .notification-text {
+      font-size: 12.5px;
+      color: var(--color-text-dark);
+      line-height: 1.4;
+    }
+
+    .notification-time {
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+
+    .dropdown-footer {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--color-border);
+      background-color: var(--color-bg-main);
+    }
+
+    .dropdown-footer a {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-pink-primary);
+      text-decoration: none;
+    }
+
+    /* Layout Main Panel */
+    main.admin-main {
+      padding: 40px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+    }
+
+    /* Mobile/Desktop Toggle Buttons */
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .desktop-only-btn {
+      display: flex;
+    }
+
+    /* Typography Utilities */
+    h1.page-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    /* Card design */
+    .card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Buttons */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 20px;
+      font-family: var(--font-body);
+      font-size: 14px;
+      font-weight: 600;
+      border-radius: var(--radius-md);
+      cursor: pointer;
+      border: none;
+      transition: all 0.2s ease;
+      text-decoration: none;
+    }
+
+    .btn-primary {
+      background-color: var(--color-pink-primary);
+      color: #ffffff;
+    }
+
+    .btn-primary:hover {
+      background-color: var(--color-pink-hover);
+    }
+
+    .btn-secondary {
+      background-color: var(--color-bg-card);
+      color: var(--color-text-dark);
+      border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .btn-danger {
+      background-color: var(--color-danger);
+      color: white;
+    }
+
+    .btn-danger:hover {
+      background-color: #dc2626;
+    }
+
+    .btn-create {
+      background-color: var(--color-pink-primary);
+      color: white;
+      border-radius: var(--radius-sm);
+      padding: 8px 16px;
+      font-size: 13px;
+      height: 36px;
+    }
+
+    .btn-create:hover {
+      background-color: var(--color-pink-hover);
+    }
+
+    /* Tables design */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-bg-card);
+      transition: border-color 0.3s;
+    }
+
+    table.data-table {
+      width: 100%;
+      border-collapse: collapse;
+      text-align: left;
+      font-size: 14px;
+    }
+
+    table.data-table th {
+      background-color: var(--color-bg-main);
+      color: var(--color-text-muted);
+      font-weight: 600;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    table.data-table td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-dark);
+      vertical-align: middle;
+      transition: border-color 0.3s, background-color 0.2s;
+    }
+
+    table.data-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    table.data-table tr:hover td {
+      background-color: rgba(243, 244, 246, 0.3);
+    }
+
+    html[data-theme="dark"] table.data-table tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+
+    /* Forms utilities */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 18px;
+    }
+
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+    }
+
+    .form-control {
+      width: 100%;
+      padding: 10px 14px;
+      font-size: 14px;
+      font-family: var(--font-body);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-bg-card);
+      color: var(--color-text-dark);
+      outline: none;
+      transition: all 0.2s;
+    }
+
+    .form-control:focus {
+      border-color: var(--color-pink-primary);
+      box-shadow: 0 0 0 3px rgba(226, 26, 97, 0.15);
+    }
+
+    .form-control:disabled,
+    .form-control[readonly] {
+      background-color: var(--color-bg-main);
+      color: var(--color-text-muted);
+      cursor: not-allowed;
+    }
+
+    /* Custom Checkboxes UI/UX */
+    input[type="checkbox"]:not(.toggle-switch input):not(.switch input) {
+      appearance: checkbox;
+      -webkit-appearance: checkbox;
+      width: 18px;
+      height: 18px;
+      border: 1.5px solid var(--color-border);
+      border-radius: 4px;
+      accent-color: var(--color-pink-primary);
+      cursor: pointer;
+      background-color: var(--color-bg-card);
+      transition: all 0.2s;
+      vertical-align: middle;
+    }
+
+    input[type="checkbox"]:not(.toggle-switch input):not(.switch input):hover {
+      border-color: var(--color-pink-primary);
+    }
+
+    /* Messages alerts */
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 8px;
+    }
+
+    .alert {
+      padding: 12px 18px;
+      border-radius: var(--radius-md);
+      font-size: 14px;
+      font-weight: 500;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .alert-success {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-error {
+      background-color: rgba(239, 44, 44, 0.1);
+      color: var(--color-danger);
+      border: 1px solid rgba(239, 44, 44, 0.2);
+    }
+
+    /* Responsive styles */
+    @media (max-width: 991px) {
+      aside.admin-sidebar {
+        transform: translateX(-100%);
+        width: 250px !important;
+      }
+
+      aside.admin-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .content-wrapper {
+        margin-left: 0 !important;
+      }
+
+      .top-navbar {
+        padding: 0 20px;
+      }
+
+      main.admin-main {
+        padding: 24px 20px;
+      }
+
+      .toggle-btn.desktop-only-btn {
+        display: none;
+      }
+
+      .toggle-btn {
+        display: flex;
+      }
+    }
+
+    @media (min-width: 992px) {
+      .toggle-btn.mobile-only-btn {
+        display: none;
+      }
+    }
+
+    /* Create Button Dropdown */
+    .create-dropdown {
+      position: relative;
+      display: inline-block;
+    }
+
+    .create-dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 8px;
+      background-color: var(--color-bg-card);
+      min-width: 170px;
+      box-shadow: var(--shadow-md);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      z-index: 200;
+      padding: 6px 0;
+      animation: dropdownFadeIn 0.2s ease;
+    }
+
+    .create-dropdown-menu.show {
+      display: block;
+    }
+
+    .create-dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 10px 16px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-size: 13px;
+      font-weight: 500;
+      transition: background-color 0.2s;
+    }
+
+    .create-dropdown-item:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .create-dropdown-item span {
+      font-size: 18px;
+      color: var(--color-text-muted);
+    }
+  </style>
+  
+<style>
+  /* ════════════════════════════════════════
+     ADMIN QUOTATION FORM — REDESIGN
+     ════════════════════════════════════════ */
+
+  .qf-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  @media (max-width: 991px) {
+    .qf-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .qf-sidebar {
+    position: sticky;
+    top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .qf-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qf-section-title span {
+    color: var(--color-pink-primary);
+  }
+
+  .qf-item-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .qf-item-table th {
+    background-color: var(--color-bg-main);
+    border-bottom: 2px solid var(--color-border);
+    padding: 10px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-item-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+    transition: border-color 0.3s;
+  }
+
+  .qf-addon-box {
+    margin-top: 8px;
+    padding: 10px;
+    background-color: var(--color-bg-main);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-addon-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .qf-totals-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    margin-bottom: 10px;
+  }
+
+  .qf-totals-row.grand-total {
+    font-size: 20px;
+    font-weight: 850;
+    color: var(--color-text-dark);
+    border-top: 1px solid var(--color-border);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+
+  .qf-btn-remove-row {
+    color: var(--color-danger);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+  }
+
+  .qf-btn-remove-row:hover {
+    background-color: #fff5f5;
+  }
+
+  html[data-theme="dark"] .qf-btn-remove-row:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+</style>
+
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-container">
+        <span class="logo-text">
+          <span class="logo-full">TECHNO<span>STORE</span></span>
+          <span class="logo-mini">360</span>
+        </span>
+      </div>
+      <div class="sub-logo">Admin Portal</div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <li class="menu-item active">
+        <a href="admin_home.html">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_products.html">
+          <span class="material-symbols-outlined">inventory_2</span>
+          <span>Products</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_brands.html">
+          <span class="material-symbols-outlined">storefront</span>
+          <span>Brands</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_sub_brands.html">
+          <span class="material-symbols-outlined">flowsheet</span>
+          <span>Sub Brand</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_users.html">
+          <span class="material-symbols-outlined">group</span>
+          <span>Users</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_orders.html">
+          <span class="material-symbols-outlined">shopping_cart</span>
+          <span>Orders</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_quotations.html">
+          <span class="material-symbols-outlined">description</span>
+          <span>Quotations</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="admin_settings.html">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="menu-item" style="list-style:none;">
+        <a href="admin_logout.html" style="color:#f87171;">
+          <span class="material-symbols-outlined">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <!-- Desktop Sidebar Toggle -->
+        <button class="toggle-btn desktop-only-btn" id="sidebar-collapse-btn" onclick="toggleSidebarCollapse()"
+          title="Collapse Sidebar">
+          <span class="material-symbols-outlined" id="collapse-icon">menu_open</span>
+        </button>
+        <!-- Mobile Sidebar Toggle -->
+        <button class="toggle-btn mobile-only-btn" id="mobile-toggle-btn">
+          <span class="material-symbols-outlined" style="font-size: 28px;">menu</span>
+        </button>
+        <div class="search-bar-wrapper">
+          <span class="material-symbols-outlined search-icon">search</span>
+          <input type="text" class="search-input-top" id="top-search-bar" placeholder="Search or type a command..."
+            onkeydown="handleTopSearch(event)">
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <!-- Quick Action Create Dropdown -->
+        <div class="create-dropdown">
+          <button type="button" class="btn btn-create"
+            style="display: flex; align-items: center; justify-content: center; gap: 4px; border: none; cursor: pointer;"
+            onclick="toggleCreateDropdown(event)">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            Create
+          </button>
+          <div class="create-dropdown-menu" id="create-dropdown-menu">
+            <a href="admin_product_add.html" class="create-dropdown-item">
+              <span class="material-symbols-outlined">shopping_bag</span>
+              Add Product
+            </a>
+            <a href="admin_quotation_add.html" class="create-dropdown-item">
+              <span class="material-symbols-outlined">description</span>
+              Create Quotation
+            </a>
+            <a href="admin_brands.html" class="create-dropdown-item">
+              <span class="material-symbols-outlined">sell</span>
+              Manage Brands
+            </a>
+            <a href="admin_sub_brands.html" class="create-dropdown-item">
+              <span class="material-symbols-outlined">folder</span>
+              Manage Sub-Brands
+            </a>
+          </div>
+        </div>
+
+        <!-- Dark Mode Toggle Button -->
+        <button class="nav-icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+          <span class="material-symbols-outlined" id="dark-mode-icon">dark_mode</span>
+        </button>
+
+        <!-- Notifications Dropdown -->
+        <div class="dropdown-container">
+          <button type="button" class="nav-icon-btn" onclick="toggleDropdownMenu(event, 'notifications-dropdown')"
+            title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="dropdown-menu notifications-dropdown" id="notifications-dropdown">
+            <div class="dropdown-header">System Notifications</div>
+            <div class="dropdown-body">
+              <div class="notification-item">
+                <span class="material-symbols-outlined info-icon">info</span>
+                <div class="notification-content">
+                  <div class="notification-text">New quotation request pending approval.</div>
+                  <div class="notification-time">10 mins ago</div>
+                </div>
+              </div>
+              <div class="notification-item">
+                <span class="material-symbols-outlined success-icon">check_circle</span>
+                <div class="notification-content">
+                  <div class="notification-text">Daily reports and quotation sync completed.</div>
+                  <div class="notification-time">1 hr ago</div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer">
+              <a href="admin_quotations.html">View All Quotations</a>
+            </div>
+          </div>
+        </div>
+
+        <!-- Divider -->
+        <div style="width: 1px; height: 24px; background-color: var(--color-border); margin: 0 4px;"></div>
+
+        <!-- User Dropdown -->
+        <div class="dropdown-container">
+          <div class="user-avatar-btn" onclick="toggleDropdownMenu(event, 'user-dropdown')">
+            <span></span>
+          </div>
+          <div class="dropdown-menu user-dropdown" id="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-name"> </div>
+              <div class="user-dropdown-email"></div>
+            </div>
+            <a href="admin_settings.html" class="dropdown-item">
+              <span class="material-symbols-outlined">settings</span>
+              Settings
+            </a>
+            <a href="admin_home.html" class="dropdown-item">
+              <span class="material-symbols-outlined">dashboard</span>
+              Dashboard Home
+            </a>
+            <hr class="dropdown-divider">
+            <a href="admin_logout.html" class="dropdown-item text-danger">
+              <span class="material-symbols-outlined">logout</span>
+              Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="admin-main">
+      
+      <div class="alert-container">
+        
+        <div class="alert alert-successalert-error">
+          <span class="material-symbols-outlined">
+            check_circleerror
+          </span>
+          
+        </div>
+        
+      </div>
+      
+
+      
+<form method="POST" id="quotation-form" action="admin_quotation_edit.htmladmin_quotation_add.html">
+  
+  
+  <div class="header-row" style="margin-bottom: 24px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <h1 class="page-title">
+          Edit Quotation #New Quotation Proposal
+        </h1>
+        <span class="qd-badge qd-badge-draft" id="header-status">
+          Draft
+        </span>
+      </div>
+      <p class="subtitle">Complete B2B client details, quote license tiers, configure custom add-ons, and dispatch proposal invoice.</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <select name="currency" id="currency-selector" class="form-control" style="width: 100px; height: 38px;" onchange="updateTotalsDisplay()">
+        <option value="AED" selected>AED</option>
+        <option value="INR" selected>INR (₹)</option>
+        <option value="USD" selected>USD ($)</option>
+        <option value="EUR" selected>EUR (€)</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="qf-layout">
+    <!-- Left Column: Primary form modules -->
+    <div style="min-width: 0;">
+      
+      <!-- Client Selector widget -->
+      <div class="qf-card">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">person</span>
+          Client Profiling
+        </h3>
+        
+        <div style="margin-bottom: 16px; display: flex; gap: 16px;">
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+            <input type="radio" name="client_mode" value="existing" checked onclick="toggleClientMode('existing')">
+            Link Register User
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+            <input type="radio" name="client_mode" value="manual" onclick="toggleClientMode('manual')">
+            Manual Input / Guest
+          </label>
+        </div>
+
+        <div class="form-group" id="existing-client-row" style="margin-bottom: 16px;">
+          <label for="user">Choose Register B2B User</label>
+          <select id="user" name="user" class="form-control" style="margin-top: 4px; padding: 4px 8px; height: 40px;" onchange="autofillClientDetails()">
+            <option value="">-- Choose User Profile --</option>
+            
+              <option value="" selected> ()</option>
+            
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label for="client_name">Corporate/Company Name *</label>
+            <input type="text" id="client_name" name="client_name" value="" class="form-control" required style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="contact_person">Contact Representative</label>
+            <input type="text" id="contact_person" name="contact_person" value="" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label for="email">Contact Corporate Email *</label>
+            <input type="email" id="email" name="email" value="" class="form-control" required style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="phone">Representative Phone</label>
+            <input type="text" id="phone" name="phone" value="" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label for="market_region">Region / State Address</label>
+            <input type="text" id="market_region" name="market_region" value="" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="gstin_tax_id">Tax registration / GSTIN ID</label>
+            <input type="text" id="gstin_tax_id" name="gstin_tax_id" value="" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Scope items card -->
+      <div class="qf-card" style="padding: 20px;">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">inventory_2</span>
+          Solution Specifications
+        </h3>
+        
+        <div class="table-container" style="border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <table class="qf-item-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th style="width: 140px;">Category</th>
+                <th style="width: 180px;">Solution Name</th>
+                <th style="width: 140px;">License / Variant</th>
+                <th style="width: 110px;">Billing Term</th>
+                <th style="width: 60px; text-align: center;">Qty</th>
+                <th style="width: 90px; text-align: right;">Unit Cost</th>
+                <th style="width: 120px; text-align: right;">Discount</th>
+                <th style="width: 50px; text-align: center;">Tax %</th>
+                <th style="width: 95px; text-align: right;">Subtotal</th>
+                <th style="width: 40px; text-align: center;"></th>
+              </tr>
+            </thead>
+            <tbody id="line-items-tbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="margin-top: 16px; padding: 0 8px;">
+          <button type="button" class="btn btn-secondary" onclick="addNewRow()" style="height: 38px; font-size: 13px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            Add Line Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Terms & Notes Card -->
+      <div class="qf-card">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">description</span>
+          Discount & Terms
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label for="overall_discount_val">Overall Discount</label>
+            <input type="number" step="0.01" id="overall_discount_val" name="overall_discount_val" value="" class="form-control" oninput="calculateTotals()" style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="overall_discount_type">Discount Type</label>
+            <select id="overall_discount_type" name="overall_discount_type" class="form-control" onchange="calculateTotals()" style="height: 40px; margin-top: 4px; padding: 4px 8px;">
+              <option value="fixed" selected>Fixed Amount</option>
+              <option value="percentage" selected>Percentage (%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="terms_conditions">Terms and Conditions (Visible to Client)</label>
+          <textarea id="terms_conditions" name="terms_conditions" class="form-control" rows="4" placeholder="Terms and validity conditions..." style="margin-top: 4px;"></textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label for="customer_notes">Customer Notes (Visible on Quote)</label>
+            <textarea id="customer_notes" name="customer_notes" class="form-control" rows="3" placeholder="Notes for customer..." style="margin-top: 4px;"></textarea>
+          </div>
+          <div class="form-group">
+            <label for="admin_notes">Internal notes (Staff Only)</label>
+            <textarea id="admin_notes" name="admin_notes" class="form-control" rows="3" placeholder="Internal remarks..." style="margin-top: 4px;"></textarea>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Right Column: Sticky summaries and Action Sidebar -->
+    <div class="qf-sidebar">
+      
+      <!-- Totals summary Card -->
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm);">
+        <h3 class="qd-section-title" style="margin-bottom: 16px; border-bottom: 2px solid var(--color-border); padding-bottom: 10px;">Quotation Summary</h3>
+        
+        <input type="hidden" name="item_count" id="item_count_input" value="0">
+        
+        <div class="qf-totals-row">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">AED 0.00</span>
+        </div>
+        
+        <div class="qf-totals-row">
+          <span>Line Item Discounts</span>
+          <span id="summary-item-discount">AED 0.00</span>
+        </div>
+        
+        <div class="qf-totals-row">
+          <span>Overall Discount</span>
+          <span id="summary-overall-discount">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row" style="font-weight: 600; color: var(--color-text-dark);">
+          <span>Taxable Amount</span>
+          <span id="summary-taxable">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row">
+          <span>Estimated VAT / GST</span>
+          <span id="summary-tax">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row grand-total">
+          <span>Grand Total</span>
+          <span id="summary-total" style="color: var(--color-pink-primary);">AED 0.00</span>
+        </div>
+      </div>
+
+      <!-- Quotation details widget -->
+      <div class="card" style="padding: 20px;">
+        <div class="qd-section-title" style="margin-bottom: 12px; border-bottom: 1px dashed var(--color-border); padding-bottom: 6px;">Configuration</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px; font-size: 13px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="valid_days" style="font-weight: 600; display: block; margin-bottom: 4px;">Validity Period</label>
+            <select id="valid_days" name="valid_days" class="form-control" style="padding: 4px 8px; height: 38px;">
+              <option value="7" selected>7 Days</option>
+              <option value="15" selected>15 Days</option>
+              <option value="30" selected>30 Days</option>
+              <option value="60" selected>60 Days</option>
+              <option value="90" selected>90 Days</option>
+            </select>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--color-border); padding-top: 10px; margin-top: 4px;">
+            <span style="font-weight: 600; color: var(--color-text-muted);">Proposal Date:</span>
+            <span style="font-weight: 700; color: var(--color-text-dark);">Today</span>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; color: var(--color-text-muted);">Created By:</span>
+            <span style="font-weight: 700; color: var(--color-text-dark);"></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="submit" name="save_draft" class="btn btn-primary" style="width: 100%; justify-content: center; height: 44px; font-size: 14px;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">save</span> Save Proposal Draft
+        </button>
+        
+        <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="sendProposal('email')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">mail</span> Share by Email
+        </button>
+
+        <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="sendProposal('whatsapp')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">chat</span> Share on WhatsApp
+        </button>
+        
+        
+          <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="copyLink('public_quotation_view.html')">
+            <span class="material-symbols-outlined" style="font-size: 18px;">share</span> Copy Shared Link
+          </button>
+        
+        
+        <a href="admin_quotations.html" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px; border-color: rgba(239, 68, 68, 0.2); color: var(--color-danger);">
+          Discard / Cancel
+        </a>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+  let rowCounter = 0;
+  
+  // Available data lists passed from Django
+  const categoriesList = [
+    
+      { id: "", name: "" },
+    
+  ];
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // Initialize form rows
+    
+      
+        addNewRow({
+          category_id: "",
+          product_id: "",
+          product_name: "",
+          variant_id: "",
+          variant_name: "",
+          duration: "",
+          quantity: ,
+          price: "",
+          discount_type: "",
+          discount_value: "",
+          tax_percentage: "",
+          addons: [
+            
+              { name: "", price: "", quantity:  },
+            
+          ]
+        });
+      
+    
+      addNewRow();
+    
+  });
+
+  function toggleClientMode(mode) {
+    const row = document.getElementById('existing-client-row');
+    if (mode === 'manual') {
+      row.style.display = 'none';
+      document.getElementById('user').value = '';
+    } else {
+      row.style.display = 'block';
+    }
+  }
+
+  function autofillClientDetails() {
+    const userId = document.getElementById('user').value;
+    if (!userId) return;
+    
+    fetch(`/dashboard/ajax/client-details/?user_id=${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('client_name').value = data.client_name;
+          document.getElementById('contact_person').value = data.contact_person;
+          document.getElementById('email').value = data.email;
+          document.getElementById('phone').value = data.phone;
+          document.getElementById('market_region').value = data.market_region;
+          document.getElementById('gstin_tax_id').value = data.gstin_tax_id;
+        }
+      });
+  }
+
+  function addNewRow(data = null) {
+    rowCounter++;
+    const tbody = document.getElementById('line-items-tbody');
+    
+    const tr = document.createElement('tr');
+    tr.id = `row-${rowCounter}`;
+    tr.innerHTML = `
+      <td style="text-align:center; padding-top:16px; font-weight:600; color:var(--color-text-muted);">${rowCounter}</td>
+      <td>
+        <select name="item_category_${rowCounter}" id="item_category_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px;" onchange="loadCategoryProducts(${rowCounter})">
+          <option value="">-- Custom --</option>
+          ${categoriesList.map(c => `<option value="${c.id}" ${data && data.category_id == c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select name="item_product_${rowCounter}" id="item_product_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px; margin-bottom:4px;" onchange="loadProductVariants(${rowCounter})">
+          <option value="">-- Custom Name --</option>
+        </select>
+        <input type="text" name="item_prod_name_${rowCounter}" id="item_prod_name_${rowCounter}" class="form-control" value="${data ? data.product_name : ''}" placeholder="Product Name" style="font-size:12px; padding:4px 8px; height:32px;">
+      </td>
+      <td>
+        <select name="item_variant_${rowCounter}" id="item_variant_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px; margin-bottom:4px;" onchange="updateVariantPrice(${rowCounter})">
+          <option value="">-- Custom --</option>
+        </select>
+        <input type="text" name="item_var_name_${rowCounter}" id="item_var_name_${rowCounter}" class="form-control" value="${data ? data.variant_name : ''}" placeholder="Variant Name" style="font-size:12px; padding:4px 8px; height:32px;">
+      </td>
+      <td>
+        <select name="item_duration_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px;">
+          <option value="one-time" ${data && data.duration == 'one-time' ? 'selected' : ''}>One-Time</option>
+          <option value="monthly" ${data && data.duration == 'monthly' ? 'selected' : ''}>Monthly</option>
+          <option value="yearly" ${data && data.duration == 'yearly' ? 'selected' : ''}>Yearly</option>
+          <option value="custom" ${data && data.duration == 'custom' ? 'selected' : ''}>Custom</option>
+        </select>
+      </td>
+      <td>
+        <input type="number" name="item_qty_${rowCounter}" id="item_qty_${rowCounter}" class="form-control" value="${data ? data.quantity : '1'}" min="1" style="font-size:12px; padding:4px; text-align:center; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td>
+        <input type="number" step="0.01" name="item_price_${rowCounter}" id="item_price_${rowCounter}" class="form-control" value="${data ? data.price : '0.00'}" style="font-size:12px; padding:4px; text-align:right; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td>
+        <div style="display: flex; gap: 4px; margin-top:2px;">
+          <input type="number" step="0.01" name="item_disc_val_${rowCounter}" id="item_disc_val_${rowCounter}" class="form-control" value="${data ? data.discount_value : '0.00'}" style="font-size:12px; padding:4px; text-align:right; width:65px; height:34px;" oninput="calculateRow(${rowCounter})">
+          <select name="item_disc_type_${rowCounter}" id="item_disc_type_${rowCounter}" class="form-control" style="font-size:11px; padding:2px; width:45px; height:34px;" onchange="calculateRow(${rowCounter})">
+            <option value="fixed" ${data && data.discount_type == 'fixed' ? 'selected' : ''}>$</option>
+            <option value="percentage" ${data && data.discount_type == 'percentage' ? 'selected' : ''}>%</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <input type="number" step="0.1" name="item_tax_pct_${rowCounter}" id="item_tax_pct_${rowCounter}" class="form-control" value="${data ? data.tax_percentage : '5.0'}" style="font-size:12px; padding:4px; text-align:center; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td style="text-align: right; font-weight:800; font-family:monospace; padding-top:16px; font-size:14px; color:var(--color-text-dark);" id="item_total_display_${rowCounter}">
+        0.00
+      </td>
+      <td>
+        <button type="button" class="qf-btn-remove-row" onclick="removeRow(${rowCounter})" title="Delete Line Row">
+          <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+        </button>
+        <div class="qf-addon-box">
+          <div id="addons-list-${rowCounter}"></div>
+          <button type="button" class="btn btn-secondary btn-sm" style="font-size:10px; padding:2px 6px; height:24px;" onclick="addNewAddon(${rowCounter})">+ Add-on</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    document.getElementById('item_count_input').value = rowCounter;
+    
+    // Load category products if edit data is passed
+    if (data) {
+      if (data.category_id) {
+        loadCategoryProducts(rowCounter, data.product_id, () => {
+          if (data.product_id) {
+            loadProductVariants(rowCounter, data.variant_id, () => {
+              calculateRow(rowCounter);
+            });
+          }
+        });
+      } else {
+        calculateRow(rowCounter);
+      }
+      
+      // Load addons
+      if (data.addons && data.addons.length > 0) {
+        data.addons.forEach(add => addNewAddon(rowCounter, add.name, add.price, add.quantity));
+      }
+    } else {
+      calculateRow(rowCounter);
+    }
+  }
+
+  function removeRow(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (row) {
+      row.remove();
+      calculateTotals();
+    }
+  }
+
+  function addNewAddon(rowId, name = '', price = '0.00', qty = 1) {
+    const list = document.getElementById(`addons-list-${rowId}`);
+    const div = document.createElement('div');
+    div.className = 'qf-addon-item';
+    div.innerHTML = `
+      <input type="text" name="addon_name_${rowId}[]" class="form-control" value="${name}" placeholder="Addon Label" style="font-size:10px; padding:2px 6px; flex-grow:1; height:26px;">
+      <input type="number" step="0.01" name="addon_price_${rowId}[]" class="form-control" value="${price}" placeholder="Cost" style="font-size:10px; padding:2px; width:50px; text-align:right; height:26px;">
+      <input type="number" name="addon_qty_${rowId}[]" class="form-control" value="${qty}" min="1" style="font-size:10px; padding:2px; width:30px; text-align:center; height:26px;">
+      <button type="button" class="qf-btn-remove-row" style="padding:2px;" onclick="this.parentNode.remove()">×</button>
+    `;
+    list.appendChild(div);
+  }
+
+  function loadCategoryProducts(rowId, selectedProductId = '', callback = null) {
+    const catId = document.getElementById(`item_category_${rowId}`).value;
+    const prodSelect = document.getElementById(`item_product_${rowId}`);
+    
+    prodSelect.innerHTML = '<option value="">-- Custom Name --</option>';
+    
+    if (!catId) {
+      if (callback) callback();
+      return;
+    }
+    
+    fetch(`/dashboard/ajax/products/?category_id=${catId}`)
+      .then(res => res.json())
+      .then(data => {
+        data.products.forEach(p => {
+          const selected = selectedProductId == p.id ? 'selected' : '';
+          prodSelect.innerHTML += `<option value="${p.id}" data-price="${p.list_price}" ${selected}>${p.name}</option>`;
+        });
+        
+        if (callback) callback();
+      });
+  }
+
+  function loadProductVariants(rowId, selectedVariantId = '', callback = null) {
+    const prodSelect = document.getElementById(`item_product_${rowId}`);
+    const variantSelect = document.getElementById(`item_variant_${rowId}`);
+    const prodNameInput = document.getElementById(`item_prod_name_${rowId}`);
+    
+    const selectedOption = prodSelect.options[prodSelect.selectedIndex];
+    if (selectedOption.value) {
+      prodNameInput.value = selectedOption.text;
+      const price = selectedOption.getAttribute('data-price');
+      document.getElementById(`item_price_${rowId}`).value = price;
+    }
+    
+    variantSelect.innerHTML = '<option value="">-- Custom --</option>';
+    
+    const prodId = prodSelect.value;
+    if (!prodId) {
+      calculateRow(rowId);
+      if (callback) callback();
+      return;
+    }
+    
+    fetch(`/dashboard/ajax/variants/?product_id=${prodId}`)
+      .then(res => res.json())
+      .then(data => {
+        data.variants.forEach(v => {
+          const selected = selectedVariantId == v.id ? 'selected' : '';
+          variantSelect.innerHTML += `<option value="${v.id}" data-price="${v.price}" ${selected}>${v.name}</option>`;
+        });
+        
+        calculateRow(rowId);
+        if (callback) callback();
+      });
+  }
+
+  function updateVariantPrice(rowId) {
+    const varSelect = document.getElementById(`item_variant_${rowId}`);
+    const varNameInput = document.getElementById(`item_var_name_${rowId}`);
+    
+    const selectedOption = varSelect.options[varSelect.selectedIndex];
+    if (selectedOption.value) {
+      varNameInput.value = selectedOption.text;
+      const price = selectedOption.getAttribute('data-price');
+      document.getElementById(`item_price_${rowId}`).value = price;
+    }
+    calculateRow(rowId);
+  }
+
+  function calculateRow(id) {
+    const qty = parseInt(document.getElementById(`item_qty_${id}`).value) || 1;
+    const price = parseFloat(document.getElementById(`item_price_${id}`).value) || 0.0;
+    const discVal = parseFloat(document.getElementById(`item_disc_val_${id}`).value) || 0.0;
+    const discType = document.getElementById(`item_disc_type_${id}`).value;
+    const taxPct = parseFloat(document.getElementById(`item_tax_pct_${id}`).value) || 0.0;
+    
+    let subtotal = qty * price;
+    let discount = 0.0;
+    
+    if (discType === 'percentage') {
+      discount = subtotal * (discVal / 100.0);
+    } else {
+      discount = discVal;
+    }
+    
+    let taxable = subtotal - discount;
+    let tax = taxable * (taxPct / 100.0);
+    let total = taxable + tax;
+    
+    document.getElementById(`item_total_display_${id}`).innerText = total.toFixed(2);
+    
+    calculateTotals();
+  }
+
+  function calculateTotals() {
+    let subtotal = 0.0;
+    let itemDiscount = 0.0;
+    let tax = 0.0;
+    
+    const tbody = document.getElementById('line-items-tbody');
+    const rows = tbody.querySelectorAll('tr');
+    
+    rows.forEach(tr => {
+      const id = tr.id.split('-')[1];
+      const qty = parseInt(document.getElementById(`item_qty_${id}`).value) || 1;
+      const price = parseFloat(document.getElementById(`item_price_${id}`).value) || 0.0;
+      const discVal = parseFloat(document.getElementById(`item_disc_val_${id}`).value) || 0.0;
+      const discType = document.getElementById(`item_disc_type_${id}`).value;
+      const taxPct = parseFloat(document.getElementById(`item_tax_pct_${id}`).value) || 0.0;
+      
+      let rowSub = qty * price;
+      let rowDisc = 0.0;
+      
+      if (discType === 'percentage') {
+        rowDisc = rowSub * (discVal / 100.0);
+      } else {
+        rowDisc = discVal;
+      }
+      
+      let rowTaxable = rowSub - rowDisc;
+      let rowTax = rowTaxable * (taxPct / 100.0);
+      
+      subtotal += rowSub;
+      itemDiscount += rowDisc;
+      tax += rowTax;
+    });
+    
+    const overallDiscVal = parseFloat(document.getElementById('overall_discount_val').value) || 0.0;
+    const overallDiscType = document.getElementById('overall_discount_type').value;
+    
+    let overallDiscount = 0.0;
+    if (overallDiscType === 'percentage') {
+      overallDiscount = subtotal * (overallDiscVal / 100.0);
+    } else {
+      overallDiscount = overallDiscVal;
+    }
+    
+    let taxable = subtotal - itemDiscount - overallDiscount;
+    let total = taxable + tax;
+    
+    window.calcResults = {
+      subtotal,
+      itemDiscount,
+      overallDiscount,
+      taxable,
+      tax,
+      total
+    };
+    
+    updateTotalsDisplay();
+  }
+
+  function updateTotalsDisplay() {
+    if (!window.calcResults) return;
+    
+    const currency = document.getElementById('currency-selector').value;
+    const r = window.calcResults;
+    
+    document.getElementById('summary-subtotal').innerText = `${currency} ${r.subtotal.toFixed(2)}`;
+    document.getElementById('summary-item-discount').innerText = `${currency} ${r.item_discount.toFixed(2)}`;
+    document.getElementById('summary-overall-discount').innerText = `${currency} ${r.overall_discount.toFixed(2)}`;
+    document.getElementById('summary-taxable').innerText = `${currency} ${r.taxable.toFixed(2)}`;
+    document.getElementById('summary-tax').innerText = `${currency} ${r.tax.toFixed(2)}`;
+    document.getElementById('summary-total').innerText = `${currency} ${r.total.toFixed(2)}`;
+  }
+
+  function sendProposal(type) {
+    const clientName = document.getElementById('client_name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!clientName || !email) {
+      alert("Please supply client name and email address before sharing.");
+      return;
+    }
+    
+    if (type === 'email') {
+      alert(`Email proposal notification sent to ${email} successfully!`);
+    } else {
+      const text = encodeURIComponent(`Hi ${clientName}, please review your quotation proposal. Link: ${window.location.origin}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+  }
+
+  function copyLink(url) {
+    navigator.clipboard.writeText(window.location.origin + url);
+    alert("Public access link copied to clipboard!");
+  }
+</script>
+
+    </main>
+  </div>
+
+  <script>
+    // Theme Loader
+    (function () {
+      const currentTheme = localStorage.getItem('admin-theme') || 'light';
+      if (currentTheme === 'dark') {
+        document.documentElement.setAttribute('data-theme', 'dark');
+        const icon = document.getElementById('dark-mode-icon');
+        if (icon) icon.textContent = 'light_mode';
+      }
+    })();
+
+    // Sidebar State Loader
+    (function () {
+      const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+      if (isCollapsed && window.innerWidth >= 992) {
+        document.body.classList.add('sidebar-collapsed');
+        const icon = document.getElementById('collapse-icon');
+        if (icon) icon.textContent = 'menu';
+      }
+    })();
+
+    // Mobile Sidebar Toggler
+    const toggleBtn = document.getElementById('mobile-toggle-btn');
+    const sidebar = document.getElementById('admin-sidebar');
+
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', (e) => {
+        sidebar.classList.toggle('open');
+        e.stopPropagation();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && e.target !== toggleBtn) {
+          sidebar.classList.remove('open');
+        }
+      });
+    }
+
+    // Toggle Desktop Sidebar Collapse
+    function toggleSidebarCollapse() {
+      document.body.classList.toggle('sidebar-collapsed');
+      const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+      localStorage.setItem('sidebar-collapsed', isCollapsed);
+
+      const icon = document.getElementById('collapse-icon');
+      if (icon) {
+        icon.textContent = isCollapsed ? 'menu' : 'menu_open';
+      }
+    }
+
+    // Toggle Dark Mode
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      const currentTheme = htmlEl.getAttribute('data-theme');
+      const icon = document.getElementById('dark-mode-icon');
+
+      if (currentTheme === 'dark') {
+        htmlEl.removeAttribute('data-theme');
+        localStorage.setItem('admin-theme', 'light');
+        if (icon) icon.textContent = 'dark_mode';
+      } else {
+        htmlEl.setAttribute('data-theme', 'dark');
+        localStorage.setItem('admin-theme', 'dark');
+        if (icon) icon.textContent = 'light_mode';
+      }
+    }
+
+    // Toggle Dropdown Menus
+    function toggleDropdownMenu(event, id) {
+      event.stopPropagation();
+      // Close other dropdowns
+      document.querySelectorAll('.dropdown-menu').forEach(el => {
+        if (el.id !== id) {
+          el.classList.remove('show');
+        }
+      });
+
+      const menu = document.getElementById(id);
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    }
+
+    // Top Search input handler
+    function handleTopSearch(event) {
+      if (event.key === 'Enter') {
+        const query = event.target.value.trim();
+        if (query) {
+          const currentUrl = window.location.pathname;
+          if (currentUrl.includes('/products/')) {
+            window.location.href = `admin_products.html?search=${encodeURIComponent(query)}`;
+          } else if (currentUrl.includes('/users/')) {
+            window.location.href = `admin_users.html?search=${encodeURIComponent(query)}`;
+          } else if (currentUrl.includes('/orders/')) {
+            window.location.href = `admin_orders.html?search=${encodeURIComponent(query)}`;
+          } else {
+            window.location.href = `admin_home.html?search=${encodeURIComponent(query)}`;
+          }
+        }
+      }
+    }
+
+    // Toggle Create Dropdown
+    function toggleCreateDropdown(event) {
+      event.stopPropagation();
+      document.getElementById('create-dropdown-menu').classList.toggle('show');
+    }
+
+    // Close all open dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+      // Close dropdown-menu
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (!menu.contains(event.target)) {
+          menu.classList.remove('show');
+        }
+      });
+      // Close create dropdown
+      const createMenu = document.getElementById('create-dropdown-menu');
+      if (createMenu && createMenu.classList.contains('show') && !event.target.closest('.create-dropdown')) {
+        createMenu.classList.remove('show');
+      }
+    });
+  </script>
+<script src="/static/js/prototype.js"></script>
+</body>
+
+</html>

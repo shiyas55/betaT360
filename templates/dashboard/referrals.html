@@ -1,0 +1,343 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Referral Management — Techno360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-text-dark); margin:0 0 4px; }
+  .page-subtitle { font-size:13px; color:var(--color-text-muted); }
+
+  /* Summary Cards */
+  .ref-cards-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(170px, 1fr)); gap:14px; margin-bottom:28px; }
+  .rc { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:16px 18px; box-shadow:var(--shadow-sm); transition:all 0.25s; }
+  .rc:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--color-pink-primary); }
+  .rc-icon { width:36px; height:36px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .rc-icon span { font-size:18px; }
+  .rc-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); margin-bottom:5px; }
+  .rc-value { font-family:var(--font-display); font-size:20px; font-weight:800; color:var(--color-text-dark); }
+  .rc.pink .rc-icon { background:rgba(226,26,97,0.1); color:var(--color-pink-primary); }
+  .rc.green .rc-icon { background:rgba(16,185,129,0.1); color:var(--color-success); }
+  .rc.amber .rc-icon { background:rgba(245,158,11,0.1); color:var(--color-warning); }
+  .rc.blue .rc-icon { background:rgba(59,130,246,0.1); color:#3b82f6; }
+  .rc.violet .rc-icon { background:rgba(139,92,246,0.1); color:#8b5cf6; }
+  .rc.red .rc-icon { background:rgba(239,68,68,0.1); color:var(--color-danger); }
+
+  /* Tabs */
+  .tab-bar { display:flex; gap:0; border-bottom:2px solid var(--color-border); margin-bottom:24px; overflow-x:auto; }
+  .tab-btn { padding:12px 22px; background:none; border:none; cursor:pointer; font-size:14px; font-weight:600; color:var(--color-text-muted); font-family:var(--font-body); border-bottom:2px solid transparent; margin-bottom:-2px; white-space:nowrap; transition:all 0.2s; display:flex; align-items:center; gap:7px; }
+  .tab-btn:hover { color:var(--color-text-dark); }
+  .tab-panel { display:none; }
+
+  /* Table */
+  .table-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .table-card-header { padding:18px 20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .table-card-title { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--color-text-dark); }
+  .table-wrap { overflow-x:auto; }
+  table.aw-table { width:100%; border-collapse:collapse; min-width:900px; }
+  .aw-table thead tr { border-bottom:2px solid var(--color-border); }
+  .aw-table th { padding:11px 10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); text-align:left; white-space:nowrap; }
+  .aw-table tr { border-bottom:1px solid var(--color-border); transition:background 0.15s; }
+  .aw-table tr:hover { background:var(--color-bg-main); }
+  .aw-table tr:last-child { border-bottom:none; }
+
+  /* Buttons */
+  .btn-primary { background:var(--color-pink-primary); color:#fff; border:none; padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
+  .btn-primary:hover { background:var(--color-pink-hover); }
+  .btn-outline { background:none; border:1px solid var(--color-border); padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; cursor:pointer; color:var(--color-text-dark); display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; text-decoration:none; }
+  .btn-outline:hover { border-color:var(--color-pink-primary); color:var(--color-pink-primary); }
+  .btn-sm { padding:6px 12px; font-size:12px; }
+
+  /* Video section */
+  .video-section { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:24px; margin-bottom:24px; }
+  .video-thumbnail { background:linear-gradient(135deg,#0b132b 0%,#1e293b 100%); border-radius:var(--radius-md); aspect-ratio:16/9; max-width:420px; display:flex; align-items:center; justify-content:center; position:relative; cursor:pointer; overflow:hidden; }
+  .video-play-btn { width:64px; height:64px; background:rgba(226,26,97,0.9); border-radius:50%; display:flex; align-items:center; justify-content:center; transition:transform 0.2s; }
+  .video-play-btn:hover { transform:scale(1.1); }
+  .video-meta { display:flex; flex-direction:column; gap:12px; }
+  .video-toggle { display:flex; align-items:center; gap:12px; }
+  .toggle-switch { position:relative; width:44px; height:24px; }
+  .toggle-switch input { opacity:0; width:0; height:0; }
+  .toggle-slider { position:absolute; inset:0; background:var(--color-border); border-radius:12px; cursor:pointer; transition:background 0.3s; }
+  .toggle-slider::before { content:''; position:absolute; height:18px; width:18px; left:3px; top:3px; background:#fff; border-radius:50%; transition:transform 0.3s; }
+  input:checked + .toggle-slider { background:var(--color-success); }
+  input:checked + .toggle-slider::before { transform:translateX(20px); }
+
+  @media(max-width:768px) {
+    .ref-cards-grid { grid-template-columns:1fr 1fr; }
+    .tab-btn { padding:10px 14px; font-size:13px; }
+    .video-thumbnail { max-width:100%; }
+  }
+  @media(max-width:480px) {
+    .ref-cards-grid { grid-template-columns:1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Referral Management</h1>
+    <p class="page-subtitle">Manage referral links, track referred users, and process activation rewards.</p>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="ref-cards-grid">
+  <div class="rc pink">
+    <div class="rc-icon"><span class="material-symbols-outlined">link</span></div>
+    <div class="rc-label">Total Links</div>
+    <div class="rc-value" id="rc-total-links">—</div>
+  </div>
+  <div class="rc green">
+    <div class="rc-icon"><span class="material-symbols-outlined">link</span></div>
+    <div class="rc-label">Active Links</div>
+    <div class="rc-value" id="rc-active-links">—</div>
+  </div>
+  <div class="rc amber">
+    <div class="rc-icon"><span class="material-symbols-outlined">link_off</span></div>
+    <div class="rc-label">Expired Links</div>
+    <div class="rc-value" id="rc-expired-links">—</div>
+  </div>
+  <div class="rc blue">
+    <div class="rc-icon"><span class="material-symbols-outlined">group</span></div>
+    <div class="rc-label">Total Referred</div>
+    <div class="rc-value" id="rc-total-users">—</div>
+  </div>
+  <div class="rc green">
+    <div class="rc-icon"><span class="material-symbols-outlined">check_circle</span></div>
+    <div class="rc-label">Successful</div>
+    <div class="rc-value" id="rc-successful">—</div>
+  </div>
+  <div class="rc amber">
+    <div class="rc-icon"><span class="material-symbols-outlined">pending</span></div>
+    <div class="rc-label">Pending Acts.</div>
+    <div class="rc-value" id="rc-pending-acts">—</div>
+  </div>
+  <div class="rc red">
+    <div class="rc-icon"><span class="material-symbols-outlined">cancel</span></div>
+    <div class="rc-label">Rejected Acts.</div>
+    <div class="rc-value" id="rc-rejected-acts">—</div>
+  </div>
+  <div class="rc violet">
+    <div class="rc-icon"><span class="material-symbols-outlined">toll</span></div>
+    <div class="rc-label">Total Rewards</div>
+    <div class="rc-value" id="rc-total-reward">—</div>
+  </div>
+  <div class="rc amber">
+    <div class="rc-icon"><span class="material-symbols-outlined">hourglass_empty</span></div>
+    <div class="rc-label">Pending Rewards</div>
+    <div class="rc-value" id="rc-pending-reward">—</div>
+  </div>
+  <div class="rc green">
+    <div class="rc-icon"><span class="material-symbols-outlined">payments</span></div>
+    <div class="rc-label">Paid Rewards</div>
+    <div class="rc-value" id="rc-paid-reward">—</div>
+  </div>
+</div>
+
+<!-- Tab Bar -->
+<div class="tab-bar">
+  <button id="tab-btn-links" class="tab-btn" onclick="switchRefTab('links')">
+    <span class="material-symbols-outlined" style="font-size:18px">link</span> Referral Links
+  </button>
+  <button id="tab-btn-users" class="tab-btn" onclick="switchRefTab('users')">
+    <span class="material-symbols-outlined" style="font-size:18px">group</span> Referred Users
+  </button>
+  <button id="tab-btn-activations" class="tab-btn" onclick="switchRefTab('activations')">
+    <span class="material-symbols-outlined" style="font-size:18px">verified</span> Referral Activations
+  </button>
+  <button id="tab-btn-video" class="tab-btn" onclick="switchRefTab('video')">
+    <span class="material-symbols-outlined" style="font-size:18px">play_circle</span> Tutorial Video
+  </button>
+</div>
+
+<!-- ── TAB 1: REFERRAL LINKS ── -->
+<div id="tab-panel-links" class="tab-panel">
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">All Referral Links</span>
+      <span style="font-size:12px;color:var(--color-text-muted);display:flex;align-items:center;gap:5px">
+        <span class="material-symbols-outlined" style="font-size:15px;color:var(--color-warning)">timer</span>
+        Countdown updates every second
+      </span>
+    </div>
+    <div class="table-wrap">
+      <table class="aw-table">
+        <thead>
+          <tr>
+            <th>Referral ID</th><th>Referrer</th><th>Type</th><th>Code</th>
+            <th>Link</th><th>Created</th><th>Expiry</th><th>Remaining</th>
+            <th>Status</th><th>Clicks</th><th>Sign-ups</th><th>Activations</th>
+            <th>Earnings</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ref-links-tbody">
+          <tr><td colspan="14" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB 2: REFERRED USERS ── -->
+<div id="tab-panel-users" class="tab-panel">
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">Referred Users</span>
+    </div>
+    <div class="table-wrap">
+      <table class="aw-table">
+        <thead>
+          <tr>
+            <th>User ID</th><th>Name</th><th>Email</th><th>Phone</th>
+            <th>Referrer</th><th>Code</th><th>Reg. Date</th><th>Activ. Date</th>
+            <th>Account Type</th><th>Activation</th><th>Reward Status</th><th>Reward</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="ref-users-tbody">
+          <tr><td colspan="13" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB 3: ACTIVATIONS ── -->
+<div id="tab-panel-activations" class="tab-panel">
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">Referral Activations</span>
+    </div>
+    <div class="table-wrap">
+      <table class="aw-table">
+        <thead>
+          <tr>
+            <th>ID</th><th>Referred User</th><th>Referrer</th><th>Reg. Date</th>
+            <th>Verification</th><th>Required Action</th><th>Activ. Date</th>
+            <th>Status</th><th>Reward Elig.</th><th>Decision</th><th>Note</th><th>Actions</th>
+          </tr>
+        </thead>
+        <tbody id="act-tbody">
+          <tr><td colspan="12" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ── TAB 4: TUTORIAL VIDEO ── -->
+<div id="tab-panel-video" class="tab-panel">
+  <!-- Video Management Card -->
+  <div class="video-section">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:20px;flex-wrap:wrap;gap:10px">
+      <div>
+        <div style="font-family:var(--font-display);font-size:17px;font-weight:700;color:var(--color-text-dark)">Referral Tutorial Video</div>
+        <div style="font-size:13px;color:var(--color-text-muted);margin-top:2px">Manage the instructional video shown to users in their Referral section.</div>
+      </div>
+      <div style="display:flex;gap:8px;flex-wrap:wrap">
+        <button class="btn-outline btn-sm" onclick="Toast.info('Preview functionality would open a video player modal.')">
+          <span class="material-symbols-outlined" style="font-size:16px">play_circle</span> Preview
+        </button>
+        <button class="btn-primary btn-sm" onclick="Toast.success('Video upload dialog would open here. No backend required for demo.')">
+          <span class="material-symbols-outlined" style="font-size:16px">upload</span> Upload / Replace
+        </button>
+      </div>
+    </div>
+
+    <div style="display:flex;gap:24px;flex-wrap:wrap;align-items:flex-start">
+      <!-- Thumbnail -->
+      <div class="video-thumbnail" onclick="Toast.info('Video player would open here in a real deployment.')">
+        <div class="video-play-btn">
+          <span class="material-symbols-outlined" style="color:#fff;font-size:30px;margin-left:4px">play_arrow</span>
+        </div>
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:12px;background:linear-gradient(0deg,rgba(0,0,0,0.7),transparent)">
+          <div style="color:#fff;font-size:12px;font-weight:600">TechnoStore360 Referral Program Guide</div>
+        </div>
+        <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.6);color:#fff;font-size:11px;padding:2px 8px;border-radius:4px">12:34</div>
+      </div>
+
+      <!-- Video Meta -->
+      <div class="video-meta" style="flex:1;min-width:260px">
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--color-text-muted);margin-bottom:4px">Video Title</div>
+          <div style="font-size:15px;font-weight:700;color:var(--color-text-dark)">TechnoStore360 Referral Program Guide</div>
+        </div>
+        <div>
+          <div style="font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:0.5px;color:var(--color-text-muted);margin-bottom:4px">Description</div>
+          <div style="font-size:13px;color:var(--color-text-muted);line-height:1.6">A step-by-step guide explaining how to generate your referral link, share it with partners, and track your earnings in real-time through the TechnoStore360 B2B marketplace.</div>
+        </div>
+        <div style="display:flex;gap:20px;flex-wrap:wrap">
+          <div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:2px">Duration</div>
+            <div style="font-size:14px;font-weight:600">12 min 34 sec</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:2px">Last Updated</div>
+            <div style="font-size:14px;font-weight:600">27 Jun 2026</div>
+          </div>
+          <div>
+            <div style="font-size:11px;font-weight:600;text-transform:uppercase;color:var(--color-text-muted);margin-bottom:2px">Total Views</div>
+            <div style="font-size:14px;font-weight:600">342</div>
+          </div>
+        </div>
+        <div class="video-toggle">
+          <label class="toggle-switch">
+            <input type="checkbox" id="video-enabled-toggle" checked onchange="handleVideoToggle(this)">
+            <span class="toggle-slider"></span>
+          </label>
+          <div>
+            <div style="font-size:13px;font-weight:600;color:var(--color-text-dark)" id="video-toggle-label">Video Enabled</div>
+            <div style="font-size:11px;color:var(--color-text-muted)">Users can see this video in their Referrals section</div>
+          </div>
+          <span id="video-status-badge" style="display:inline-flex;align-items:center;gap:5px;padding:3px 10px;border-radius:50px;font-size:11px;font-weight:600;background:rgba(16,185,129,0.1);color:var(--color-success)">
+            <span style="width:6px;height:6px;border-radius:50%;background:var(--color-success)"></span>Live
+          </span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Video Viewers Table -->
+  <div class="table-card">
+    <div class="table-card-header">
+      <span class="table-card-title">Users Who Viewed the Referral Video</span>
+      <span style="font-size:13px;color:var(--color-text-muted)">5 viewers</span>
+    </div>
+    <div class="table-wrap">
+      <table class="aw-table">
+        <thead>
+          <tr>
+            <th>User ID</th><th>Name</th><th>Email</th><th>User Type</th>
+            <th>Watched</th><th>Progress</th><th>Status</th>
+            <th>First Viewed</th><th>Last Viewed</th>
+          </tr>
+        </thead>
+        <tbody id="video-viewers-tbody">
+          <tr><td colspan="9" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<script>
+function handleVideoToggle(checkbox) {
+  const label = document.getElementById('video-toggle-label');
+  const badge = document.getElementById('video-status-badge');
+  if (checkbox.checked) {
+    label.textContent = 'Video Enabled';
+    badge.style.background = 'rgba(16,185,129,0.1)'; badge.style.color = 'var(--color-success)';
+    badge.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:var(--color-success)"></span>Live';
+    Toast.success('Referral tutorial video is now live for users.');
+  } else {
+    label.textContent = 'Video Disabled';
+    badge.style.background = 'rgba(107,114,128,0.1)'; badge.style.color = '#6b7280';
+    badge.innerHTML = '<span style="width:6px;height:6px;border-radius:50%;background:#6b7280"></span>Hidden';
+    Toast.warning('Referral tutorial video has been hidden from users.');
+  }
+}
+</script>
+
+<script src="{% static 'dashboard/js/admin-wallet-referral.js' %}"></script>
+{% endblock %}

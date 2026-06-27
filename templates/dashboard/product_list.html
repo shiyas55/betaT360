@@ -1,87 +1,740 @@
 {% extends 'dashboard/base.html' %}
 
-{% block title %}Manage Catalog - TechnoStore360 Admin{% endblock %}
+{% block title %}Products — TechnoStore360 Admin{% endblock %}
 
-{% block admin_content %}
-<div class="space-y-6">
-  <div class="flex items-center justify-between flex-wrap gap-4">
-    <div>
-      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight font-display">Catalog Products</h1>
-      <p class="text-sm text-slate-500 mt-1">Manage software solutions, hardware packages, inventory and prices.</p>
+{% block extra_css %}
+<style>
+  /* ════════════════════════════════════════
+     ADMIN PRODUCT LIST — PROFESSIONAL REDESIGN
+  ════════════════════════════════════════ */
+
+  /* Page Header */
+  .pl-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .pl-header-left h1 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .pl-header-left p {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 3px;
+  }
+
+  .pl-header-actions {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  /* Stats bar */
+  .pl-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .pl-stat-chip {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: box-shadow 0.2s;
+  }
+
+  .pl-stat-chip:hover { box-shadow: 0 4px 16px rgba(0,0,0,0.06); }
+
+  .pl-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .pl-stat-icon .material-symbols-outlined { font-size: 20px; }
+  .pl-stat-icon.pink  { background:#fdf2f8; color:#e21a61; }
+  .pl-stat-icon.blue  { background:#eff6ff; color:#3b82f6; }
+  .pl-stat-icon.green { background:#ecfdf5; color:#10b981; }
+  .pl-stat-icon.amber { background:#fffbeb; color:#f59e0b; }
+
+  .pl-stat-info { min-width: 0; }
+
+  .pl-stat-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    line-height: 1;
+  }
+
+  .pl-stat-label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* Toolbar */
+  .pl-toolbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding: 16px 20px;
+    border-bottom: 1px solid var(--color-border);
+    background: #fafafa;
+    border-radius: var(--radius-md) var(--radius-md) 0 0;
+  }
+
+  .pl-search-wrap {
+    position: relative;
+    width: 320px;
+    max-width: 100%;
+  }
+
+  .pl-search-wrap .material-symbols-outlined {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 18px;
+    color: var(--color-text-muted);
+    pointer-events: none;
+  }
+
+  .pl-search-input {
+    width: 100%;
+    padding: 9px 14px 9px 38px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-family: var(--font-body);
+    color: var(--color-text-dark);
+    background: #ffffff;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+  }
+
+  .pl-search-input:focus {
+    border-color: var(--color-pink-primary);
+    box-shadow: 0 0 0 3px rgba(226,26,97,0.08);
+  }
+
+  .pl-search-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 9px 16px;
+    background: var(--color-pink-primary);
+    color: #fff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: background 0.2s, box-shadow 0.2s;
+    white-space: nowrap;
+  }
+
+  .pl-search-btn:hover {
+    background: var(--color-pink-hover);
+    box-shadow: 0 4px 12px rgba(226,26,97,0.25);
+  }
+
+  .pl-result-count {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    white-space: nowrap;
+  }
+
+  /* Table container */
+  .pl-table-wrap {
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+  }
+
+  .pl-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .pl-table thead th {
+    padding: 12px 16px;
+    text-align: left;
+    font-size: 10.5px;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.7px;
+    color: var(--color-text-muted);
+    background: #fafafa;
+    border-bottom: 1px solid var(--color-border);
+    white-space: nowrap;
+    user-select: none;
+  }
+
+  .pl-table thead th:first-child { padding-left: 20px; }
+  .pl-table thead th:last-child  { padding-right: 20px; text-align: right; }
+
+  .pl-table tbody tr {
+    border-bottom: 1px solid #f3f4f6;
+    transition: background 0.12s;
+  }
+
+  .pl-table tbody tr:last-child { border-bottom: none; }
+
+  .pl-table tbody tr:hover {
+    background: #fdf2f8;
+  }
+
+  .pl-table tbody td {
+    padding: 14px 16px;
+    vertical-align: middle;
+    color: var(--color-text-dark);
+  }
+
+  .pl-table tbody td:first-child { padding-left: 20px; }
+  .pl-table tbody td:last-child  { padding-right: 20px; }
+
+  /* Product image cell */
+  .pl-img-cell {
+    width: 44px;
+    height: 44px;
+    border-radius: 10px;
+    border: 1px solid var(--color-border);
+    background: #f9fafb;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+  }
+
+  .pl-img-cell img {
+    max-width: 85%;
+    max-height: 85%;
+    object-fit: contain;
+  }
+
+  .pl-img-cell .material-symbols-outlined {
+    font-size: 20px;
+    color: #d1d5db;
+  }
+
+  /* Product name column */
+  .pl-product-name {
+    font-weight: 700;
+    color: var(--color-text-dark);
+    font-size: 13px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    max-width: 220px;
+  }
+
+  .pl-product-meta {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 3px;
+  }
+
+  /* Family/brand */
+  .pl-family-badge {
+    display: inline-block;
+    background: #f1f5f9;
+    color: #334155;
+    font-size: 10.5px;
+    font-weight: 700;
+    padding: 3px 8px;
+    border-radius: 20px;
+    white-space: nowrap;
+    margin-bottom: 3px;
+  }
+
+  .pl-brand-text {
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  /* Pricing */
+  .pl-price-main {
+    font-weight: 800;
+    font-size: 14px;
+    color: var(--color-text-dark);
+    font-family: 'Inter', monospace;
+    white-space: nowrap;
+  }
+
+  .pl-price-sub {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    font-family: 'Inter', monospace;
+    white-space: nowrap;
+  }
+
+  /* Badges */
+  .pl-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 2px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .pl-badge .material-symbols-outlined { font-size: 12px; }
+  .pl-badge.featured { background: #fdf2f8; color: var(--color-pink-primary); }
+  .pl-badge.trending { background: #eff6ff; color: #2563eb; }
+  .pl-badge.standard { background: #f9fafb; color: #9ca3af; }
+
+  /* Currency chip */
+  .pl-currency {
+    font-size: 10.5px;
+    font-weight: 800;
+    color: var(--color-pink-primary);
+    background: #fdf2f8;
+    padding: 2px 7px;
+    border-radius: 20px;
+    white-space: nowrap;
+  }
+
+  /* Action buttons */
+  .pl-actions {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    justify-content: flex-end;
+  }
+
+  .pl-btn-edit {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: #f1f5f9;
+    color: #334155;
+    border: 1px solid #e2e8f0;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+    white-space: nowrap;
+  }
+
+  .pl-btn-edit:hover {
+    background: #e8f0fe;
+    border-color: #bfdbfe;
+    color: #1d4ed8;
+  }
+
+  .pl-btn-edit .material-symbols-outlined { font-size: 14px; }
+
+  .pl-btn-delete {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    background: #fff5f5;
+    color: #dc2626;
+    border: 1px solid #fecaca;
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    font-family: inherit;
+    transition: background 0.15s, border-color 0.15s;
+    white-space: nowrap;
+  }
+
+  .pl-btn-delete:hover {
+    background: #fee2e2;
+    border-color: #fca5a5;
+  }
+
+  .pl-btn-delete .material-symbols-outlined { font-size: 14px; }
+
+  .pl-delete-form { display: inline; }
+
+  /* Empty state */
+  .pl-empty {
+    text-align: center;
+    padding: 64px 24px;
+    color: var(--color-text-muted);
+  }
+
+  .pl-empty .material-symbols-outlined {
+    font-size: 48px;
+    color: #d1d5db;
+    display: block;
+    margin: 0 auto 12px;
+  }
+
+  .pl-empty h3 {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 6px;
+  }
+
+  .pl-empty p { font-size: 13px; }
+
+  /* Pagination */
+  .pl-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 14px 20px;
+    border-top: 1px solid var(--color-border);
+    background: #fafafa;
+    flex-wrap: wrap;
+    gap: 10px;
+  }
+
+  .pl-pag-info {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .pl-pag-btns { display: flex; gap: 6px; }
+
+  .pl-pag-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+    padding: 7px 16px;
+    background: #ffffff;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+    text-decoration: none;
+    transition: background 0.15s, border-color 0.15s, color 0.15s;
+  }
+
+  .pl-pag-btn:hover {
+    background: var(--color-pink-primary);
+    border-color: var(--color-pink-primary);
+    color: #ffffff;
+  }
+
+  .pl-pag-btn .material-symbols-outlined { font-size: 14px; }
+
+  /* Add product button */
+  .btn-add-product {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 20px;
+    background: var(--color-pink-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    font-family: var(--font-body);
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.2s, box-shadow 0.2s;
+    box-shadow: 0 4px 14px rgba(226,26,97,0.25);
+  }
+
+  .btn-add-product:hover {
+    background: var(--color-pink-hover);
+    box-shadow: 0 6px 20px rgba(226,26,97,0.35);
+    color: #fff;
+  }
+
+  .btn-add-product .material-symbols-outlined { font-size: 18px; }
+
+  @media (max-width: 900px) {
+    .pl-stats-bar { grid-template-columns: repeat(2, 1fr); }
+  }
+
+  @media (max-width: 600px) {
+    .pl-stats-bar { grid-template-columns: 1fr; }
+    .pl-header { flex-direction: column; align-items: flex-start; }
+  }
+
+  /* Row entrance animation */
+  @keyframes rowFadeIn {
+    from { opacity: 0; transform: translateX(-6px); }
+    to   { opacity: 1; transform: translateX(0); }
+  }
+
+  .pl-table tbody tr {
+    animation: rowFadeIn 0.3s ease both;
+  }
+
+  {% for i in "12345678901234567890" %}
+  .pl-table tbody tr:nth-child({{ forloop.counter }}) { animation-delay: {{ forloop.counter0 }}0ms; }
+  {% endfor %}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<!-- ── PAGE HEADER ── -->
+<div class="pl-header">
+  <div class="pl-header-left">
+    <h1>Products Directory</h1>
+    <p>Manage software products, licenses, pricing, and catalog configurations.</p>
+  </div>
+  <div class="pl-header-actions">
+    <a href="{% url 'admin_product_add' %}" class="btn-add-product">
+      <span class="material-symbols-outlined">add</span>
+      Add Product
+    </a>
+  </div>
+</div>
+
+<!-- ── STATS BAR ── -->
+<div class="pl-stats-bar">
+  <div class="pl-stat-chip">
+    <div class="pl-stat-icon pink">
+      <span class="material-symbols-outlined">inventory_2</span>
     </div>
-    <div>
-      <a href="{% url 'admin_product_add' %}" class="inline-flex items-center px-4 py-2 text-sm font-bold rounded-lg text-white bg-blue-600 hover:bg-blue-700 transition duration-150 shadow-sm">
-        <span class="material-symbols-outlined mr-2 text-sm">add</span>
-        Add Product
-      </a>
+    <div class="pl-stat-info">
+      <div class="pl-stat-value">{{ page_obj.paginator.count }}</div>
+      <div class="pl-stat-label">Total Products</div>
     </div>
   </div>
-
-  <!-- Product Table -->
-  <div class="bg-white shadow rounded-lg border border-slate-200 overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-        <thead class="bg-slate-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
-          <tr>
-            <th class="p-4">Product Name</th>
-            <th class="p-4">SKU / Code</th>
-            <th class="p-4">Category</th>
-            <th class="p-4">Brand</th>
-            <th class="p-4">Price (USD)</th>
-            <th class="p-4">Stock Qty</th>
-            <th class="p-4">Deployment</th>
-            <th class="p-4 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          {% for prod in products %}
-            <tr class="hover:bg-slate-50 transition">
-              <td class="p-4">
-                <div class="flex items-center gap-3">
-                  <div class="w-10 h-10 rounded border border-slate-200 flex items-center justify-center bg-slate-50 text-slate-600 font-black flex-shrink-0 text-sm overflow-hidden">
-                    {% if prod.image_file %}
-                      <img src="{{ prod.image_file.url }}" class="w-full h-full object-contain p-1">
-                    {% else %}
-                      {{ prod.brand.name|slice:":1" }}
-                    {% endif %}
-                  </div>
-                  <div>
-                    <h4 class="font-bold text-slate-900 line-clamp-1"><a href="{% url 'product_detail' prod.slug %}" target="_blank" class="hover:text-blue-600 transition">{{ prod.name }}</a></h4>
-                    <span class="text-[10px] text-slate-400 font-semibold uppercase">Added: {{ prod.created_at|date:"Y-m-d" }}</span>
-                  </div>
-                </div>
-              </td>
-              <td class="p-4 font-mono text-slate-600">{{ prod.sku }}</td>
-              <td class="p-4 text-slate-500 font-semibold">{{ prod.category.name }}</td>
-              <td class="p-4 text-slate-500 font-semibold">{{ prod.brand.name }}</td>
-              <td class="p-4 font-bold text-slate-900">${{ prod.price|floatformat:"2" }}</td>
-              <td class="p-4">
-                {% if prod.stock_qty <= 0 %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-red-100 text-red-800">Out of Stock (0)</span>
-                {% elif prod.stock_qty <= 5 %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-amber-100 text-amber-800">Low Stock ({{ prod.stock_qty }})</span>
-                {% else %}
-                  <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-green-100 text-green-800">In Stock ({{ prod.stock_qty }})</span>
-                {% endif %}
-              </td>
-              <td class="p-4 text-slate-500 font-semibold">{{ prod.deployment }}</td>
-              <td class="p-4 text-right space-x-2 whitespace-nowrap">
-                <a href="{% url 'admin_product_edit' prod.id %}" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold rounded border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition" title="Edit Product">
-                  <span class="material-symbols-outlined text-sm">edit</span>
-                </a>
-                <a href="{% url 'admin_product_delete' prod.id %}" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold rounded border border-red-300 bg-red-50 hover:bg-red-100 text-red-700 transition" title="Delete Product" onclick="return confirm('Are you sure you want to delete this product? This action cannot be undone.');">
-                  <span class="material-symbols-outlined text-sm">delete</span>
-                </a>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="8" class="p-8 text-center text-slate-400">No products found in the catalog.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="pl-stat-chip">
+    <div class="pl-stat-icon blue">
+      <span class="material-symbols-outlined">star</span>
+    </div>
+    <div class="pl-stat-info">
+      <div class="pl-stat-value" id="featured-count">—</div>
+      <div class="pl-stat-label">Featured</div>
+    </div>
+  </div>
+  <div class="pl-stat-chip">
+    <div class="pl-stat-icon green">
+      <span class="material-symbols-outlined">trending_up</span>
+    </div>
+    <div class="pl-stat-info">
+      <div class="pl-stat-value" id="trending-count">—</div>
+      <div class="pl-stat-label">Trending</div>
+    </div>
+  </div>
+  <div class="pl-stat-chip">
+    <div class="pl-stat-icon amber">
+      <span class="material-symbols-outlined">category</span>
+    </div>
+    <div class="pl-stat-info">
+      <div class="pl-stat-value">{{ total_products }}</div>
+      <div class="pl-stat-label">In Catalog</div>
     </div>
   </div>
 </div>
+
+<!-- ── TABLE CARD ── -->
+<div class="pl-table-wrap">
+
+  <!-- Toolbar -->
+  <div class="pl-toolbar">
+    <form class="pl-search-form" method="GET" action="{% url 'admin_products' %}"
+          style="display:flex; align-items:center; gap:8px; flex:1; max-width:460px;">
+      <div class="pl-search-wrap">
+        <span class="material-symbols-outlined">search</span>
+        <input type="text" name="search" value="{{ search_query }}"
+               class="pl-search-input" placeholder="Search by name, SKU, brand, or family…"
+               autocomplete="off">
+      </div>
+      <button type="submit" class="pl-search-btn">
+        <span class="material-symbols-outlined" style="font-size:15px;">search</span>
+        Search
+      </button>
+      {% if search_query %}
+        <a href="{% url 'admin_products' %}" style="font-size:12px; color:var(--color-text-muted); font-weight:600; text-decoration:none; white-space:nowrap;">
+          ✕ Clear
+        </a>
+      {% endif %}
+    </form>
+
+    <span class="pl-result-count">
+      {{ page_obj.paginator.count }} product{{ page_obj.paginator.count|pluralize }}
+      {% if search_query %}matching "{{ search_query }}"{% endif %}
+    </span>
+  </div>
+
+  <!-- Table -->
+  <div style="overflow-x:auto;">
+    <table class="pl-table">
+      <thead>
+        <tr>
+          <th style="width:56px;">Image</th>
+          <th>Product</th>
+          <th>Family / Brand</th>
+          <th>Pricing</th>
+          <th>Billing</th>
+          <th>Status</th>
+          <th style="text-align:right;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for product in page_obj %}
+        <tr>
+          <!-- Image -->
+          <td>
+            <div class="pl-img-cell">
+              {% if product.image_file %}
+                <img src="{{ product.image_file.url }}" alt="{{ product.name }}">
+              {% elif product.image %}
+                <img src="{{ product.image }}" alt="{{ product.name }}">
+              {% else %}
+                <span class="material-symbols-outlined">image</span>
+              {% endif %}
+            </div>
+          </td>
+
+          <!-- Product details -->
+          <td>
+            <div class="pl-product-name" title="{{ product.name }}">{{ product.name }}</div>
+            <div class="pl-product-meta">SKU: {{ product.sku }}{% if product.part_number %} · Part: {{ product.part_number }}{% endif %}</div>
+          </td>
+
+          <!-- Family & Brand -->
+          <td>
+            <div>
+              <span class="pl-family-badge">{{ product.category.name }}</span>
+            </div>
+            <div class="pl-brand-text">{{ product.brand.name }}</div>
+          </td>
+
+          <!-- Pricing -->
+          <td>
+            <div class="pl-price-main">{{ product.list_price }} <span class="pl-currency">{{ product.currency }}</span></div>
+            <div class="pl-price-sub">Cost: {{ product.purchase_price }}</div>
+          </td>
+
+          <!-- Billing / Term -->
+          <td>
+            <div style="font-size:12px; font-weight:600; color:var(--color-text-dark);">{{ product.billing_cycle|default:"—" }}</div>
+            <div style="font-size:11px; color:var(--color-text-muted);">{{ product.term|default:"—" }}</div>
+          </td>
+
+          <!-- Badges -->
+          <td>
+            {% if product.is_featured %}
+              <span class="pl-badge featured">
+                <span class="material-symbols-outlined">star</span> Featured
+              </span>
+            {% endif %}
+            {% if product.is_trending %}
+              <span class="pl-badge trending">
+                <span class="material-symbols-outlined">trending_up</span> Trending
+              </span>
+            {% endif %}
+            {% if not product.is_featured and not product.is_trending %}
+              <span class="pl-badge standard">Standard</span>
+            {% endif %}
+          </td>
+
+          <!-- Actions -->
+          <td>
+            <div class="pl-actions">
+              <a href="{% url 'admin_product_edit' product.id %}" class="pl-btn-edit">
+                <span class="material-symbols-outlined">edit</span> Edit
+              </a>
+              <form class="pl-delete-form" method="POST" action="{% url 'admin_product_delete' product.id %}"
+                    onsubmit="return confirm('Delete « {{ product.name }} »? This cannot be undone.');">
+                {% csrf_token %}
+                <button type="submit" class="pl-btn-delete">
+                  <span class="material-symbols-outlined">delete</span> Delete
+                </button>
+              </form>
+            </div>
+          </td>
+        </tr>
+        {% empty %}
+        <tr>
+          <td colspan="7">
+            <div class="pl-empty">
+              <span class="material-symbols-outlined">inventory_2</span>
+              <h3>No products found</h3>
+              <p>{% if search_query %}No results for "{{ search_query }}". Try a different keyword.{% else %}Your catalog is empty. Add your first product to get started.{% endif %}</p>
+            </div>
+          </td>
+        </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+
+  <!-- Pagination -->
+  {% if page_obj.has_other_pages %}
+  <div class="pl-pagination">
+    <span class="pl-pag-info">
+      Showing {{ page_obj.start_index }}–{{ page_obj.end_index }} of {{ page_obj.paginator.count }} products
+    </span>
+    <div class="pl-pag-btns">
+      {% if page_obj.has_previous %}
+        <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pl-pag-btn">
+          <span class="material-symbols-outlined">chevron_left</span> Previous
+        </a>
+      {% endif %}
+      <span style="display:flex; align-items:center; padding: 0 12px; font-size:12px; color:var(--color-text-muted); font-weight:600;">
+        {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+      </span>
+      {% if page_obj.has_next %}
+        <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}" class="pl-pag-btn">
+          Next <span class="material-symbols-outlined">chevron_right</span>
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+
+<script>
+  // Count featured and trending from rendered rows
+  (function() {
+    var rows = document.querySelectorAll('.pl-table tbody tr');
+    var featured = 0, trending = 0;
+    rows.forEach(function(row) {
+      if (row.querySelector('.pl-badge.featured')) featured++;
+      if (row.querySelector('.pl-badge.trending')) trending++;
+    });
+    var fc = document.getElementById('featured-count');
+    var tc = document.getElementById('trending-count');
+    if (fc) fc.textContent = featured;
+    if (tc) tc.textContent = trending;
+  })();
+</script>
+
 {% endblock %}

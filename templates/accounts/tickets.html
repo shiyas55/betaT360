@@ -1,0 +1,335 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}Support Desk - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  .ticket-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .stat-card-mini {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card-mini:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .stat-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-main);
+  }
+  
+  .stat-icon-wrap span {
+    font-size: 24px;
+  }
+  
+  .stat-icon-wrap.primary { color: var(--color-pink-primary); background-color: rgba(226, 26, 97, 0.1); }
+  .stat-icon-wrap.success { color: var(--color-success); background-color: rgba(16, 185, 129, 0.1); }
+  .stat-icon-wrap.pending { color: var(--color-warning); background-color: rgba(245, 158, 11, 0.1); }
+
+  .ticket-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ticket-priority-badge.high { background-color: rgba(239, 68, 68, 0.1); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+  .ticket-priority-badge.medium { background-color: rgba(245, 158, 11, 0.1); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+  .ticket-priority-badge.low { background-color: var(--color-bg-main); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+
+  .ticket-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+
+  .ticket-status-badge.open { background-color: rgba(37, 99, 235, 0.1); color: #2563eb; }
+  .ticket-status-badge.in_progress { background-color: rgba(162, 28, 175, 0.1); color: #a21caf; }
+  .ticket-status-badge.resolved { background-color: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+  .ticket-status-badge.closed { background-color: var(--color-bg-main); color: var(--color-text-muted); }
+
+  .action-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    color: var(--color-pink-primary);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .action-link-btn:hover {
+    color: var(--color-pink-hover);
+    text-decoration: underline;
+  }
+
+  /* Modal styling */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .modal-card {
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--color-border);
+    animation: modalSlide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-main);
+  }
+  
+  .modal-body {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 24px;
+    background-color: var(--color-bg-main);
+    border-top: 1px solid var(--color-border);
+  }
+
+  @keyframes modalSlide {
+    from {
+      transform: translateY(30px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div>
+    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Help Desk</span>
+    <h1 class="page-title">Support Tickets</h1>
+    <p class="subtitle">Open support tickets to communicate with sales executives and technical staff.</p>
+  </div>
+  <button onclick="openTicketModal()" class="btn btn-primary" style="height: 42px; padding: 0 20px; border-radius: 50px;">
+    <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+    Create Support Ticket
+  </button>
+</div>
+
+<!-- Support stats grid -->
+<div class="ticket-stats-grid">
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap primary">
+      <span class="material-symbols-outlined">support_agent</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Total Tickets</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-total-tickets">{{ tickets|length }}</div>
+    </div>
+  </div>
+  
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap pending">
+      <span class="material-symbols-outlined">hourglass_empty</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Open & Active</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-active-tickets">0</div>
+    </div>
+  </div>
+  
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap success">
+      <span class="material-symbols-outlined">done_all</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Resolved Closed</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-resolved-tickets">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- Support Tickets Table -->
+<div class="table-container mb-8 shadow-sm">
+  <table id="client-tickets-table">
+    <thead>
+      <tr>
+        <th>Ticket ID</th>
+        <th>Subject</th>
+        <th>Created Date</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th style="text-align: right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      {% for ticket in tickets %}
+        <tr data-status="{{ ticket.status }}">
+          <td style="font-weight: 600; font-family: monospace; color: var(--color-text-dark);">#{{ ticket.ticket_number }}</td>
+          <td style="font-weight: 700; color: var(--color-text-dark); font-size: 14px;">{{ ticket.subject }}</td>
+          <td>{{ ticket.created_at|date:"M d, Y" }}</td>
+          <td>
+            <span class="ticket-priority-badge {{ ticket.priority }}">
+              {{ ticket.get_priority_display }}
+            </span>
+          </td>
+          <td>
+            <span class="ticket-status-badge {{ ticket.status }}">
+              {{ ticket.get_status_display }}
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <a href="{% url 'customer_ticket_detail' ticket.ticket_number %}" class="action-link-btn">
+              <span class="material-symbols-outlined" style="font-size: 16px;">forum</span>
+              Discuss / View
+            </a>
+          </td>
+        </tr>
+      {% empty %}
+        <!-- Empty State -->
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 48px 0; color: var(--color-text-muted);">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); margin-bottom: 12px;">support_agent</span>
+            <h4 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">No support tickets found</h4>
+            <p style="font-size: 13px; max-w-sm; margin: 6px auto 16px;">You don't have any support tickets open. If you have licensing issues, payment updates, or custom contract queries, feel free to open a ticket.</p>
+            <button onclick="openTicketModal()" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px;">
+              Open Support Ticket
+            </button>
+          </td>
+        </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+<!-- CREATE TICKET MODAL -->
+<div id="create-ticket-modal" class="modal-overlay" onclick="if(event.target === this) closeTicketModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="profile-card-title">Open Support Ticket</h3>
+      <span class="material-symbols-outlined" style="cursor: pointer; color: var(--color-text-muted);" onclick="closeTicketModal()">close</span>
+    </div>
+
+    <form method="POST" action="{% url 'customer_ticket_create' %}">
+      {% csrf_token %}
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-subject">Subject / Query Title *</label>
+          <input type="text" id="ticket-subject" name="subject" required placeholder="e.g. License activation error" class="form-control">
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-priority">Priority Level</label>
+          <select id="ticket-priority" name="priority" class="form-control">
+            <option value="low">Low - General query</option>
+            <option value="medium" selected>Medium - Product billing / account issue</option>
+            <option value="high">High - Software license / production server issue</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-description">Detailed Description *</label>
+          <textarea id="ticket-description" name="description" required rows="5" placeholder="Explain the problem or request in detail..." class="form-control"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" onclick="closeTicketModal()" class="btn btn-secondary">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openTicketModal() {
+    const modal = document.getElementById('create-ticket-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  function closeTicketModal() {
+    const modal = document.getElementById('create-ticket-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  // Calculate ticket counts dynamically
+  document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('#client-tickets-table tbody tr[data-status]');
+    
+    let activeCount = 0;
+    let resolvedCount = 0;
+
+    rows.forEach(row => {
+      const status = row.getAttribute('data-status');
+      if (status === 'open' || status === 'in_progress') {
+        activeCount++;
+      } else if (status === 'resolved' || status === 'closed') {
+        resolvedCount++;
+      }
+    });
+
+    document.getElementById('client-active-tickets').textContent = activeCount;
+    document.getElementById('client-resolved-tickets').textContent = resolvedCount;
+  });
+</script>
+{% endblock %}

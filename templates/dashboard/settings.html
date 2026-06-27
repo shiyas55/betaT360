@@ -1,0 +1,387 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Portal Settings - Techno360 Admin Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+  .settings-wrapper {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  
+  .settings-sidebar {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .tab-btn {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 14px 16px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    text-align: left;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+  
+  .tab-btn:hover {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-dark);
+  }
+  
+  .tab-btn.active {
+    background-color: var(--color-pink-light);
+    color: var(--color-pink-primary);
+  }
+
+  .tab-btn span.material-symbols-outlined {
+    font-size: 20px;
+  }
+  
+  .settings-content-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .settings-card-header {
+    padding: 24px 30px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .settings-card-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+
+  .settings-card-body {
+    padding: 30px;
+  }
+
+  .settings-card-footer {
+    padding: 20px 30px;
+    background-color: var(--color-bg-main);
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+  }
+  
+  .settings-section-pane {
+    display: none;
+    animation: fadePane 0.25s ease;
+  }
+  
+  .settings-section-pane.active {
+    display: block;
+  }
+
+  @keyframes fadePane {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  
+  /* Toggle Switch styling */
+  .setting-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .setting-toggle-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 16px;
+  }
+  
+  .toggle-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+  }
+  
+  .toggle-desc {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+  
+  /* Switch slider stylings */
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  input:checked + .slider {
+    background-color: var(--color-pink-primary);
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(24px);
+  }
+
+  html[data-theme="dark"] .slider {
+    background-color: #374151;
+  }
+  
+  /* Logo preview */
+  .logo-preview-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-top: 16px;
+    padding: 16px;
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+  }
+  
+  .logo-thumbnail {
+    max-height: 60px;
+    max-width: 180px;
+    padding: 8px;
+    background-color: #ffffff;
+    border: 1px solid #e5e7eb;
+    border-radius: var(--radius-sm);
+    object-fit: contain;
+  }
+
+  @media (max-width: 768px) {
+    .settings-wrapper {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header-row">
+  <div>
+    <h1 class="page-title">Portal Settings</h1>
+    <p class="subtitle">Update system email parameters, logo paths, checkout toggles, and base currency configuration.</p>
+  </div>
+</div>
+
+<div class="settings-wrapper">
+  <!-- Tabs Navigation Sidebar -->
+  <div class="settings-sidebar">
+    <button type="button" class="tab-btn active" id="tab-btn-general" onclick="switchSettingsTab('general')">
+      <span class="material-symbols-outlined">settings</span>
+      General Settings
+    </button>
+    <button type="button" class="tab-btn" id="tab-btn-storefront" onclick="switchSettingsTab('storefront')">
+      <span class="material-symbols-outlined">shopping_cart</span>
+      Checkout & Cart
+    </button>
+    <button type="button" class="tab-btn" id="tab-btn-branding" onclick="switchSettingsTab('branding')">
+      <span class="material-symbols-outlined">palette</span>
+      Branding & Assets
+    </button>
+  </div>
+  
+  <!-- Tabs Content Panel inside a Single Form -->
+  <div class="settings-content-card">
+    <form method="POST" enctype="multipart/form-data">
+      {% csrf_token %}
+      
+      <div class="settings-card-header">
+        <h3 class="settings-card-title" id="panel-title-display">General Settings</h3>
+      </div>
+      
+      <div class="settings-card-body">
+        
+        <!-- Tab 1: General Settings -->
+        <div class="settings-section-pane active" id="pane-general">
+          <div class="form-group">
+            <label for="admin_email">Admin Email Notification Address *</label>
+            <input type="email" id="admin_email" name="admin_email" value="{{ settings.admin_email }}" class="form-control" required placeholder="admin@techno360.com">
+            <span style="font-size: 11px; color: var(--color-text-muted); margin-top: 4px;">Destination address for customer order notifications and support ticket alerts.</span>
+          </div>
+
+          <div class="form-group" style="margin-top: 20px;">
+            <label for="base_currency">Base Currency Code *</label>
+            <select id="base_currency" name="base_currency" class="form-control" required>
+              <option value="USD" {% if settings.base_currency == 'USD' %}selected{% endif %}>USD ($) - US Dollar</option>
+              <option value="INR" {% if settings.base_currency == 'INR' %}selected{% endif %}>INR (₹) - Indian Rupee</option>
+              <option value="EUR" {% if settings.base_currency == 'EUR' %}selected{% endif %}>EUR (€) - Euro</option>
+              <option value="GBP" {% if settings.base_currency == 'GBP' %}selected{% endif %}>GBP (£) - British Pound</option>
+            </select>
+            <span style="font-size: 11px; color: var(--color-text-muted); margin-top: 4px;">Primary B2B checkout transactional pricing currency used across order calculations.</span>
+          </div>
+        </div>
+        
+        <!-- Tab 2: Storefront Configurations -->
+        <div class="settings-section-pane" id="pane-storefront">
+          <div style="display: flex; flex-direction: column; gap: 8px;">
+            <div class="setting-toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Shop Catalog Status</span>
+                <span class="toggle-desc">Enable core store catalog features. If disabled, products are browse-only with requests.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="shop_enabled" {% if settings.shop_enabled %}checked{% endif %}>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Cart Access Control</span>
+                <span class="toggle-desc">Toggle customer capabilities to add products and services to their checkout list.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="cart_enabled" {% if settings.cart_enabled %}checked{% endif %}>
+                <span class="slider"></span>
+              </label>
+            </div>
+            
+            <div class="setting-toggle-row">
+              <div class="toggle-info">
+                <span class="toggle-title">Checkout & Transactions</span>
+                <span class="toggle-desc">Allow authorized checkout orders to be processed directly through the portal database.</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" name="checkout_enabled" {% if settings.checkout_enabled %}checked{% endif %}>
+                <span class="slider"></span>
+              </label>
+            </div>
+          </div>
+        </div>
+        
+        <!-- Tab 3: Branding & Assets -->
+        <div class="settings-section-pane" id="pane-branding">
+          <div class="form-group">
+            <label for="website_logo">Website Logo Link URL</label>
+            <input type="text" id="website_logo" name="website_logo" value="{{ settings.website_logo }}" class="form-control" placeholder="e.g. /static/images/logo.png">
+            <span style="font-size: 11px; color: var(--color-text-muted); margin-top: 4px;">Direct path to company logo image file on static servers.</span>
+          </div>
+          
+          <div class="form-group" style="margin-top: 20px;">
+            <label for="website_logo_file">Upload Website Logo (Overwrites Link URL)</label>
+            <input type="file" id="website_logo_file" name="website_logo_file" class="form-control" accept="image/*" style="padding: 8px 12px;">
+            
+            <div class="logo-preview-box">
+              <span style="font-size: 12px; color: var(--color-text-muted); font-weight: 600; text-transform: uppercase; letter-spacing: 0.5px;">Active Logo Preview</span>
+              <div style="background-color: #f1f5f9; padding: 16px; border-radius: var(--radius-sm); display: inline-flex; align-items: center; border: 1px solid #e2e8f0; width: fit-content;">
+                <img src="{{ settings.website_logo }}" class="logo-thumbnail" alt="Logo preview" onerror="this.style.display='none'">
+              </div>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="settings-card-footer">
+        <button type="submit" class="btn btn-primary" style="height: 44px; padding: 0 24px;">
+          <span class="material-symbols-outlined">save</span>
+          Save Portal Configurations
+        </button>
+      </div>
+      
+    </form>
+  </div>
+</div>
+
+<script>
+  function switchSettingsTab(tabId) {
+    // Hide all panes
+    const panes = document.querySelectorAll('.settings-section-pane');
+    panes.forEach(pane => pane.classList.remove('active'));
+    
+    // Deactivate all buttons
+    const buttons = document.querySelectorAll('.tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected pane
+    const targetPane = document.getElementById('pane-' + tabId);
+    if (targetPane) targetPane.classList.add('active');
+    
+    // Activate selected button
+    const targetBtn = document.getElementById('tab-btn-' + tabId);
+    if (targetBtn) targetBtn.classList.add('active');
+    
+    // Update header title display
+    const titleDisplay = document.getElementById('panel-title-display');
+    if (titleDisplay) {
+      if (tabId === 'general') {
+        titleDisplay.textContent = 'General Settings';
+      } else if (tabId === 'storefront') {
+        titleDisplay.textContent = 'Checkout & Cart Settings';
+      } else if (tabId === 'branding') {
+        titleDisplay.textContent = 'Branding & Assets';
+      }
+    }
+
+    // Save active tab in session storage
+    sessionStorage.setItem('activeSettingsTab', tabId);
+  }
+
+  // Restore tab on page load
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTab = sessionStorage.getItem('activeSettingsTab');
+    if (savedTab) {
+      switchSettingsTab(savedTab);
+    }
+  });
+</script>
+{% endblock %}

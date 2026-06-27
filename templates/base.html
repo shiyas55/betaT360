@@ -3,7 +3,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
   <title>{% block title %}T360 Commerce - TechnoStore360{% endblock %}</title>
   <meta name="description" content="{% block meta_description %}Premium B2B Technology Marketplace. Compare software, hardware, cloud, security, and AI tools, request demos, and get quotes.{% endblock %}">
   
@@ -49,6 +49,32 @@
     {% include 'includes/footer.html' %}
 
   </div>
+
+  <!-- ── GLOBAL MOBILE BOTTOM NAV ── -->
+  <nav class="mobile-bottom-nav">
+    <div class="mobile-nav-inner">
+      <a href="{% url 'home' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'home' %}active{% endif %}">
+        <i data-lucide="home"></i>
+        Home
+      </a>
+      <a href="{% url 'product_list' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'product_list' or request.resolver_match.url_name == 'product_detail' or request.resolver_match.url_name == 'demo_selection' %}active{% endif %}">
+        <i data-lucide="layout-grid"></i>
+        Categories
+      </a>
+      <a href="{% url 'product_compare' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'product_compare' %}active{% endif %}">
+        <i data-lucide="git-compare"></i>
+        Compare
+      </a>
+      <a href="{% url 'customer_wishlist' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'customer_wishlist' %}active{% endif %}">
+        <i data-lucide="heart"></i>
+        Wishlist
+      </a>
+      <a href="{% url 'customer_dashboard' %}" class="mobile-nav-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">
+        <i data-lucide="user"></i>
+        Account
+      </a>
+    </div>
+  </nav>
 
   <!-- Back to Top Button -->
   <button id="back-to-top-btn" aria-label="Back to top">

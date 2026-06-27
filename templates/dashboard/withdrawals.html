@@ -1,0 +1,145 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Withdrawal Requests — Techno360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-text-dark); margin:0 0 4px; }
+  .page-subtitle { font-size:13px; color:var(--color-text-muted); }
+  .filter-bar { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .filter-group { display:flex; flex-direction:column; gap:5px; min-width:160px; flex:1; }
+  .filter-label { font-size:11px; font-weight:600; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.4px; }
+  .filter-input, .filter-select { padding:8px 12px; border:1px solid var(--color-border); border-radius:var(--radius-sm); font-size:13px; background:var(--color-bg-main); color:var(--color-text-dark); font-family:var(--font-body); outline:none; transition:border-color 0.2s; }
+  .filter-input:focus, .filter-select:focus { border-color:var(--color-pink-primary); }
+  .filter-actions { display:flex; gap:8px; align-items:flex-end; }
+  .table-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .table-card-header { padding:18px 20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; }
+  .table-card-title { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--color-text-dark); }
+  .table-wrap { overflow-x:auto; }
+  table.aw-table { width:100%; border-collapse:collapse; min-width:950px; }
+  .aw-table thead tr { border-bottom:2px solid var(--color-border); }
+  .aw-table th { padding:11px 10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); text-align:left; white-space:nowrap; }
+  .aw-table tr { border-bottom:1px solid var(--color-border); transition:background 0.15s; }
+  .aw-table tr:hover { background:var(--color-bg-main); }
+  .aw-table tr:last-child { border-bottom:none; }
+  .pagination-bar { padding:14px 20px; border-top:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; }
+  .btn-primary { background:var(--color-pink-primary); color:#fff; border:none; padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; text-decoration:none; }
+  .btn-primary:hover { background:var(--color-pink-hover); }
+  .btn-outline { background:none; border:1px solid var(--color-border); padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; cursor:pointer; color:var(--color-text-dark); display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; text-decoration:none; }
+  .btn-outline:hover { border-color:var(--color-pink-primary); color:var(--color-pink-primary); }
+  .btn-sm { padding:6px 12px; font-size:12px; }
+  /* Modal */
+  .aw-modal { display:none; position:fixed; inset:0; background:rgba(15,23,42,0.5); z-index:500; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+  .aw-modal-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-lg); width:100%; max-width:480px; box-shadow:0 25px 50px rgba(0,0,0,0.25); animation:modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+  .aw-modal-header { padding:20px 24px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; }
+  .aw-modal-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--color-text-dark); }
+  .aw-modal-close { background:none; border:none; cursor:pointer; color:var(--color-text-muted); font-size:22px; line-height:1; padding:0; }
+  .aw-modal-body { padding:24px; }
+  .aw-modal-footer { padding:16px 24px; border-top:1px solid var(--color-border); background:var(--color-bg-main); display:flex; justify-content:flex-end; gap:10px; }
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:600; color:var(--color-text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
+  .form-group textarea { width:100%; padding:10px 12px; border:1px solid var(--color-border); border-radius:var(--radius-sm); font-size:14px; font-family:var(--font-body); color:var(--color-text-dark); background:var(--color-bg-main); outline:none; transition:border-color 0.2s; }
+  .form-group textarea:focus { border-color:var(--color-pink-primary); background:var(--color-bg-card); }
+  @media(max-width:768px) { .filter-bar { flex-direction:column; } .filter-group { min-width:unset; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Withdrawal Requests</h1>
+    <p class="page-subtitle">Review, approve, and process user withdrawal requests.</p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <a href="{% url 'admin_wallet' %}" class="btn-outline btn-sm">
+      <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> Wallet Management
+    </a>
+    <a href="{% url 'admin_transactions' %}" class="btn-outline btn-sm">
+      <span class="material-symbols-outlined" style="font-size:16px">receipt_long</span> All Transactions
+    </a>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="filter-group" style="flex:2;min-width:200px">
+    <label class="filter-label">Search</label>
+    <input id="wdf-search" class="filter-input" placeholder="Request ID or user name…" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Status</label>
+    <select id="wdf-status" class="filter-select">
+      <option value="all">All Statuses</option>
+      <option value="pending">Pending</option>
+      <option value="under_review">Under Review</option>
+      <option value="approved">Approved</option>
+      <option value="processing">Processing</option>
+      <option value="paid">Paid</option>
+      <option value="rejected">Rejected</option>
+      <option value="failed">Failed</option>
+    </select>
+  </div>
+  <div class="filter-actions">
+    <button id="wdf-apply" class="btn-primary btn-sm">
+      <span class="material-symbols-outlined" style="font-size:15px">filter_list</span> Apply
+    </button>
+    <button id="wdf-reset" class="btn-outline btn-sm">Reset</button>
+  </div>
+</div>
+
+<!-- Withdrawals Table -->
+<div class="table-card">
+  <div class="table-card-header">
+    <span class="table-card-title">Withdrawal Requests</span>
+    <span id="wd-page-info" style="font-size:13px;color:var(--color-text-muted)"></span>
+  </div>
+  <div class="table-wrap">
+    <table class="aw-table">
+      <thead>
+        <tr>
+          <th>Request ID</th><th>User</th><th>Type</th><th>Amount</th>
+          <th>Method</th><th>Account</th><th>Date</th><th>Status</th>
+          <th>Admin Note</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="wd-tbody">
+        <tr><td colspan="10" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination-bar">
+    <span style="font-size:13px;color:var(--color-text-muted)"></span>
+  </div>
+</div>
+
+<!-- Reject Modal -->
+<div id="wd-reject-modal" class="aw-modal">
+  <div class="aw-modal-card">
+    <div class="aw-modal-header">
+      <span class="aw-modal-title">Reject Withdrawal</span>
+      <button class="aw-modal-close" onclick="Modal.close('wd-reject-modal')">✕</button>
+    </div>
+    <div class="aw-modal-body">
+      <div style="background:rgba(239,68,68,0.08);border:1px solid rgba(239,68,68,0.2);border-radius:8px;padding:12px 14px;margin-bottom:18px;font-size:13px;color:var(--color-danger)">
+        <span class="material-symbols-outlined" style="font-size:16px;vertical-align:middle;margin-right:6px">warning</span>
+        This action cannot be undone. A rejection note is required.
+      </div>
+      <div class="form-group">
+        <label>Rejection Reason / Admin Note *</label>
+        <textarea id="wd-reject-note" rows="4" placeholder="e.g. KYC not completed. Please verify your account before requesting a withdrawal."></textarea>
+      </div>
+    </div>
+    <div class="aw-modal-footer">
+      <button class="btn-outline" onclick="Modal.close('wd-reject-modal')">Cancel</button>
+      <button style="background:var(--color-danger);color:#fff;border:none;padding:9px 18px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer" onclick="confirmWdReject()">
+        Confirm Rejection
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'dashboard/js/admin-wallet-referral.js' %}"></script>
+{% endblock %}

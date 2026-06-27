@@ -1,138 +1,1079 @@
 {% extends 'dashboard/base.html' %}
+{% load static %}
 
-{% block title %}{{ action }} Product - TechnoStore360 Admin{% endblock %}
+{% block title %}{{ title }} - TechnoStore360 Admin{% endblock %}
 
-{% block admin_content %}
-<div class="space-y-6 max-w-3xl">
+{% block extra_css %}
+<style>
+  /* ══════════════════════════════════════════
+     PRODUCT FORM – PREMIUM REDESIGN
+  ══════════════════════════════════════════ */
+
+  .form-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 28px;
+  }
+
+  @media (max-width: 991px) {
+    .form-grid { grid-template-columns: 1fr; }
+  }
+
+  /* ── PREMIUM TAB BAR ── */
+  .pf-tab-bar {
+    display: flex;
+    gap: 6px;
+    background: var(--color-bg-main);
+    border-radius: var(--radius-md);
+    padding: 6px;
+    margin-bottom: 28px;
+    border: 1px solid var(--color-border);
+  }
+
+  .pf-tab-btn {
+    flex: 1;
+    background: transparent;
+    border: none;
+    padding: 11px 16px;
+    font-family: var(--font-body);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    border-radius: var(--radius-sm);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+    white-space: nowrap;
+  }
+
+  .pf-tab-btn .material-symbols-outlined { 
+    font-size: 19px; 
+    transition: transform 0.2s;
+  }
+
+  .pf-tab-btn:hover {
+    background: var(--color-bg-card);
+    color: var(--color-text-dark);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .pf-tab-btn.active {
+    background: var(--color-bg-card);
+    color: var(--color-pink-primary);
+    box-shadow: var(--shadow-md);
+  }
+
+  .pf-tab-btn.active .material-symbols-outlined {
+    transform: scale(1.1);
+  }
+
+  /* ── TAB PANES ── */
+  .pf-pane { display: none; }
+  .pf-pane.active {
+    display: block;
+    animation: pfFadeIn 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  @keyframes pfFadeIn {
+    from { opacity: 0; transform: translateY(8px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+
+  /* ── FORM SECTION TITLE ── */
+  .form-section-title {
+    font-family: var(--font-display);
+    font-size: 15px;
+    font-weight: 800;
+    margin-bottom: 22px;
+    margin-top: 8px;
+    color: var(--color-text-dark);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    letter-spacing: -0.01em;
+  }
+
+  .form-section-title .material-symbols-outlined {
+    font-size: 19px;
+    color: var(--color-pink-primary);
+  }
+
+  /* ── FORM ROW ── */
+  .form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .form-row-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+  }
+
+  @media (max-width: 640px) {
+    .form-row, .form-row-3 { grid-template-columns: 1fr; }
+  }
+
+  /* ── CHECKBOXES ── */
+  .checkbox-group {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .checkbox-item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 13.5px;
+    font-weight: 600;
+    cursor: pointer;
+    color: var(--color-text-dark);
+    background: var(--color-bg-main);
+    padding: 12px 16px;
+    border-radius: var(--radius-md);
+    border: 1.5px solid var(--color-border);
+    transition: all 0.2s ease;
+    user-select: none;
+  }
+
+  .checkbox-item:hover {
+    border-color: var(--color-pink-primary);
+    background: var(--color-pink-light);
+  }
+
+  html[data-theme="dark"] .checkbox-item:hover {
+    background: rgba(226, 26, 97, 0.08);
+  }
+
+  .checkbox-item input {
+    width: 17px;
+    height: 17px;
+    accent-color: var(--color-pink-primary);
+    cursor: pointer;
+    border-radius: 4px;
+    border: 1px solid var(--color-border);
+  }
+
+  /* ── DYNAMIC ROW ADDER ── */
+  .dynamic-rows {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    margin-bottom: 18px;
+    background: var(--color-bg-main);
+    padding: 16px;
+    border-radius: var(--radius-md);
+    border: 1px solid var(--color-border);
+  }
+
+  .dynamic-row {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .dynamic-row input {
+    flex: 1;
+  }
+
+  .btn-remove-row {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    width: 38px;
+    height: 38px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-danger);
+    flex-shrink: 0;
+    transition: all 0.2s;
+  }
+
+  .btn-remove-row:hover {
+    background: rgba(239, 68, 68, 0.08);
+    border-color: var(--color-danger);
+    color: var(--color-danger);
+  }
+
+  .btn-remove-row .material-symbols-outlined { font-size: 19px; }
+
+  .btn-add-row {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 10px 16px;
+    background: var(--color-bg-card);
+    border: 1.5px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    cursor: pointer;
+    font-family: var(--font-body);
+    width: 100%;
+    transition: all 0.2s;
+    justify-content: center;
+  }
+
+  .btn-add-row:hover {
+    border-color: var(--color-pink-primary);
+    color: var(--color-pink-primary);
+    background: var(--color-pink-light);
+  }
+
+  html[data-theme="dark"] .btn-add-row:hover {
+    background: rgba(226, 26, 97, 0.06);
+  }
+
+  .btn-add-row .material-symbols-outlined { font-size: 18px; }
+
+  /* ── BULK WORKSPACE ── */
+  #bulk-workspace {
+    display: none;
+    animation: pfFadeIn 0.3s ease;
+  }
+
+  #bulk-workspace.active { display: flex; flex-direction: column; gap: 20px; }
+
+  .bulk-info-banner {
+    background: linear-gradient(135deg, #0b132b 0%, #1e3a5f 100%);
+    border-radius: var(--radius-md);
+    padding: 22px 26px;
+    color: #ffffff;
+    display: flex;
+    align-items: flex-start;
+    gap: 16px;
+  }
+
+  .bulk-info-banner .material-symbols-outlined {
+    font-size: 32px;
+    color: #60a5fa;
+    flex-shrink: 0;
+    margin-top: 2px;
+  }
+
+  .bulk-info-banner h4 {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 6px;
+    letter-spacing: -0.01em;
+  }
+
+  .bulk-info-banner p {
+    font-size: 12.5px;
+    color: rgba(255,255,255,0.75);
+    line-height: 1.6;
+  }
+
+  .bulk-format-tabs {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 10px;
+  }
+
+  .bulk-format-tab {
+    padding: 8px 18px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: var(--font-body);
+    transition: all 0.2s;
+    background: var(--color-bg-card);
+    color: var(--color-text-muted);
+  }
+
+  .bulk-format-tab.active,
+  .bulk-format-tab:hover {
+    background: var(--color-pink-primary);
+    color: #fff;
+    border-color: var(--color-pink-primary);
+  }
+
+  .bulk-data-area {
+    width: 100%;
+    min-height: 260px;
+    padding: 16px;
+    border: 1.5px solid var(--color-border);
+    border-radius: var(--radius-md);
+    font-family: 'Courier New', monospace;
+    font-size: 12.5px;
+    line-height: 1.8;
+    background: #fafbfc;
+    color: var(--color-text-dark);
+    outline: none;
+    transition: border-color 0.2s;
+    resize: vertical;
+  }
+
+  html[data-theme="dark"] .bulk-data-area { background: #0f172a; }
+
+  .bulk-data-area:focus { border-color: var(--color-pink-primary); }
+
+  .bulk-template-pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 14px;
+    border: 1px solid var(--color-border);
+    border-radius: 20px;
+    font-size: 11px;
+    font-weight: 700;
+    background: var(--color-bg-main);
+    color: var(--color-text-muted);
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .bulk-template-pill:hover {
+    border-color: var(--color-pink-primary);
+    color: var(--color-pink-primary);
+  }
+
+  /* ── READONLY BOX ── */
+  .readonly-box {
+    background: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+
+  .readonly-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12.5px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 10px;
+  }
+
+  .readonly-item:last-child { border-bottom: none; padding-bottom: 0; }
+  .readonly-label { font-weight: 700; color: var(--color-text-muted); }
+  .readonly-value { font-family: monospace; font-weight: 700; color: var(--color-text-dark); font-size: 11px; }
+
+  /* ── IMAGE PREVIEW ── */
+  .image-preview {
+    width: 100%;
+    height: 180px;
+    border: 2px dashed var(--color-border);
+    border-radius: var(--radius-md);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-main);
+    overflow: hidden;
+    margin-top: 10px;
+    transition: all 0.25s ease;
+    gap: 8px;
+    cursor: pointer;
+  }
+
+  .image-preview:hover { 
+    border-color: var(--color-pink-primary); 
+    background: var(--color-pink-light);
+  }
+
+  html[data-theme="dark"] .image-preview:hover {
+    background: rgba(226, 26, 97, 0.04);
+  }
+
+  .image-preview img {
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+  }
+
+  /* ── BULK TOGGLE BUTTON STATE ── */
+  .bulk-mode-active .btn-bulk-toggle {
+    background: var(--color-pink-primary);
+    color: #fff;
+  }
+
+  /* ── SPEC ROWS ── */
+  .spec-row-pair {
+    display: grid;
+    grid-template-columns: 1fr 1.5fr auto;
+    gap: 10px;
+    align-items: center;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header-row" style="margin-bottom: 24px;">
   <div>
-    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight font-display">{{ action }} Product</h1>
-    <p class="text-sm text-slate-500 mt-1">{% if action == 'Add' %}Create a new product entry in the catalog database.{% else %}Update product details for "{{ product.name }}".{% endif %}</p>
+    <h1 class="page-title">
+      <span class="material-symbols-outlined" style="font-size:26px; color:var(--color-pink-primary); vertical-align:middle;">{% if product %}edit{% else %}add_box{% endif %}</span>
+      {% if product %}Edit Product{% else %}Add New Product{% endif %}
+    </h1>
+    <p class="subtitle">
+      {% if product %}Modify catalog details for SKU: <strong>{{ product.sku }}</strong>{% else %}Register a new product to the B2B catalog{% endif %}
+    </p>
+  </div>
+  <div style="display:flex; gap:10px; align-items:center; flex-wrap:wrap;">
+    {% if not product %}
+    <button type="button" class="btn btn-secondary btn-bulk-toggle" onclick="toggleBulkMode()" id="bulk-toggle-btn" title="Switch to bulk upload mode">
+      <span class="material-symbols-outlined" style="font-size:18px;">upload_file</span>
+      <span id="bulk-btn-label">Bulk Upload Mode</span>
+    </button>
+    {% endif %}
+    <a href="{% url 'admin_products' %}" class="btn btn-secondary">
+      <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+      Back to Catalog
+    </a>
+  </div>
+</div>
+
+<form method="POST" enctype="multipart/form-data" id="product-form">
+  {% csrf_token %}
+  <!-- Hidden flag for bulk action -->
+  <input type="hidden" name="bulk_action" id="id_bulk_action" value="">
+
+  <!-- ══════════════════════════ BULK WORKSPACE ══════════════════════════ -->
+  <div id="bulk-workspace">
+    <div class="bulk-info-banner">
+      <span class="material-symbols-outlined">cloud_upload</span>
+      <div>
+        <h4>Bulk Product Import</h4>
+        <p>Paste a JSON array or CSV data below. Existing products matched by SKU or name will be <strong>updated</strong>; new entries will be <strong>created</strong>. Use the default Category & Brand dropdowns as fallback for rows without those fields.</p>
+      </div>
+    </div>
+
+    <div class="card">
+      <h3 class="form-section-title">
+        <span class="material-symbols-outlined">data_object</span>
+        Bulk Data Input
+      </h3>
+
+      <div style="display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:10px; margin-bottom:14px;">
+        <div class="bulk-format-tabs">
+          <button type="button" class="bulk-format-tab active" onclick="setTemplate('json')">JSON</button>
+          <button type="button" class="bulk-format-tab" onclick="setTemplate('csv')">CSV</button>
+        </div>
+        <div style="display:flex; gap:8px; flex-wrap:wrap;">
+          <span class="bulk-template-pill" onclick="loadTemplate('json')">
+            <span class="material-symbols-outlined" style="font-size:14px;">auto_fix_high</span>
+            Load JSON Template
+          </span>
+          <span class="bulk-template-pill" onclick="loadTemplate('csv')">
+            <span class="material-symbols-outlined" style="font-size:14px;">auto_fix_high</span>
+            Load CSV Template
+          </span>
+          <span class="bulk-template-pill" onclick="clearBulkData()">
+            <span class="material-symbols-outlined" style="font-size:14px;">clear</span>
+            Clear
+          </span>
+        </div>
+      </div>
+
+      <textarea
+        name="bulk_data"
+        id="bulk-data-area"
+        class="bulk-data-area"
+        placeholder='Paste JSON array or CSV here…'
+        spellcheck="false"
+      ></textarea>
+    </div>
+
+    <div class="card">
+      <h3 class="form-section-title">
+        <span class="material-symbols-outlined">tune</span>
+        Default Fallback Values
+      </h3>
+      <p style="font-size:12.5px; color:var(--color-text-muted); margin-bottom:16px;">Used for rows that do not specify a category or brand.</p>
+      <div class="form-row">
+        <div class="form-group">
+          <label for="bulk-category">Default Category</label>
+          <select name="category" id="bulk-category" class="form-control">
+            <option value="">-- Select Category --</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}">{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        <div class="form-group">
+          <label for="bulk-brand">Default Brand</label>
+          <select name="brand" id="bulk-brand" class="form-control">
+            <option value="">-- Select Brand --</option>
+            {% for br in brands %}
+            <option value="{{ br.id }}">{{ br.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+    </div>
+
+    <div style="display:flex; gap:12px; justify-content:flex-end; flex-wrap:wrap;">
+      <button type="button" class="btn btn-secondary" onclick="toggleBulkMode()">
+        <span class="material-symbols-outlined" style="font-size:18px;">arrow_back</span>
+        Back to Standard Form
+      </button>
+      <button type="submit" class="btn btn-primary" onclick="submitBulk()">
+        <span class="material-symbols-outlined" style="font-size:18px;">rocket_launch</span>
+        Run Bulk Import
+      </button>
+    </div>
   </div>
 
-  <form method="POST" enctype="multipart/form-data" class="bg-white shadow rounded-lg border border-slate-200 p-6 space-y-6">
-    {% csrf_token %}
-    
-    <!-- Row 1: Name & SKU -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div class="form-group">
-        <label for="name" class="block text-sm font-bold text-slate-700">Product Name *</label>
-        <input type="text" name="name" id="name" required value="{{ product.name|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+  <!-- ══════════════════════════ STANDARD FORM GRID ══════════════════════════ -->
+  <div id="standard-form" class="form-grid">
+
+    <!-- ──────────── LEFT COLUMN ──────────── -->
+    <div style="display:flex; flex-direction:column; gap:24px;">
+
+      <!-- TAB BAR -->
+      <div class="card" style="padding-bottom: 0;">
+        <div class="pf-tab-bar">
+          <button type="button" class="pf-tab-btn active" id="tab-overview-btn" onclick="switchTab('overview')">
+            <span class="material-symbols-outlined">info</span>
+            Overview
+          </button>
+          <button type="button" class="pf-tab-btn" id="tab-features-btn" onclick="switchTab('features')">
+            <span class="material-symbols-outlined">star</span>
+            Key Features
+          </button>
+          <button type="button" class="pf-tab-btn" id="tab-specs-btn" onclick="switchTab('specs')">
+            <span class="material-symbols-outlined">settings</span>
+            Specs &amp; Info
+          </button>
+        </div>
+
+        <!-- ── PANE: OVERVIEW ── -->
+        <div class="pf-pane active" id="pane-overview" style="padding: 0 0 24px;">
+          <h3 class="form-section-title" style="margin: 0 0 18px; padding: 0 0 12px;">
+            <span class="material-symbols-outlined">inventory_2</span>
+            General Information
+          </h3>
+
+          <div class="form-group">
+            <label for="name">Product Name *</label>
+            <input type="text" id="name" name="name" value="{{ product.name|default:'' }}" class="form-control" placeholder="e.g. Microsoft 365 Business Premium" required>
+          </div>
+
+          <div class="form-group">
+            <label for="short_desc">Short Description</label>
+            <input type="text" id="short_desc" name="short_desc" value="{{ product.short_desc|default:'' }}" class="form-control" placeholder="One-line product tagline…" maxlength="200">
+          </div>
+
+          <div class="form-group">
+            <label for="description">Full Description</label>
+            <textarea id="description" name="description" rows="5" class="form-control" placeholder="Enter full product description and licensing details…" style="resize:vertical;">{{ product.full_desc|default:'' }}</textarea>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="publisher">Publisher</label>
+              <input type="text" id="publisher" name="publisher" value="{{ product.publisher|default:'' }}" class="form-control" placeholder="e.g. Microsoft Corporation">
+            </div>
+            <div class="form-group">
+              <label for="part_number">Part Number</label>
+              <input type="text" id="part_number" name="part_number" value="{{ product.part_number|default:'' }}" class="form-control" placeholder="e.g. PN-M365-BP">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="billing_cycle">Billing Cycle</label>
+              <select id="billing_cycle" name="billing_cycle" class="form-control">
+                <option value="" {% if not product.billing_cycle %}selected{% endif %}>Select…</option>
+                <option value="Monthly" {% if product.billing_cycle == "Monthly" %}selected{% endif %}>Monthly</option>
+                <option value="Annual" {% if product.billing_cycle == "Annual" %}selected{% endif %}>Annual</option>
+                <option value="One-Time" {% if product.billing_cycle == "One-Time" %}selected{% endif %}>One-Time</option>
+                <option value="Multi-Year" {% if product.billing_cycle == "Multi-Year" %}selected{% endif %}>Multi-Year</option>
+                {% if product.billing_cycle and product.billing_cycle != "Monthly" and product.billing_cycle != "Annual" and product.billing_cycle != "One-Time" and product.billing_cycle != "Multi-Year" %}
+                <option value="{{ product.billing_cycle }}" selected>{{ product.billing_cycle }}</option>
+                {% endif %}
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="term">Term</label>
+              <input type="text" id="term" name="term" value="{{ product.term|default:'' }}" class="form-control" placeholder="e.g. 1 Year, 3 Years">
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="market">Market Segment</label>
+              <input type="text" id="market" name="market" value="{{ product.market|default:'' }}" class="form-control" placeholder="e.g. Commercial, Education">
+            </div>
+            <div class="form-group">
+              <label for="purchase_unit">Purchase Unit</label>
+              <input type="text" id="purchase_unit" name="purchase_unit" value="{{ product.purchase_unit|default:'' }}" class="form-control" placeholder="e.g. Per User / Month">
+            </div>
+          </div>
+
+          <!-- Pricing Sub-section -->
+          <h3 class="form-section-title">
+            <span class="material-symbols-outlined">payments</span>
+            Pricing Details
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="list_price">List Price (AED) *</label>
+              <input type="number" step="0.01" id="list_price" name="list_price" value="{{ product.list_price|default:'0.00' }}" class="form-control" min="0" required>
+            </div>
+            <div class="form-group">
+              <label for="purchase_price">Cost Price (AED) *</label>
+              <input type="number" step="0.01" id="purchase_price" name="purchase_price" value="{{ product.purchase_price|default:'0.00' }}" class="form-control" min="0" required>
+            </div>
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="currency">Currency *</label>
+              <select id="currency" name="currency" class="form-control" required>
+                <option value="AED" {% if product.currency == 'AED' or not product %}selected{% endif %}>AED (د.إ) – UAE Dirham</option>
+                <option value="USD" {% if product.currency == 'USD' %}selected{% endif %}>USD ($) – US Dollar</option>
+                <option value="EUR" {% if product.currency == 'EUR' %}selected{% endif %}>EUR (€) – Euro</option>
+                <option value="GBP" {% if product.currency == 'GBP' %}selected{% endif %}>GBP (£) – British Pound</option>
+                <option value="INR" {% if product.currency == 'INR' %}selected{% endif %}>INR (₹) – Indian Rupee</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="minimum_quantity">Min Purchase Qty *</label>
+              <input type="number" id="minimum_quantity" name="minimum_quantity" value="{{ product.minimum_quantity|default:'1' }}" class="form-control" min="1" required>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="maximum_quantity">Max Purchase Qty <span style="color:var(--color-text-muted); font-weight:400;">(leave blank for unlimited)</span></label>
+            <input type="number" id="maximum_quantity" name="maximum_quantity" value="{{ product.maximum_quantity|default:'' }}" class="form-control" placeholder="Unlimited">
+          </div>
+        </div>
+
+        <!-- ── PANE: KEY FEATURES ── -->
+        <div class="pf-pane" id="pane-features" style="padding: 0 0 24px;">
+          <h3 class="form-section-title" style="margin: 0 0 18px; padding: 0 0 12px;">
+            <span class="material-symbols-outlined">star</span>
+            Key Features
+          </h3>
+          <p style="font-size:12.5px; color:var(--color-text-muted); margin-bottom:16px;">Add bullet-point features that will appear on the product detail page.</p>
+
+          <div class="dynamic-rows" id="features-container">
+            {% if product %}
+              {% for feat in product.features.all %}
+              <div class="dynamic-row">
+                <input type="text" name="features" class="form-control" value="{{ feat.feature }}" placeholder="e.g. Cloud-based collaboration platform">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+              {% empty %}
+              <div class="dynamic-row">
+                <input type="text" name="features" class="form-control" placeholder="e.g. Cloud-based collaboration platform">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="dynamic-row">
+                <input type="text" name="features" class="form-control" placeholder="e.g. Cloud-based collaboration platform">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+            {% endif %}
+          </div>
+
+          <button type="button" class="btn-add-row" onclick="addFeatureRow()">
+            <span class="material-symbols-outlined">add</span>
+            Add Feature
+          </button>
+        </div>
+
+        <!-- ── PANE: SPECS & INFO ── -->
+        <div class="pf-pane" id="pane-specs" style="padding: 0 0 24px;">
+          <h3 class="form-section-title" style="margin: 0 0 18px; padding: 0 0 12px;">
+            <span class="material-symbols-outlined">settings</span>
+            Product Specifications
+          </h3>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="deployment">Deployment Model</label>
+              <select id="deployment" name="deployment" class="form-control">
+                {% for v in "Cloud / SaaS,On-Premises,Hybrid,Desktop,Mobile,Web-based" %}{% endfor %}
+                <option value="Cloud / SaaS" {% if product.deployment == 'Cloud / SaaS' or not product %}selected{% endif %}>Cloud / SaaS</option>
+                <option value="On-Premises" {% if product.deployment == 'On-Premises' %}selected{% endif %}>On-Premises</option>
+                <option value="Hybrid" {% if product.deployment == 'Hybrid' %}selected{% endif %}>Hybrid</option>
+                <option value="Desktop" {% if product.deployment == 'Desktop' %}selected{% endif %}>Desktop</option>
+                <option value="Mobile App" {% if product.deployment == 'Mobile App' %}selected{% endif %}>Mobile App</option>
+                <option value="Web-based" {% if product.deployment == 'Web-based' %}selected{% endif %}>Web-based</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label for="business_type">Business Type</label>
+              <select id="business_type" name="business_type" class="form-control">
+                <option value="Enterprise & Mid-Market" {% if product.business_type == 'Enterprise & Mid-Market' or not product %}selected{% endif %}>Enterprise &amp; Mid-Market</option>
+                <option value="SMB" {% if product.business_type == 'SMB' %}selected{% endif %}>SMB</option>
+                <option value="Startup" {% if product.business_type == 'Startup' %}selected{% endif %}>Startup</option>
+                <option value="Government" {% if product.business_type == 'Government' %}selected{% endif %}>Government</option>
+                <option value="Education" {% if product.business_type == 'Education' %}selected{% endif %}>Education</option>
+                <option value="Non-Profit" {% if product.business_type == 'Non-Profit' %}selected{% endif %}>Non-Profit</option>
+              </select>
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="support">Support Level</label>
+            <select id="support" name="support" class="form-control">
+              <option value="24/7 Live Support" {% if product.support == '24/7 Live Support' or not product %}selected{% endif %}>24/7 Live Support</option>
+              <option value="Business Hours" {% if product.support == 'Business Hours' %}selected{% endif %}>Business Hours</option>
+              <option value="Email Only" {% if product.support == 'Email Only' %}selected{% endif %}>Email Only</option>
+              <option value="Community" {% if product.support == 'Community' %}selected{% endif %}>Community</option>
+              <option value="Premium SLA" {% if product.support == 'Premium SLA' %}selected{% endif %}>Premium SLA</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="best_use_case">Best Use Case</label>
+            <textarea id="best_use_case" name="best_use_case" rows="3" class="form-control" placeholder="Describe the ideal use case for this product…">{{ product.best_use_case|default:'' }}</textarea>
+          </div>
+
+          <div class="form-group" style="margin-bottom:24px;">
+            <label class="checkbox-item" style="display:inline-flex;">
+              <input type="checkbox" name="demo_available" {% if product.demo_available or not product %}checked{% endif %}>
+              Demo Available
+            </label>
+          </div>
+
+          <!-- Custom Specifications -->
+          <h3 class="form-section-title">
+            <span class="material-symbols-outlined">table_rows</span>
+            Custom Specifications
+          </h3>
+          <p style="font-size:12.5px; color:var(--color-text-muted); margin-bottom:14px;">Add technical details shown in the product spec table (e.g. Storage: 100 GB, Users: 300).</p>
+
+          <div class="dynamic-rows" id="specs-container">
+            {% if product %}
+              {% for spec in product.specs.all %}
+              <div class="spec-row-pair">
+                <input type="text" name="spec_names" class="form-control" value="{{ spec.name }}" placeholder="Spec name">
+                <input type="text" name="spec_values" class="form-control" value="{{ spec.value }}" placeholder="Spec value">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+              {% empty %}
+              <div class="spec-row-pair">
+                <input type="text" name="spec_names" class="form-control" placeholder="e.g. Storage">
+                <input type="text" name="spec_values" class="form-control" placeholder="e.g. 1 TB">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+              {% endfor %}
+            {% else %}
+              <div class="spec-row-pair">
+                <input type="text" name="spec_names" class="form-control" placeholder="e.g. Storage">
+                <input type="text" name="spec_values" class="form-control" placeholder="e.g. 1 TB">
+                <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+                  <span class="material-symbols-outlined">remove</span>
+                </button>
+              </div>
+            {% endif %}
+          </div>
+
+          <button type="button" class="btn-add-row" onclick="addSpecRow()">
+            <span class="material-symbols-outlined">add</span>
+            Add Specification
+          </button>
+        </div>
       </div>
-      <div class="form-group">
-        <label for="sku" class="block text-sm font-bold text-slate-700">SKU / Product Code *</label>
-        <input type="text" name="sku" id="sku" required value="{{ product.sku|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
+      </div>
+      <!-- END CARD WITH TABS -->
+
+      <!-- Product FAQs Card -->
+      <div class="card" style="margin-top: 20px;">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+          <h3 class="form-section-title" style="margin: 0;">
+            <span class="material-symbols-outlined"></span>
+            Product FAQs
+          </h3>
+          <button type="button" id="btn-add-faq" class="btn btn-outline btn-sm">
+            <span class="material-symbols-outlined">add</span>
+            Add New FAQ
+          </button>
+        </div>
+        <div id="faq-list-container">
+          <!-- FAQ rows will be inserted here by JavaScript -->
+        </div>
       </div>
     </div>
 
-    <!-- Row 2: Category & Brand -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
-      <div class="form-group">
-        <label for="category" class="block text-sm font-bold text-slate-700">Category *</label>
-        <select name="category" id="category" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-          <option value="">Select Category</option>
-          {% for cat in categories %}
-            <option value="{{ cat.id }}" {% if product.category.id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-      <div class="form-group">
-        <label for="brand" class="block text-sm font-bold text-slate-700">Brand *</label>
-        <select name="brand" id="brand" required class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-          <option value="">Select Brand</option>
-          {% for brand in brands %}
-            <option value="{{ brand.id }}" {% if product.brand.id == brand.id %}selected{% endif %}>{{ brand.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
+    <!-- ──────────── RIGHT COLUMN ──────────── -->
+    <div style="display:flex; flex-direction:column; gap:20px;">
 
-    <!-- Row 3: Descriptions -->
-    <div class="form-group">
-      <label for="short_desc" class="block text-sm font-bold text-slate-700">Short Description *</label>
-      <input type="text" name="short_desc" id="short_desc" required value="{{ product.short_desc|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Brief tagline or description">
-    </div>
+      <!-- Categorization -->
+      <div class="card">
+        <h3 class="form-section-title">
+          <span class="material-symbols-outlined">category</span>
+          Categorization
+        </h3>
 
-    <div class="form-group">
-      <label for="full_desc" class="block text-sm font-bold text-slate-700">Full Description</label>
-      <textarea name="full_desc" id="full_desc" rows="4" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Detailed product descriptions or specifications">{{ product.full_desc|default:'' }}</textarea>
-    </div>
+        <div class="form-group">
+          <label for="category">Family (Category) *</label>
+          <select id="category" name="category" class="form-control" required>
+            <option value="" disabled {% if not product %}selected{% endif %}>Select Category…</option>
+            {% for cat in categories %}
+            <option value="{{ cat.id }}" {% if product.category_id == cat.id %}selected{% endif %}>{{ cat.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <!-- Row 4: Price & Stock -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-      <div class="form-group">
-        <label for="price" class="block text-sm font-bold text-slate-700">Regular Price (USD) *</label>
-        <input type="number" name="price" id="price" required step="0.01" value="{{ product.price|default:0.00 }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-      </div>
-      <div class="form-group">
-        <label for="sale_price" class="block text-sm font-bold text-slate-700">Sale Price (USD)</label>
-        <input type="number" name="sale_price" id="sale_price" step="0.01" value="{{ product.sale_price|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Leave empty if none">
-      </div>
-      <div class="form-group">
-        <label for="stock_qty" class="block text-sm font-bold text-slate-700">Stock Quantity *</label>
-        <input type="number" name="stock_qty" id="stock_qty" required value="{{ product.stock_qty|default:0 }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-      </div>
-    </div>
+        <div class="form-group">
+          <label for="brand">Brand *</label>
+          <select id="brand" name="brand" class="form-control" required>
+            <option value="" disabled {% if not product %}selected{% endif %}>Select Brand…</option>
+            {% for br in brands %}
+            <option value="{{ br.id }}" {% if product.brand_id == br.id %}selected{% endif %}>{{ br.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <!-- Row 5: Deployment & Specs -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-3">
-      <div class="form-group">
-        <label for="deployment" class="block text-sm font-bold text-slate-700">Deployment</label>
-        <input type="text" name="deployment" id="deployment" value="{{ product.deployment|default:'Cloud / SaaS' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-      </div>
-      <div class="form-group">
-        <label for="business_type" class="block text-sm font-bold text-slate-700">Business Scale</label>
-        <input type="text" name="business_type" id="business_type" value="{{ product.business_type|default:'Enterprise & Mid-Market' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-      </div>
-      <div class="form-group">
-        <label for="support" class="block text-sm font-bold text-slate-700">SLA Support</label>
-        <input type="text" name="support" id="support" value="{{ product.support|default:'24/7 Live Support' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-      </div>
-    </div>
+        <div class="form-group">
+          <label for="sub_brand">Sub Brand</label>
+          <select id="sub_brand" name="sub_brand" class="form-control">
+            <option value="" {% if not product.sub_brand %}selected{% endif %}>None</option>
+            {% for sbr in sub_brands %}
+            <option value="{{ sbr.id }}" {% if product.sub_brand_id == sbr.id %}selected{% endif %}>{{ sbr.brand.name }} – {{ sbr.name }}</option>
+            {% endfor %}
+          </select>
+        </div>
 
-    <!-- Row 6: Image Selection -->
-    <div class="grid grid-cols-1 gap-6 sm:grid-cols-2 border-t border-slate-100 pt-4">
-      <div class="form-group">
-        <label for="image_file" class="block text-sm font-bold text-slate-700">Upload Product Logo File</label>
-        <input type="file" name="image_file" id="image_file" class="mt-1 block w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-md file:border-0 file:text-sm file:font-semibold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100">
-        {% if product.image_file %}
-          <p class="text-xs text-slate-400 mt-1">Currently uploaded: <a href="{{ product.image_file.url }}" target="_blank" class="text-blue-600 font-bold underline">{{ product.image_file.name }}</a></p>
+        {% if product %}
+        <div class="form-group">
+          <label for="sku">SKU Code *</label>
+          <input type="text" id="sku" name="sku" value="{{ product.sku }}" class="form-control" required>
+        </div>
         {% endif %}
       </div>
-      <div class="form-group">
-        <label for="image_url" class="block text-sm font-bold text-slate-700">Or Static Image Path / URL</label>
-        <input type="text" name="image_url" id="image_url" value="{{ product.image|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g. assets/microsoft_365.png">
+
+      <!-- Visibility & Options -->
+      <div class="card">
+        <h3 class="form-section-title">
+          <span class="material-symbols-outlined">visibility</span>
+          Visibility &amp; Options
+        </h3>
+        <div class="checkbox-group">
+          <label class="checkbox-item">
+            <input type="checkbox" name="is_featured" {% if product.is_featured %}checked{% endif %}>
+            <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-warning);">star</span>
+            Featured
+          </label>
+          <label class="checkbox-item">
+            <input type="checkbox" name="is_trending" {% if product.is_trending %}checked{% endif %}>
+            <span class="material-symbols-outlined" style="font-size:16px; color:var(--color-pink-primary);">trending_up</span>
+            Trending
+          </label>
+        </div>
       </div>
-    </div>
 
-    <!-- Row 7: Flags (Switches) -->
-    <div class="border-t border-slate-100 pt-4">
-      <label class="block text-sm font-bold text-slate-700 mb-2">Catalog Tag Flags</label>
-      <div class="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-          <input type="checkbox" name="is_featured" {% if product.is_featured %}checked{% endif %} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span>Featured Card</span>
-        </label>
-        <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-          <input type="checkbox" name="is_trending" {% if product.is_trending %}checked{% endif %} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span>Trending Tag</span>
-        </label>
-        <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-          <input type="checkbox" name="is_new_arrival" {% if product.is_new_arrival %}checked{% endif %} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span>New Arrival</span>
-        </label>
-        <label class="flex items-center gap-2 text-sm text-slate-700 cursor-pointer">
-          <input type="checkbox" name="is_best_seller" {% if product.is_best_seller %}checked{% endif %} class="rounded border-slate-300 text-blue-600 focus:ring-blue-500">
-          <span>Best Seller</span>
-        </label>
+      <!-- Product Image -->
+      <div class="card">
+        <h3 class="form-section-title">
+          <span class="material-symbols-outlined">image</span>
+          Product Image
+        </h3>
+        <div class="form-group">
+          <label for="image_file">Upload Image</label>
+          <input type="file" id="image_file" name="image_file" class="form-control" accept="image/*" onchange="previewImage(this)">
+        </div>
+        <div class="image-preview" id="image-preview-box">
+          {% if product.image_file %}
+            <img src="{{ product.image_file.url }}" alt="{{ product.name }}" id="preview-img">
+          {% elif product.image %}
+            <img src="{{ product.image }}" alt="{{ product.name }}" id="preview-img">
+          {% else %}
+            <span class="material-symbols-outlined" style="font-size:48px; color:var(--color-text-muted);" id="preview-placeholder">image</span>
+          {% endif %}
+        </div>
       </div>
-    </div>
 
-    <!-- Controls -->
-    <div class="border-t border-slate-100 pt-4 flex items-center justify-end gap-3">
-      <a href="{% url 'admin_products' %}" class="inline-flex justify-center py-2 px-4 border border-slate-300 shadow-sm text-sm font-bold rounded-md text-slate-700 bg-white hover:bg-slate-50 transition duration-150">Cancel</a>
-      <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition duration-150">{{ action }} Product Entry</button>
-    </div>
+      <!-- System Parameters -->
+      <div class="card">
+        <h3 class="form-section-title">
+          <span class="material-symbols-outlined">memory</span>
+          System Parameters
+        </h3>
+        <div class="readonly-box">
+          <div class="readonly-item">
+            <span class="readonly-label">ID</span>
+            <span class="readonly-value">{% if product %}{{ product.id }}{% else %}[Auto]{% endif %}</span>
+          </div>
+          <div class="readonly-item">
+            <span class="readonly-label">Slug</span>
+            <span class="readonly-value">{% if product %}{{ product.slug|truncatechars:20 }}{% else %}[Auto]{% endif %}</span>
+          </div>
+          <div class="readonly-item">
+            <span class="readonly-label">Catalog Key</span>
+            <span class="readonly-value">{% if product %}{{ product.catalog_key|default:"—" }}{% else %}[Auto]{% endif %}</span>
+          </div>
+          <div class="readonly-item">
+            <span class="readonly-label">Segment</span>
+            <span class="readonly-value">{% if product %}{{ product.segment|default:"Enterprise" }}{% else %}Enterprise{% endif %}</span>
+          </div>
+          <div class="readonly-item">
+            <span class="readonly-label">Region</span>
+            <span class="readonly-value">{% if product %}{{ product.region|default:"Global" }}{% else %}Global{% endif %}</span>
+          </div>
+          <div class="readonly-item">
+            <span class="readonly-label">Created</span>
+            <span class="readonly-value">{% if product %}{{ product.created_at|date:"d M Y" }}{% else %}[Auto]{% endif %}</span>
+          </div>
+        </div>
+      </div>
 
-  </form>
-</div>
+      <!-- Save Button -->
+      <button type="submit" class="btn btn-primary" style="width:100%; padding:14px; font-size:15px;">
+        <span class="material-symbols-outlined">save</span>
+        {% if product %}Update Product{% else %}Save New Product{% endif %}
+      </button>
+    </div>
+  </div>
+  <!-- END STANDARD FORM -->
+</form>
+
+<script>
+  /* ── TAB SWITCHER ── */
+  function switchTab(name) {
+    document.querySelectorAll('.pf-tab-btn').forEach(b => b.classList.remove('active'));
+    document.querySelectorAll('.pf-pane').forEach(p => p.classList.remove('active'));
+    document.getElementById('tab-' + name + '-btn').classList.add('active');
+    document.getElementById('pane-' + name).classList.add('active');
+  }
+
+  /* ── DYNAMIC ROW: FEATURE ── */
+  function addFeatureRow() {
+    const container = document.getElementById('features-container');
+    const div = document.createElement('div');
+    div.className = 'dynamic-row';
+    div.innerHTML = `
+      <input type="text" name="features" class="form-control" placeholder="e.g. Real-time collaboration">
+      <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+        <span class="material-symbols-outlined">remove</span>
+      </button>`;
+    container.appendChild(div);
+    div.querySelector('input').focus();
+  }
+
+  /* ── DYNAMIC ROW: SPEC ── */
+  function addSpecRow() {
+    const container = document.getElementById('specs-container');
+    const div = document.createElement('div');
+    div.className = 'spec-row-pair';
+    div.innerHTML = `
+      <input type="text" name="spec_names" class="form-control" placeholder="Spec name">
+      <input type="text" name="spec_values" class="form-control" placeholder="Spec value">
+      <button type="button" class="btn-remove-row" onclick="removeRow(this)" title="Remove">
+        <span class="material-symbols-outlined">remove</span>
+      </button>`;
+    container.appendChild(div);
+    div.querySelector('input').focus();
+  }
+
+  function removeRow(btn) {
+    const row = btn.closest('.dynamic-row, .spec-row-pair');
+    if (row) row.remove();
+  }
+
+  /* ── BULK MODE TOGGLE ── */
+  function toggleBulkMode() {
+    const standardForm = document.getElementById('standard-form');
+    const bulkWS       = document.getElementById('bulk-workspace');
+    const btnLabel     = document.getElementById('bulk-btn-label');
+    const isBulk      = bulkWS.classList.contains('active');
+
+    if (isBulk) {
+      // Switch back to standard
+      bulkWS.classList.remove('active');
+      standardForm.style.display = '';
+      document.getElementById('id_bulk_action').value = '';
+      btnLabel.textContent = 'Bulk Upload Mode';
+      // Re-enable required attrs
+      document.querySelectorAll('#standard-form [required]').forEach(el => el.required = true);
+    } else {
+      // Switch to bulk
+      standardForm.style.display = 'none';
+      bulkWS.classList.add('active');
+      document.getElementById('id_bulk_action').value = 'on';
+      btnLabel.textContent = 'Standard Mode';
+      // Disable required attrs on standard fields so form can submit
+      document.querySelectorAll('#standard-form [required]').forEach(el => el.required = false);
+    }
+  }
+
+  function submitBulk() {
+    document.getElementById('id_bulk_action').value = 'on';
+  }
+
+  /* ── BULK TEMPLATES ── */
+  const JSON_TEMPLATE = `[
+  {
+    "name": "Microsoft 365 Business Premium",
+    "sku": "MS365-BP",
+    "category": "Productivity",
+    "brand": "Microsoft",
+    "list_price": "2499.00",
+    "purchase_price": "1999.00",
+    "currency": "AED",
+    "publisher": "Microsoft Corporation",
+    "billing_cycle": "Annual",
+    "term": "1 Year",
+    "deployment": "Cloud / SaaS",
+    "business_type": "Enterprise & Mid-Market",
+    "support": "24/7 Live Support"
+  }
+]`;
+
+  const CSV_TEMPLATE = `name,sku,category,brand,list_price,purchase_price,currency,publisher,billing_cycle,term,deployment,business_type,support
+Microsoft 365 Business Premium,MS365-BP,Productivity,Microsoft,2499.00,1999.00,AED,Microsoft Corporation,Annual,1 Year,Cloud / SaaS,Enterprise & Mid-Market,24/7 Live Support`;
+
+  function setTemplate(type) {
+    document.querySelectorAll('.bulk-format-tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+  }
+
+  function loadTemplate(type) {
+    document.getElementById('bulk-data-area').value = type === 'json' ? JSON_TEMPLATE : CSV_TEMPLATE;
+    document.querySelectorAll('.bulk-format-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.bulk-format-tab').forEach(t => {
+      if (t.textContent.toUpperCase().trim() === type.toUpperCase()) t.classList.add('active');
+    });
+  }
+
+  function clearBulkData() {
+    document.getElementById('bulk-data-area').value = '';
+  }
+
+  /* ── IMAGE PREVIEW ── */
+  function previewImage(input) {
+    if (input.files && input.files[0]) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const box = document.getElementById('image-preview-box');
+        box.innerHTML = `<img src="${e.target.result}" style="max-width:100%; max-height:100%; object-fit:contain;" id="preview-img">`;
+      };
+      reader.readAsDataURL(input.files[0]);
+    }
+  }
+</script>
+<script src="{% static 'dashboard/js/product-faq.js' %}"></script>
 {% endblock %}

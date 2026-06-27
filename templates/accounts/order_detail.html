@@ -1,0 +1,374 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}Order Details - #{{ order.order_number }} - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* Stepper styling */
+  .stepper-container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    padding: 20px 0;
+    margin-top: 10px;
+  }
+
+  .stepper-line {
+    position: absolute;
+    top: 36px;
+    left: 40px;
+    right: 40px;
+    height: 4px;
+    background-color: var(--color-border);
+    z-index: 1;
+  }
+
+  .stepper-progress {
+    position: absolute;
+    top: 36px;
+    left: 40px;
+    height: 4px;
+    background-color: var(--color-pink-primary);
+    z-index: 1;
+    transition: width 0.4s ease;
+  }
+
+  .step-node {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 2;
+    width: 80px;
+  }
+
+  .step-circle {
+    width: 36px;
+    height: 36px;
+    border-radius: 50%;
+    background-color: var(--color-bg-card);
+    border: 3px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .step-node.active .step-circle {
+    border-color: var(--color-pink-primary);
+    background-color: var(--color-bg-card);
+    color: var(--color-pink-primary);
+    box-shadow: 0 0 10px rgba(226, 26, 97, 0.2);
+  }
+
+  .step-node.completed .step-circle {
+    background-color: var(--color-pink-primary);
+    border-color: var(--color-pink-primary);
+    color: #ffffff;
+  }
+
+  .step-label {
+    margin-top: 8px;
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  .step-node.active .step-label {
+    color: var(--color-text-dark);
+  }
+
+  .step-node.completed .step-label {
+    color: var(--color-text-dark);
+  }
+
+  .step-time {
+    font-size: 9px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  .split-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .financial-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    padding: 8px 0;
+  }
+
+  .detail-card-section {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .detail-card-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .detail-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .address-badge {
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: 4px;
+  }
+
+  .item-thumb-placeholder {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-pink-primary);
+    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  @media (max-width: 991px) {
+    .split-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div>
+    <a href="{% url 'customer_orders' %}" class="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-700 mb-2" style="text-decoration: none;">
+      <span class="material-symbols-outlined text-xs mr-1" style="font-size: 16px; vertical-align: middle;">arrow_back</span> Back to Orders
+    </a>
+    <h1 class="page-title">Order #{{ order.order_number }}</h1>
+    <p class="subtitle">Placed on {{ order.created_at|date:"M d, Y, h:i A" }}</p>
+  </div>
+  
+  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+    <!-- Reorder button -->
+    <a href="{% url 'customer_reorder' order.order_number %}" class="btn btn-primary" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+      <span class="material-symbols-outlined" style="font-size: 16px;">replay</span> Reorder Items
+    </a>
+
+    <!-- Invoice Download -->
+    <a href="{% url 'order_invoice' order.order_number %}" target="_blank" class="btn btn-secondary" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+      <span class="material-symbols-outlined" style="font-size: 16px;">download</span> Invoice PDF
+    </a>
+
+    <!-- Eligible Cancel Button -->
+    {% if order.order_status == 'pending' %}
+      <a href="{% url 'customer_order_cancel' order.order_number %}" onclick="return confirm('Are you sure you want to cancel this order?')" class="btn btn-danger" style="height: 40px; padding: 0 16px; border-radius: 50px; background-color: rgba(239, 68, 68, 0.1); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.2);">
+        <span class="material-symbols-outlined" style="font-size: 16px;">cancel</span> Cancel Order
+      </a>
+    {% endif %}
+
+    <!-- Eligible Refund Request Button -->
+    {% if order.payment_status == 'paid' and order.order_status in 'confirmed,processing,delivered' %}
+      <a href="{% url 'customer_order_refund_request' order.order_number %}" onclick="return confirm('Are you sure you want to request a refund for this order?')" class="btn btn-secondary" style="height: 40px; padding: 0 16px; border-radius: 50px; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.2);">
+        <span class="material-symbols-outlined" style="font-size: 16px;">keyboard_return</span> Request Refund
+      </a>
+    {% endif %}
+  </div>
+</div>
+
+<!-- Order Tracker Progress Card -->
+<div class="card mb-8" style="padding: 24px 30px;">
+  <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); margin-bottom: 20px;">Track Order Delivery Status</h3>
+  
+  <div class="stepper-container">
+    <!-- Progress Stepper Background Line -->
+    <div class="stepper-line"></div>
+    
+    <!-- Active status line -->
+    <div class="stepper-progress" style="width: {% if order.order_status == 'pending' %}0%{% elif order.order_status == 'confirmed' or order.order_status == 'processing' %}33.3%{% elif order.order_status == 'shipped' or order.order_status == 'out_for_delivery' %}66.6%{% elif order.order_status == 'delivered' %}100%{% else %}0%{% endif %};"></div>
+
+    <!-- Step 1: Placed -->
+    <div class="step-node {% if order.order_status != 'cancelled' %}completed{% else %}active{% endif %}">
+      <div class="step-circle">
+        {% if order.order_status != 'cancelled' %}
+          <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+        {% else %}
+          1
+        {% endif %}
+      </div>
+      <span class="step-label">Ordered</span>
+      <span class="step-time">{{ order.created_at|date:"M d" }}</span>
+    </div>
+
+    <!-- Step 2: Processing -->
+    <div class="step-node {% if order.order_status in 'confirmed,processing,shipped,out_for_delivery,delivered' %}{% if order.order_status == 'confirmed' or order.order_status == 'processing' %}active{% else %}completed{% endif %}{% endif %}">
+      <div class="step-circle">
+        {% if order.order_status in 'shipped,out_for_delivery,delivered' %}
+          <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+        {% else %}
+          2
+        {% endif %}
+      </div>
+      <span class="step-label">Processing</span>
+    </div>
+
+    <!-- Step 3: Shipped -->
+    <div class="step-node {% if order.order_status in 'shipped,out_for_delivery,delivered' %}{% if order.order_status == 'shipped' or order.order_status == 'out_for_delivery' %}active{% else %}completed{% endif %}{% endif %}">
+      <div class="step-circle">
+        {% if order.order_status == 'delivered' %}
+          <span class="material-symbols-outlined" style="font-size: 16px;">check</span>
+        {% else %}
+          3
+        {% endif %}
+      </div>
+      <span class="step-label">Shipped</span>
+    </div>
+
+    <!-- Step 4: Delivered -->
+    <div class="step-node {% if order.order_status == 'delivered' %}completed{% endif %}">
+      <div class="step-circle">
+        <span class="material-symbols-outlined" style="font-size: 16px;">done_all</span>
+      </div>
+      <span class="step-label">Delivered</span>
+    </div>
+  </div>
+</div>
+
+<div class="split-layout">
+  <!-- Left Side: Order Items summary -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 20px 24px; border-bottom: 1px solid var(--color-border); background-color: var(--color-bg-main);">
+        <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">Purchased Items</h3>
+      </div>
+      
+      <div class="divide-y divide-slate-100" style="background-color: var(--color-bg-card);">
+        {% for item in order.items.all %}
+          <div style="padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="item-thumb-placeholder">
+                {{ item.product.name|slice:":2"|upper }}
+              </div>
+              <div>
+                <h4 style="font-weight: 700; font-size: 14.5px; color: var(--color-text-dark);">{{ item.product.name }}</h4>
+                <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 2px;">Deployment: {{ item.product.deployment }} &bull; Plan: {{ item.plan|title }}</p>
+                <p style="font-size: 11px; color: var(--color-text-muted); font-family: monospace;">SKU: {{ item.product.sku }}</p>
+              </div>
+            </div>
+            
+            <div style="text-align: right; font-size: 13px;">
+              <span style="display: block; font-weight: 700; color: var(--color-text-dark);">₹{{ item.price }}</span>
+              <span style="display: block; color: var(--color-text-muted); margin-top: 2px;">Qty: {{ item.quantity }}</span>
+              <span style="display: block; font-weight: 700; color: var(--color-pink-primary); margin-top: 4px;">Total: ₹{{ item.item_total }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Financial totals breakdown -->
+      <div style="padding: 24px; border-top: 1px solid var(--color-border); background-color: var(--color-bg-main);">
+        <div class="financial-row">
+          <span>Subtotal</span>
+          <span style="font-weight: 600; color: var(--color-text-dark);">₹{{ order.subtotal }}</span>
+        </div>
+        {% if order.discount > 0 %}
+          <div class="financial-row" style="color: var(--color-danger);">
+            <span>Discount Coupon Applied</span>
+            <span style="font-weight: 600;">-₹{{ order.discount }}</span>
+          </div>
+        {% endif %}
+        <div class="financial-row">
+          <span>B2B Tax GST (18%)</span>
+          <span style="font-weight: 600; color: var(--color-text-dark);">₹{{ order.tax }}</span>
+        </div>
+        <div class="financial-row">
+          <span>Transit Convenience Surcharge</span>
+          <span style="font-weight: 600; color: var(--color-text-dark);">₹{{ order.shipping_cost }}</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 12px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px;">
+          <span style="font-weight: 700; color: var(--color-text-dark);">Grand Total</span>
+          <span style="font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--color-pink-primary);">₹{{ order.total }}</span>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Right Side: Delivery & Payment Details -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <!-- Address snapshot -->
+    <div class="card">
+      <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); border-bottom: 1px solid var(--color-border); padding-bottom: 10px; margin-bottom: 16px;">Delivery Addresses</h3>
+      
+      <div class="detail-card-section">
+        <div class="detail-title">Shipping Location</div>
+        <div class="address-badge">
+          <p style="font-weight: 700; color: var(--color-text-dark);">{{ order.shipping_address.full_name }}</p>
+          <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px; line-height: 1.4;">
+            {{ order.shipping_address.address_line1 }}<br>
+            {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.postal_code }}
+          </p>
+        </div>
+      </div>
+
+      <div class="detail-card-section">
+        <div class="detail-title">Billing Corporate Office</div>
+        <div class="address-badge">
+          <p style="font-weight: 700; color: var(--color-text-dark);">{{ order.billing_address.full_name }}</p>
+          <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px; line-height: 1.4;">
+            {{ order.billing_address.address_line1 }}<br>
+            {{ order.billing_address.city }}, {{ order.billing_address.state }} - {{ order.billing_address.postal_code }}
+          </p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Payments status & Tracking metadata -->
+    <div class="card" style="display: flex; flex-direction: column; gap: 14px;">
+      <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); border-bottom: 1px solid var(--color-border); padding-bottom: 10px; margin-bottom: 4px;">Payment & Shipment</h3>
+      
+      <div style="display: flex; justify-content: space-between; font-size: 13px;">
+        <span style="color: var(--color-text-muted); font-weight: 500;">Payment Gateway:</span>
+        <span style="font-weight: 700; color: var(--color-text-dark);">{{ order.get_payment_method_display }}</span>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between; font-size: 13px; align-items: center;">
+        <span style="color: var(--color-text-muted); font-weight: 500;">Payment Status:</span>
+        <span class="payment-status-badge {{ order.payment_status }}" style="padding: 3px 8px; border-radius: 4px;">
+          {{ order.get_payment_status_display }}
+        </span>
+      </div>
+
+      <div style="display: flex; justify-content: space-between; font-size: 13px;">
+        <span style="color: var(--color-text-muted); font-weight: 500;">Tracking Number:</span>
+        <span style="font-weight: 700; color: var(--color-text-dark);">{{ order.tracking_number|default:"Awaiting Dispatch" }}</span>
+      </div>
+    </div>
+  </div>
+</div>
+{% endblock %}

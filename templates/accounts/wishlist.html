@@ -1,0 +1,158 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}My Wishlist - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  .wishlist-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: 24px;
+  }
+
+  .wishlist-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .wishlist-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-pink-primary);
+  }
+
+  .wishlist-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    margin-bottom: 6px;
+  }
+
+  .wishlist-desc {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+
+  .meta-footer {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+  }
+
+  .price-col {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .price-label {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .price-val {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+  }
+
+  .actions-group {
+    display: flex;
+    gap: 6px;
+  }
+
+  .btn-wishlist-action {
+    padding: 6px 12px;
+    font-size: 12px;
+    font-weight: 700;
+    border-radius: var(--radius-sm);
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+
+  .btn-wishlist-action.secondary {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-dark);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-wishlist-action.secondary:hover {
+    background-color: var(--color-border);
+  }
+
+  .btn-wishlist-action.primary {
+    background-color: var(--color-pink-primary);
+    color: #ffffff;
+  }
+
+  .btn-wishlist-action.primary:hover {
+    background-color: var(--color-pink-hover);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Favorites Registry</span>
+  <h1 class="page-title">My Wishlist</h1>
+  <p class="subtitle">Products you have saved for future B2B procurement evaluations.</p>
+</div>
+
+<!-- Wishlist Grid -->
+<div class="wishlist-grid mb-8">
+  {% for item in wishlist %}
+    <div class="wishlist-card">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span class="role-badge customer" style="font-size: 9.5px; padding: 2px 8px; border-radius: 4px;">
+            {{ item.product.category.name }}
+          </span>
+          <a href="{% url 'wishlist_remove' item.product.id %}" style="color: var(--color-text-muted); transition: color 0.2s;" onmouseover="this.style.color='var(--color-danger)'" onmouseout="this.style.color='var(--color-text-muted)'" title="Remove item">
+            <span class="material-symbols-outlined" style="font-size: 18px;">delete</span>
+          </a>
+        </div>
+        
+        <h4 class="wishlist-title">{{ item.product.name }}</h4>
+        <p class="wishlist-desc line-clamp-3">{{ item.product.short_desc }}</p>
+      </div>
+
+      <div class="meta-footer">
+        <div class="price-col">
+          <span class="price-label">Price</span>
+          <span class="price-val">₹{{ item.product.price }}</span>
+        </div>
+        <div class="actions-group">
+          <a href="{% url 'product_detail' item.product.slug %}" class="btn-wishlist-action secondary">View</a>
+          <a href="{% url 'cart_add' item.product.id %}" class="btn-wishlist-action primary">
+            <span class="material-symbols-outlined" style="font-size: 14px; margin-right: 4px;">shopping_cart</span>
+            Add to Cart
+          </a>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="card" style="grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--color-text-muted);">
+      <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); margin-bottom: 12px;">favorite_border</span>
+      <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">Your wishlist is empty</h3>
+      <p style="font-size: 13px; max-w-sm; margin: 6px auto 16px;">You haven't saved any software solutions to your wishlist yet.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

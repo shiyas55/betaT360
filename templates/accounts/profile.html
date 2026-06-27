@@ -1,0 +1,520 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}Profile Settings - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  .profile-layout {
+    display: grid;
+    grid-template-columns: 280px 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  
+  .profile-sidebar-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    box-shadow: var(--shadow-sm);
+    text-align: center;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .profile-image-container {
+    position: relative;
+    width: 96px;
+    height: 96px;
+    margin: 0 auto;
+  }
+
+  .profile-image-frame {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 4px solid var(--color-bg-main);
+    box-shadow: var(--shadow-sm);
+  }
+
+  .profile-avatar-fallback {
+    width: 100%;
+    height: 100%;
+    border-radius: 50%;
+    background-color: var(--color-pink-primary);
+    color: #ffffff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: 800;
+    font-family: var(--font-display);
+    border: 4px solid var(--color-bg-main);
+  }
+
+  .meta-info-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    text-align: left;
+    font-size: 13px;
+    border-top: 1px solid var(--color-border);
+    padding-top: 20px;
+  }
+
+  .meta-info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .meta-info-label {
+    color: var(--color-text-muted);
+    font-weight: 500;
+  }
+
+  .meta-info-value {
+    color: var(--color-text-dark);
+    font-weight: 700;
+  }
+
+  .profile-tabs-nav {
+    display: flex;
+    gap: 8px;
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 8px;
+    box-shadow: var(--shadow-sm);
+    margin-bottom: 24px;
+    overflow-x: auto;
+  }
+
+  .profile-tab-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 12px 18px;
+    border-radius: var(--radius-md);
+    background: transparent;
+    border: none;
+    color: var(--color-text-muted);
+    font-family: var(--font-body);
+    font-size: 14px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    white-space: nowrap;
+  }
+
+  .profile-tab-btn:hover {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-dark);
+  }
+
+  .profile-tab-btn.active {
+    background-color: var(--color-pink-light);
+    color: var(--color-pink-primary);
+  }
+
+  html[data-theme="dark"] .profile-tab-btn.active {
+    background-color: rgba(226, 26, 97, 0.15);
+  }
+
+  .profile-pane {
+    display: none;
+    animation: fadePane 0.25s ease;
+  }
+
+  .profile-pane.active {
+    display: block;
+  }
+
+  @keyframes fadePane {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Form layouts */
+  .profile-content-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    box-shadow: var(--shadow-sm);
+    overflow: hidden;
+  }
+
+  .profile-card-header {
+    padding: 24px 30px;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-main);
+  }
+
+  .profile-card-title {
+    font-family: var(--font-display);
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+
+  .profile-card-body {
+    padding: 30px;
+  }
+
+  .profile-card-footer {
+    padding: 20px 30px;
+    border-top: 1px solid var(--color-border);
+    display: flex;
+    justify-content: flex-end;
+  }
+
+  /* Switch styling mapped to dark mode */
+  .setting-toggle-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+  
+  .setting-toggle-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .toggle-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding-right: 16px;
+  }
+  
+  .toggle-title {
+    font-size: 14.5px;
+    font-weight: 600;
+    color: var(--color-text-dark);
+  }
+  
+  .toggle-desc {
+    font-size: 12.5px;
+    color: var(--color-text-muted);
+    line-height: 1.4;
+  }
+  
+  .switch {
+    position: relative;
+    display: inline-block;
+    width: 52px;
+    height: 28px;
+    flex-shrink: 0;
+  }
+  
+  .switch input {
+    opacity: 0;
+    width: 0;
+    height: 0;
+  }
+  
+  .slider {
+    position: absolute;
+    cursor: pointer;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: #cbd5e1;
+    transition: .3s;
+    border-radius: 34px;
+  }
+  
+  .slider:before {
+    position: absolute;
+    content: "";
+    height: 22px;
+    width: 22px;
+    left: 3px;
+    bottom: 3px;
+    background-color: white;
+    transition: .3s;
+    border-radius: 50%;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+  }
+  
+  input:checked + .slider {
+    background-color: var(--color-pink-primary);
+  }
+  
+  input:checked + .slider:before {
+    transform: translateX(24px);
+  }
+
+  html[data-theme="dark"] .slider {
+    background-color: #374151;
+  }
+
+  @media (max-width: 991px) {
+    .profile-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Settings Hub</span>
+  <h1 class="text-3xl font-extrabold text-navy-900 tracking-tight font-display mt-1">Profile & Preferences</h1>
+  <p class="text-sm text-slate-500 mt-1">Manage your corporate credentials, billing identifiers, and messaging preferences.</p>
+</div>
+
+<div class="profile-layout">
+  
+  <!-- Left Side: Profile Summary Card -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    <div class="profile-sidebar-card">
+      <div class="profile-image-container">
+        {% if profile.profile_image %}
+          <img src="{{ profile.profile_image.url }}" alt="Profile Image" class="profile-image-frame">
+        {% else %}
+          <div class="profile-avatar-fallback">
+            {{ user.username|slice:":1"|upper }}
+          </div>
+        {% endif %}
+      </div>
+      <div>
+        <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; color: var(--color-text-dark);">{{ user.first_name }} {{ user.last_name }}</h3>
+        <span style="font-size: 12px; color: var(--color-text-muted);">@{{ user.username }} ({{ user.get_user_type_display }})</span>
+      </div>
+      
+      <div class="meta-info-list">
+        <div class="meta-info-row">
+          <span class="meta-info-label">Company:</span>
+          <span class="meta-info-value">{{ profile.company_name|default:"N/A" }}</span>
+        </div>
+        <div class="meta-info-row">
+          <span class="meta-info-label">GST / Tax ID:</span>
+          <span class="meta-info-value" style="font-family: monospace;">{{ profile.tax_id|default:"N/A" }}</span>
+        </div>
+        <div class="meta-info-row">
+          <span class="meta-info-label">Join Date:</span>
+          <span class="meta-info-value">{{ user.date_joined|date:"M d, Y" }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Procurement Level Status badge -->
+    <div class="card bg-navy-900 p-6 rounded-2xl relative overflow-hidden text-slate-300" style="background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border: 1px solid rgba(255,255,255,0.08);">
+      <h4 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.8px;">Buyer Standing</h4>
+      <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Corporate status indicators</p>
+      
+      <div style="display: flex; align-items: baseline; gap: 8px; margin-top: 16px; color: #ffffff;">
+        <span style="font-family: var(--font-display); font-size: 26px; font-weight: 800;">Active Account</span>
+      </div>
+      <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; margin-top: 8px;">
+        Your corporate buyer account has unlimited access to custom quotations, invoice downloads, and multi-address configurations.
+      </p>
+    </div>
+  </div>
+
+  <!-- Right Side: Tabbed Form Cards -->
+  <div>
+    <!-- Tab navigation -->
+    <div class="profile-tabs-nav">
+      <button type="button" class="profile-tab-btn active" id="btn-pane-details" onclick="switchProfileTab('pane-details')">
+        <span class="material-symbols-outlined">corporate_fare</span>
+        Profile Details
+      </button>
+      <button type="button" class="profile-tab-btn" id="btn-pane-security" onclick="switchProfileTab('pane-security')">
+        <span class="material-symbols-outlined">shield</span>
+        Password & Security
+      </button>
+      <button type="button" class="profile-tab-btn" id="btn-pane-notifications" onclick="switchProfileTab('pane-notifications')">
+        <span class="material-symbols-outlined">chat</span>
+        Notification Preferences
+      </button>
+    </div>
+
+    <!-- Profile details tab -->
+    <div class="profile-pane active" id="pane-details">
+      <div class="profile-content-card">
+        <form method="POST" action="{% url 'customer_profile' %}" enctype="multipart/form-data">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="profile_info">
+          
+          <div class="profile-card-header">
+            <h3 class="profile-card-title">Corporate Information</h3>
+          </div>
+          
+          <div class="profile-card-body" style="display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>First Name</label>
+                <input type="text" name="first_name" value="{{ user.first_name }}" required class="form-control">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Last Name</label>
+                <input type="text" name="last_name" value="{{ user.last_name }}" required class="form-control">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Corporate Email</label>
+                <input type="email" name="email" value="{{ user.email }}" required class="form-control">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Phone Number</label>
+                <input type="text" name="phone_number" value="{{ profile.phone_number|default:'' }}" required class="form-control">
+              </div>
+            </div>
+
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Company Name</label>
+                <input type="text" name="company_name" value="{{ profile.company_name|default:'' }}" required class="form-control">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>GST or Tax ID</label>
+                <input type="text" name="tax_id" value="{{ profile.tax_id|default:'' }}" placeholder="e.g. GSTIN27AAAAA1111A1Z9" class="form-control">
+              </div>
+            </div>
+
+            <div class="form-group" style="margin-bottom:0;">
+              <label>Profile Image</label>
+              <input type="file" name="profile_image" accept="image/*" class="form-control" style="padding: 8px 12px;">
+            </div>
+          </div>
+          
+          <div class="profile-card-footer">
+            <button type="submit" class="btn btn-primary" style="height: 42px;">Save Details</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Password Settings Tab -->
+    <div class="profile-pane" id="pane-security">
+      <div class="profile-content-card">
+        <form method="POST" action="{% url 'customer_profile' %}" class="form">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="change_password">
+          
+          <div class="profile-card-header">
+            <h3 class="profile-card-title">Change Account Password</h3>
+          </div>
+          
+          <div class="profile-card-body" style="display: flex; flex-direction: column; gap: 18px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px;">
+              <div class="form-group" style="margin-bottom:0;">
+                <label>New Password</label>
+                <input type="password" name="password" required class="form-control" placeholder="Enter new password">
+              </div>
+              <div class="form-group" style="margin-bottom:0;">
+                <label>Confirm Password</label>
+                <input type="password" name="confirm_password" required class="form-control" placeholder="Confirm new password">
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-card-footer">
+            <button type="submit" class="btn btn-primary" style="height: 42px;">Update Password</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <!-- Notification Preferences Tab -->
+    <div class="profile-pane" id="pane-notifications">
+      <div class="profile-content-card">
+        <form method="POST" action="{% url 'customer_profile' %}">
+          {% csrf_token %}
+          <input type="hidden" name="action" value="notification_preferences">
+          
+          <div class="profile-card-header">
+            <h3 class="profile-card-title">Communication settings</h3>
+          </div>
+          
+          <div class="profile-card-body">
+            <div style="display: flex; flex-direction: column; gap: 4px;">
+              <!-- Email Notifications Switch -->
+              <div class="setting-toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-title">Email Notifications</span>
+                  <span class="toggle-desc">Send quote updates, invoices, and renewal alerts directly to your corporate inbox.</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" name="email_notifications" {% if profile.notification_preferences.email != False %}checked{% endif %}>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <!-- WhatsApp Notifications Switch -->
+              <div class="setting-toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-title">WhatsApp Notifications</span>
+                  <span class="toggle-desc">Receive quotation PDFs and invoice tracking directly on your mobile chat client.</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" name="whatsapp_notifications" {% if profile.notification_preferences.whatsapp %}checked{% endif %}>
+                  <span class="slider"></span>
+                </label>
+              </div>
+
+              <!-- Promotional Notifications Switch -->
+              <div class="setting-toggle-row">
+                <div class="toggle-info">
+                  <span class="toggle-title">B2B Promotional Campaigns</span>
+                  <span class="toggle-desc">Alert me regarding partner discounts, volume sales discounts, and vendor promotions.</span>
+                </div>
+                <label class="switch">
+                  <input type="checkbox" name="promotional_notifications" {% if profile.notification_preferences.promotional %}checked{% endif %}>
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+          </div>
+          
+          <div class="profile-card-footer">
+            <button type="submit" class="btn btn-primary" style="height: 42px;">Save Preferences</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+  </div>
+
+</div>
+
+<script>
+  function switchProfileTab(tabId) {
+    // Hide all panes
+    const panes = document.querySelectorAll('.profile-pane');
+    panes.forEach(pane => pane.classList.remove('active'));
+    
+    // Deactivate all buttons
+    const buttons = document.querySelectorAll('.profile-tab-btn');
+    buttons.forEach(btn => btn.classList.remove('active'));
+    
+    // Show selected pane
+    const targetPane = document.getElementById(tabId);
+    if (targetPane) targetPane.classList.add('active');
+    
+    // Activate selected button
+    const targetBtn = document.getElementById('btn-' + tabId);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    // Save active tab state
+    sessionStorage.setItem('activeProfileTab', tabId);
+  }
+
+  // Restore active tab on load
+  document.addEventListener('DOMContentLoaded', () => {
+    const savedTab = sessionStorage.getItem('activeProfileTab');
+    if (savedTab) {
+      switchProfileTab(savedTab);
+    }
+  });
+</script>
+{% endblock %}

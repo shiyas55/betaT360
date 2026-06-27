@@ -1,0 +1,270 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Brands - Techno360 Admin Portal{% endblock %}
+
+{% block extra_css %}
+<style>
+  .brands-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+  }
+  
+  .stats-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+
+  .stats-card-modern {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+  }
+
+  .stats-card-modern:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+
+  .stats-icon-circle {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-main);
+  }
+
+  .stats-icon-circle.pink { color: var(--color-pink-primary); background-color: rgba(226, 26, 97, 0.1); }
+  .stats-icon-circle.success { color: var(--color-success); background-color: rgba(16, 185, 129, 0.1); }
+
+  .stats-icon-circle span {
+    font-size: 28px;
+  }
+  
+  .brands-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+    gap: 20px;
+  }
+  
+  .brand-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    padding: 28px 24px;
+    position: relative;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .brand-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-pink-primary);
+  }
+  
+  .brand-logo-container {
+    width: 90px;
+    height: 90px;
+    border-radius: 50%;
+    border: 1px solid var(--color-border);
+    background-color: var(--color-bg-main);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 20px;
+    transition: all 0.3s;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .brand-card:hover .brand-logo-container {
+    transform: scale(1.05);
+    background-color: var(--color-bg-card);
+  }
+  
+  .brand-logo {
+    max-width: 65%;
+    max-height: 65%;
+    object-fit: contain;
+    filter: drop-shadow(0 2px 4px rgba(0,0,0,0.05));
+  }
+  
+  .brand-name {
+    font-family: var(--font-display);
+    font-size: 17px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+  
+  .brand-prod-count {
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    margin-top: 6px;
+  }
+  
+  .brand-badge {
+    position: absolute;
+    top: 14px;
+    right: 14px;
+    padding: 3px 10px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+    border: 1px solid rgba(16, 185, 129, 0.2);
+  }
+  
+  .brand-badge.inactive {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border);
+  }
+  
+  .brand-actions {
+    margin-top: 24px;
+    width: 100%;
+  }
+
+  .form-card {
+    position: sticky;
+    top: 94px; /* offset top-navbar height + padding */
+  }
+  
+  @media (max-width: 991px) {
+    .brands-layout {
+      grid-template-columns: 1fr;
+    }
+    .form-card {
+      position: static;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="header-row">
+  <div>
+    <h1 class="page-title">Brands Directory</h1>
+    <p class="subtitle">Manage publisher brands, active badges, and catalog listings.</p>
+  </div>
+</div>
+
+<div class="brands-layout">
+  <!-- Left Side: Stats and Brand Cards -->
+  <div>
+    <div class="stats-row">
+      <div class="stats-card-modern">
+        <div class="stats-icon-circle pink">
+          <span class="material-symbols-outlined">storefront</span>
+        </div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 26px; font-weight: 800; line-height: 1; color: var(--color-text-dark);">{{ total_brands }}</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); font-weight: 500; margin-top: 4px;">Total Catalog Brands</div>
+        </div>
+      </div>
+      
+      <div class="stats-card-modern">
+        <div class="stats-icon-circle success">
+          <span class="material-symbols-outlined">inventory_2</span>
+        </div>
+        <div>
+          <div style="font-family: var(--font-display); font-size: 26px; font-weight: 800; line-height: 1; color: var(--color-text-dark);">{{ total_products }}</div>
+          <div style="font-size: 13.5px; color: var(--color-text-muted); font-weight: 500; margin-top: 4px;">Total Indexed Products</div>
+        </div>
+      </div>
+    </div>
+    
+    <div class="brands-grid">
+      {% for brand in brands %}
+        <div class="card brand-card">
+          {% if brand.is_active %}
+            <span class="brand-badge">Featured</span>
+          {% else %}
+            <span class="brand-badge inactive">Standard</span>
+          {% endif %}
+          
+          <div class="brand-logo-container">
+            {% if brand.logo %}
+              <img src="{{ brand.logo.url }}" class="brand-logo" alt="{{ brand.name }}">
+            {% else %}
+              <span class="material-symbols-outlined" style="font-size: 36px; color: var(--color-text-muted);">storefront</span>
+            {% endif %}
+          </div>
+          
+          <div class="brand-name">{{ brand.name }}</div>
+          <div class="brand-prod-count">{{ brand.product_count }} Products</div>
+          
+          <div class="brand-actions">
+            <form method="POST" action="{% url 'admin_brand_delete' brand.id %}" onsubmit="return confirm('Are you sure you want to delete this brand? All products under it will be affected.');">
+              {% csrf_token %}
+              <button type="submit" class="btn btn-secondary" style="width: 100%; padding: 8px 12px; font-size: 13px; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.2); background: transparent;">
+                <span class="material-symbols-outlined" style="font-size: 16px;">delete</span>
+                Delete Brand
+              </button>
+            </form>
+          </div>
+        </div>
+      {% empty %}
+        <div class="card" style="grid-column: 1/-1; text-align: center; color: var(--color-text-muted); padding: 50px 20px;">
+          <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); margin-bottom: 12px;">storefront</span>
+          <p style="font-weight: 500; font-size: 15px;">No publisher brands defined in the catalog.</p>
+        </div>
+      {% endfor %}
+    </div>
+  </div>
+  
+  <!-- Right Side: Add Brand Form -->
+  <div>
+    <div class="card form-card">
+      <h3 style="font-family: var(--font-display); font-size: 18px; font-weight: 700; border-bottom: 1px solid var(--color-border); padding-bottom: 14px; margin-bottom: 22px; color: var(--color-text-dark);">
+        Add New Brand
+      </h3>
+      
+      <form method="POST" action="{% url 'admin_brand_add' %}" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="form-group">
+          <label for="name">Brand Name *</label>
+          <input type="text" id="name" name="name" class="form-control" placeholder="e.g. Atlassian" required>
+        </div>
+        
+        <div class="form-group">
+          <label for="description">Description</label>
+          <textarea id="description" name="description" rows="3" class="form-control" placeholder="Optional details..."></textarea>
+        </div>
+        
+        <div class="form-group">
+          <label for="logo">Upload Brand Logo</label>
+          <input type="file" id="logo" name="logo" class="form-control" accept="image/*" style="padding: 8px 12px;">
+        </div>
+        
+        <div class="form-group" style="margin-top: 12px;">
+          <label class="checkbox-item" style="display: flex; align-items: center; gap: 8px; font-size: 14px; font-weight: 600; cursor: pointer; color: var(--color-text-dark);">
+            <input type="checkbox" name="is_featured" checked style="width: 18px; height: 18px; accent-color: var(--color-pink-primary);">
+            Mark as Featured / Active
+          </label>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 20px; padding: 12px; height: 46px;">
+          <span class="material-symbols-outlined">add</span>
+          Create Brand
+        </button>
+      </form>
+    </div>
+  </div>
+</div>
+{% endblock %}

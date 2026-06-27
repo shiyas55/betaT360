@@ -15,7 +15,7 @@ environ.Env.read_env(os.path.join(BASE_DIR, '.env'))
 # Quick-start development settings - unsuitable for production
 SECRET_KEY = env('SECRET_KEY')
 DEBUG = env('DEBUG')
-ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost'])
+ALLOWED_HOSTS = env.list('ALLOWED_HOSTS', default=['127.0.0.1', 'localhost', '*'])
 
 # Application definition
 INSTALLED_APPS = [
@@ -33,10 +33,14 @@ INSTALLED_APPS = [
     'orders',
     'dashboard',
     'core',
+    # Django REST Framework
+    'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -116,6 +120,18 @@ SESSION_COOKIE_AGE = 86400 * 30  # 30 days
 LOGIN_URL = 'login'
 LOGIN_REDIRECT_URL = 'customer_dashboard'
 LOGOUT_REDIRECT_URL = 'home'
+
+# CORS Configuration for React Frontend
+CORS_ALLOW_ALL_ORIGINS = True
+
+# Django REST Framework Config
+REST_FRAMEWORK = {
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.AllowAny',
+    ],
+    'DEFAULT_PAGINATION_CLASS': 'rest_framework.pagination.PageNumberPagination',
+    'PAGE_SIZE': 12,
+}
 
 # Default primary key field type
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'

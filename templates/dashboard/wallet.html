@@ -1,0 +1,348 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}Wallet Management — Techno360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-text-dark); margin:0 0 4px; }
+  .page-subtitle { font-size:13px; color:var(--color-text-muted); }
+
+  /* Stat Cards */
+  .wallet-cards-grid { display:grid; grid-template-columns:repeat(auto-fit, minmax(180px, 1fr)); gap:16px; margin-bottom:28px; }
+  .wc { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:18px 20px; box-shadow:var(--shadow-sm); transition:all 0.25s; }
+  .wc:hover { transform:translateY(-2px); box-shadow:var(--shadow-md); border-color:var(--color-pink-primary); }
+  .wc-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.6px; color:var(--color-text-muted); margin-bottom:8px; }
+  .wc-value { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-text-dark); }
+  .wc-icon { width:38px; height:38px; border-radius:10px; display:flex; align-items:center; justify-content:center; margin-bottom:10px; }
+  .wc-icon span { font-size:20px; }
+  .wc.pink .wc-icon { background:rgba(226,26,97,0.1); color:var(--color-pink-primary); }
+  .wc.green .wc-icon { background:rgba(16,185,129,0.1); color:var(--color-success); }
+  .wc.amber .wc-icon { background:rgba(245,158,11,0.1); color:var(--color-warning); }
+  .wc.blue .wc-icon { background:rgba(59,130,246,0.1); color:#3b82f6; }
+  .wc.violet .wc-icon { background:rgba(139,92,246,0.1); color:#8b5cf6; }
+  .wc.red .wc-icon { background:rgba(239,68,68,0.1); color:var(--color-danger); }
+
+  /* Filter Bar */
+  .filter-bar { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .filter-group { display:flex; flex-direction:column; gap:5px; min-width:140px; flex:1; }
+  .filter-label { font-size:11px; font-weight:600; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.4px; }
+  .filter-input, .filter-select { padding:8px 12px; border:1px solid var(--color-border); border-radius:var(--radius-sm); font-size:13px; background:var(--color-bg-main); color:var(--color-text-dark); font-family:var(--font-body); outline:none; transition:border-color 0.2s; }
+  .filter-input:focus, .filter-select:focus { border-color:var(--color-pink-primary); background:var(--color-bg-card); }
+  .filter-actions { display:flex; gap:8px; align-items:flex-end; flex-wrap:wrap; }
+
+  /* Card Table */
+  .table-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .table-card-header { padding:18px 20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .table-card-title { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--color-text-dark); }
+  .table-wrap { overflow-x:auto; }
+  table.aw-table { width:100%; border-collapse:collapse; min-width:900px; }
+  .aw-table thead tr { border-bottom:2px solid var(--color-border); }
+  .aw-table th { padding:11px 10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); text-align:left; white-space:nowrap; }
+  .aw-table .table-row { border-bottom:1px solid var(--color-border); transition:background 0.15s; }
+  .aw-table .table-row:hover { background:var(--color-bg-main); }
+  .aw-table .table-row:last-child { border-bottom:none; }
+
+  /* Pagination */
+  .pagination-bar { padding:14px 20px; border-top:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .pagination-info { font-size:13px; color:var(--color-text-muted); }
+  .pagination-controls { display:flex; gap:6px; flex-wrap:wrap; }
+
+  /* Buttons */
+  .btn-primary { background:var(--color-pink-primary); color:#fff; border:none; padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
+  .btn-primary:hover { background:var(--color-pink-hover); }
+  .btn-outline { background:none; border:1px solid var(--color-border); padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; cursor:pointer; font-family:var(--font-body); color:var(--color-text-dark); display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; }
+  .btn-outline:hover { border-color:var(--color-pink-primary); color:var(--color-pink-primary); }
+  .btn-sm { padding:6px 12px; font-size:12px; }
+
+  /* Modal */
+  .aw-modal { display:none; position:fixed; inset:0; background:rgba(15,23,42,0.5); z-index:500; align-items:center; justify-content:center; padding:20px; backdrop-filter:blur(4px); }
+  .aw-modal-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-lg); width:100%; max-width:580px; box-shadow:0 25px 50px rgba(0,0,0,0.25); animation:modalIn 0.25s cubic-bezier(0.34,1.56,0.64,1); }
+  .aw-modal-card.wide { max-width:800px; }
+  @keyframes modalIn { from{opacity:0;transform:scale(0.94)} to{opacity:1;transform:scale(1)} }
+  .aw-modal-header { padding:20px 24px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; }
+  .aw-modal-title { font-family:var(--font-display); font-size:17px; font-weight:700; color:var(--color-text-dark); }
+  .aw-modal-close { background:none; border:none; cursor:pointer; color:var(--color-text-muted); font-size:22px; line-height:1; padding:0; }
+  .aw-modal-body { padding:24px; max-height:70vh; overflow-y:auto; }
+  .aw-modal-footer { padding:16px 24px; border-top:1px solid var(--color-border); background:var(--color-bg-main); display:flex; justify-content:flex-end; gap:10px; }
+
+  /* Form Groups */
+  .form-group { margin-bottom:16px; }
+  .form-group label { display:block; font-size:12px; font-weight:600; color:var(--color-text-muted); margin-bottom:6px; text-transform:uppercase; letter-spacing:0.4px; }
+  .form-group input, .form-group select, .form-group textarea { width:100%; padding:10px 12px; border:1px solid var(--color-border); border-radius:var(--radius-sm); font-size:14px; font-family:var(--font-body); color:var(--color-text-dark); background:var(--color-bg-main); outline:none; transition:border-color 0.2s; }
+  .form-group input:focus, .form-group select:focus, .form-group textarea:focus { border-color:var(--color-pink-primary); background:var(--color-bg-card); }
+  .form-row { display:grid; grid-template-columns:1fr 1fr; gap:16px; }
+
+  /* Detail Grid */
+  .detail-grid { display:grid; grid-template-columns:1fr 1fr; gap:14px; margin-bottom:20px; }
+  .detail-item { background:var(--color-bg-main); border-radius:var(--radius-sm); padding:12px 14px; }
+  .detail-item-label { font-size:11px; font-weight:600; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); margin-bottom:4px; }
+  .detail-item-value { font-size:14px; font-weight:600; color:var(--color-text-dark); }
+
+  @media(max-width:768px) {
+    .wallet-cards-grid { grid-template-columns:1fr 1fr; }
+    .filter-bar { flex-direction:column; }
+    .filter-group { min-width:unset; }
+    .form-row { grid-template-columns:1fr; }
+    .detail-grid { grid-template-columns:1fr; }
+    .page-header { flex-direction:column; }
+  }
+  @media(max-width:480px) {
+    .wallet-cards-grid { grid-template-columns:1fr; }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">Wallet Management</h1>
+    <p class="page-subtitle">View and manage all user and vendor wallets, balances, and transactions.</p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <button class="btn-outline" onclick="exportWalletReport()">
+      <span class="material-symbols-outlined" style="font-size:17px">download</span> Export Report
+    </button>
+    <a href="{% url 'admin_transactions' %}" class="btn-outline">
+      <span class="material-symbols-outlined" style="font-size:17px">receipt_long</span> All Transactions
+    </a>
+    <a href="{% url 'admin_withdrawals' %}" class="btn-primary">
+      <span class="material-symbols-outlined" style="font-size:17px">payments</span> Withdrawals
+    </a>
+  </div>
+</div>
+
+<!-- Summary Cards -->
+<div class="wallet-cards-grid">
+  <div class="wc pink">
+    <div class="wc-icon"><span class="material-symbols-outlined">account_balance_wallet</span></div>
+    <div class="wc-label">Total Balance</div>
+    <div class="wc-value" id="card-total-balance">—</div>
+  </div>
+  <div class="wc green">
+    <div class="wc-icon"><span class="material-symbols-outlined">check_circle</span></div>
+    <div class="wc-label">Available</div>
+    <div class="wc-value" id="card-available">—</div>
+  </div>
+  <div class="wc amber">
+    <div class="wc-icon"><span class="material-symbols-outlined">pending</span></div>
+    <div class="wc-label">Pending</div>
+    <div class="wc-value" id="card-pending">—</div>
+  </div>
+  <div class="wc blue">
+    <div class="wc-icon"><span class="material-symbols-outlined">person</span></div>
+    <div class="wc-label">User Earnings</div>
+    <div class="wc-value" id="card-user-earnings">—</div>
+  </div>
+  <div class="wc violet">
+    <div class="wc-icon"><span class="material-symbols-outlined">storefront</span></div>
+    <div class="wc-label">Vendor Earnings</div>
+    <div class="wc-value" id="card-vendor-earnings">—</div>
+  </div>
+  <div class="wc pink">
+    <div class="wc-icon"><span class="material-symbols-outlined">savings</span></div>
+    <div class="wc-label">Total Withdrawn</div>
+    <div class="wc-value" id="card-withdrawn">—</div>
+  </div>
+  <div class="wc amber">
+    <div class="wc-icon"><span class="material-symbols-outlined">hourglass_empty</span></div>
+    <div class="wc-label">Pending Withdrawals</div>
+    <div class="wc-value" id="card-wd-pending">—</div>
+  </div>
+  <div class="wc green">
+    <div class="wc-icon"><span class="material-symbols-outlined">task_alt</span></div>
+    <div class="wc-label">Completed Tx</div>
+    <div class="wc-value" id="card-tx-completed">—</div>
+  </div>
+  <div class="wc red">
+    <div class="wc-icon"><span class="material-symbols-outlined">cancel</span></div>
+    <div class="wc-label">Failed Tx</div>
+    <div class="wc-value" id="card-tx-failed">—</div>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="filter-group" style="flex:2;min-width:200px">
+    <label class="filter-label">Search</label>
+    <input id="wf-search" class="filter-input" placeholder="Name, email or user ID…" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">User Type</label>
+    <select id="wf-type" class="filter-select">
+      <option value="all">All Types</option>
+      <option>Customer</option>
+      <option>Business Customer</option>
+      <option>Vendor</option>
+      <option>Reseller</option>
+      <option>Affiliate</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Status</label>
+    <select id="wf-status" class="filter-select">
+      <option value="all">All Statuses</option>
+      <option value="active">Active</option>
+      <option value="pending">Pending</option>
+      <option value="frozen">Frozen</option>
+      <option value="suspended">Suspended</option>
+      <option value="closed">Closed</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Min Balance</label>
+    <input id="wf-min" class="filter-input" type="number" placeholder="0.00" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Max Balance</label>
+    <input id="wf-max" class="filter-input" type="number" placeholder="999999" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Sort By</label>
+    <select id="wf-sort" class="filter-select">
+      <option value="">Default</option>
+      <option value="balance_desc">Balance ↓</option>
+      <option value="balance_asc">Balance ↑</option>
+      <option value="earnings_desc">Earnings ↓</option>
+      <option value="tx_latest">Latest Transaction</option>
+    </select>
+  </div>
+  <div class="filter-actions">
+    <button id="wf-apply" class="btn-primary btn-sm">
+      <span class="material-symbols-outlined" style="font-size:15px">filter_list</span> Apply
+    </button>
+    <button id="wf-reset" class="btn-outline btn-sm">Reset</button>
+  </div>
+</div>
+
+<!-- Wallet Table -->
+<div class="table-card">
+  <div class="table-card-header">
+    <span class="table-card-title">All User Wallets</span>
+    <div style="display:flex;align-items:center;gap:10px">
+      <span id="wallet-page-info" style="font-size:13px;color:var(--color-text-muted)"></span>
+      <select onchange="walletPerPage=parseInt(this.value);walletPage=1;renderWalletTable()" style="padding:6px 10px;border:1px solid var(--color-border);border-radius:6px;font-size:12px;background:var(--color-bg-main);color:var(--color-text-dark)">
+        <option value="10">10 / page</option>
+        <option value="25">25 / page</option>
+        <option value="50">50 / page</option>
+      </select>
+    </div>
+  </div>
+  <div class="table-wrap">
+    <table class="aw-table">
+      <thead>
+        <tr>
+          <th>User ID</th><th>User</th><th>Type</th><th>Available</th>
+          <th>Pending</th><th>Total Earned</th><th>Withdrawn</th>
+          <th>Referral</th><th>Status</th><th>Last Tx</th><th>Actions</th>
+        </tr>
+      </thead>
+      <tbody id="wallet-tbody">
+        <tr><td colspan="11" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination-bar">
+    <span class="pagination-info" id="wallet-page-info"></span>
+    <div class="pagination-controls" id="wallet-pagination"></div>
+  </div>
+</div>
+
+
+<!-- ─── WALLET DETAIL MODAL ─── -->
+<div id="wallet-detail-modal" class="aw-modal">
+  <div class="aw-modal-card wide">
+    <div class="aw-modal-header">
+      <div>
+        <div class="aw-modal-title" id="wd-name">Wallet Details</div>
+        <div style="font-size:12px;color:var(--color-text-muted);margin-top:2px" id="wd-email"></div>
+      </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <span id="wd-type"></span>
+        <span id="wd-status"></span>
+        <button class="aw-modal-close" onclick="Modal.close('wallet-detail-modal')">✕</button>
+      </div>
+    </div>
+    <div class="aw-modal-body">
+      <div class="detail-grid">
+        <div class="detail-item"><div class="detail-item-label">Wallet ID</div><div class="detail-item-value" id="wd-id"></div></div>
+        <div class="detail-item"><div class="detail-item-label">User ID</div><div class="detail-item-value" id="wd-user-id"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Available Balance</div><div class="detail-item-value" style="color:var(--color-success)" id="wd-available"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Pending</div><div class="detail-item-value" style="color:var(--color-warning)" id="wd-pending"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Total Earnings</div><div class="detail-item-value" id="wd-earnings"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Total Withdrawn</div><div class="detail-item-value" id="wd-withdrawn"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Referral Earnings</div><div class="detail-item-value" style="color:#8b5cf6" id="wd-referral"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Payment Method</div><div class="detail-item-value" id="wd-method"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Bank / UPI Account</div><div class="detail-item-value" id="wd-account"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Created</div><div class="detail-item-value" id="wd-created"></div></div>
+        <div class="detail-item"><div class="detail-item-label">Last Transaction</div><div class="detail-item-value" id="wd-last-tx"></div></div>
+      </div>
+
+      <div style="margin-top:8px;margin-bottom:10px;font-weight:700;font-size:14px">Recent Transactions</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;min-width:500px">
+          <thead><tr style="border-bottom:2px solid var(--color-border)">
+            <th style="padding:8px;font-size:11px;color:var(--color-text-muted);text-align:left">TXN ID</th>
+            <th style="padding:8px;font-size:11px;color:var(--color-text-muted);text-align:left">Type</th>
+            <th style="padding:8px;font-size:11px;color:var(--color-text-muted);text-align:left">Credit</th>
+            <th style="padding:8px;font-size:11px;color:var(--color-text-muted);text-align:left">Debit</th>
+            <th style="padding:8px;font-size:11px;color:var(--color-text-muted);text-align:left">Status</th>
+          </tr></thead>
+          <tbody id="wd-txn-body"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="aw-modal-footer">
+      <button class="btn-outline" onclick="Modal.close('wallet-detail-modal')">Close</button>
+      <button class="btn-primary" onclick="Modal.close('wallet-detail-modal');openCreditDebitModal(activeWalletId,'credit')">
+        <span class="material-symbols-outlined" style="font-size:16px">add</span> Add Credit
+      </button>
+    </div>
+  </div>
+</div>
+
+<!-- ─── CREDIT / DEBIT MODAL ─── -->
+<div id="credit-debit-modal" class="aw-modal">
+  <div class="aw-modal-card">
+    <div class="aw-modal-header">
+      <span class="aw-modal-title" id="cd-modal-title">Add Credit</span>
+      <button class="aw-modal-close" onclick="Modal.close('credit-debit-modal')">✕</button>
+    </div>
+    <div class="aw-modal-body">
+      <input type="hidden" id="cd-modal-wid" />
+      <input type="hidden" id="cd-modal-mode" />
+      <div style="background:var(--color-bg-main);border-radius:var(--radius-sm);padding:12px 14px;margin-bottom:16px;display:flex;justify-content:space-between">
+        <span style="font-size:13px;color:var(--color-text-muted)">Current Available Balance</span>
+        <span style="font-weight:700;font-size:14px;color:var(--color-success)" id="cd-available">—</span>
+      </div>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Amount *</label>
+          <input id="cd-amount" type="number" step="0.01" min="0.01" placeholder="0.00" />
+        </div>
+        <div class="form-group">
+          <label>Reference No.</label>
+          <input id="cd-ref" type="text" placeholder="e.g. ADJ-20260627" />
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Reason *</label>
+        <input id="cd-reason" type="text" placeholder="e.g. Loyalty bonus Q2 2026" />
+      </div>
+      <div class="form-group">
+        <label>Admin Notes</label>
+        <textarea id="cd-notes" rows="3" placeholder="Any additional notes…"></textarea>
+      </div>
+    </div>
+    <div class="aw-modal-footer">
+      <button class="btn-outline" onclick="Modal.close('credit-debit-modal')">Cancel</button>
+      <button class="btn-primary" onclick="confirmCreditDebit()">
+        <span class="material-symbols-outlined" style="font-size:16px">check</span> Confirm
+      </button>
+    </div>
+  </div>
+</div>
+
+<script src="{% static 'dashboard/js/admin-wallet-referral.js' %}"></script>
+{% endblock %}

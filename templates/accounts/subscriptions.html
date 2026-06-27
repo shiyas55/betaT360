@@ -1,0 +1,149 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}My Subscriptions - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  .subscriptions-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 24px;
+  }
+
+  .subscription-card {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  }
+
+  .subscription-card:hover {
+    transform: translateY(-4px);
+    box-shadow: var(--shadow-md);
+    border-color: var(--color-pink-primary);
+  }
+
+  .sub-badge {
+    padding: 3px 8px;
+    font-size: 10px;
+    font-weight: 700;
+    border-radius: 50px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .sub-badge.active {
+    background-color: rgba(16, 185, 129, 0.1);
+    color: var(--color-success);
+  }
+
+  .sub-badge.expired {
+    background-color: rgba(239, 68, 68, 0.1);
+    color: var(--color-danger);
+  }
+
+  .pricing-block {
+    display: flex;
+    align-items: baseline;
+    gap: 4px;
+    margin-top: 14px;
+  }
+
+  .sub-price {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 900;
+    color: var(--color-text-dark);
+  }
+
+  .sub-period {
+    font-size: 12px;
+    color: var(--color-text-muted);
+  }
+
+  .meta-footer {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 24px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-border);
+    font-size: 12px;
+  }
+
+  .meta-footer-item {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  .meta-footer-label {
+    font-size: 10px;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .meta-footer-value {
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6">
+  <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Procurement Tiers</span>
+  <h1 class="page-title">My Subscriptions</h1>
+  <p class="subtitle">Monitor your SaaS billing cycles, active plans, and next renewal schedules.</p>
+</div>
+
+<!-- Subscriptions Grid -->
+<div class="subscriptions-grid mb-8">
+  {% for sub in subscriptions %}
+    <div class="subscription-card">
+      <div>
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+          <span class="role-badge customer" style="font-size: 9.5px; padding: 2px 8px; border-radius: 4px;">
+            {{ sub.product.category.name }}
+          </span>
+          <span class="sub-badge {% if sub.status == 'active' %}active{% else %}expired{% endif %}">
+            {{ sub.get_status_display }}
+          </span>
+        </div>
+        
+        <h4 style="font-family: var(--font-display); font-size: 17px; font-weight: 700; color: var(--color-text-dark); margin-bottom: 4px;">{{ sub.product.name }}</h4>
+        <p style="font-size: 11.5px; color: var(--color-text-muted); font-family: monospace;">Subscription ID: #{{ sub.subscription_number }}</p>
+        
+        <!-- Pricing Block -->
+        <div class="pricing-block">
+          <span class="sub-price">₹{{ sub.price }}</span>
+          <span class="sub-period">/ {{ sub.plan_type }}</span>
+        </div>
+      </div>
+
+      <div class="meta-footer">
+        <div class="meta-footer-item">
+          <span class="meta-footer-label">Started On</span>
+          <span class="meta-footer-value">{{ sub.start_date|date:"M d, Y" }}</span>
+        </div>
+        <div class="meta-footer-item">
+          <span class="meta-footer-label">Next Renewal</span>
+          <span class="meta-footer-value" style="color: var(--color-pink-primary);">{{ sub.end_date|date:"M d, Y" }}</span>
+        </div>
+      </div>
+    </div>
+  {% empty %}
+    <div class="card" style="grid-column: 1/-1; text-align: center; padding: 50px 20px; color: var(--color-text-muted);">
+      <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); margin-bottom: 12px;">autorenew</span>
+      <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">No subscriptions found</h3>
+      <p style="font-size: 13px; max-w-sm; margin: 6px auto 16px;">You do not have any active product subscriptions. Subscribe to premium cloud solutions to get started.</p>
+    </div>
+  {% endfor %}
+</div>
+{% endblock %}

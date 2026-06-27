@@ -41,6 +41,24 @@ class Brand(models.Model):
     def __str__(self):
         return self.name
 
+class SubBrand(models.Model):
+    brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='sub_brands')
+    name = models.CharField(max_length=100)
+    slug = models.SlugField(max_length=120, unique=True)
+    created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        ordering = ['name']
+        unique_together = ('brand', 'name')
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            self.slug = slugify(f"{self.brand.slug}-{self.name}")
+        super().save(*args, **kwargs)
+
+    def __str__(self):
+        return f"{self.brand.name} - {self.name}"
+
 class Product(models.Model):
     STOCK_STATUS_CHOICES = (
         ('in_stock', 'In Stock'),
@@ -53,6 +71,7 @@ class Product(models.Model):
     sku = models.CharField(max_length=50, unique=True, verbose_name="SKU / Product Code")
     category = models.ForeignKey(Category, on_delete=models.CASCADE, related_name='products')
     brand = models.ForeignKey(Brand, on_delete=models.CASCADE, related_name='products')
+    sub_brand = models.ForeignKey(SubBrand, on_delete=models.SET_NULL, blank=True, null=True, related_name='products')
     short_desc = models.TextField(max_length=500, blank=True, null=True)
     full_desc = models.TextField(blank=True, null=True)
     
@@ -60,10 +79,29 @@ class Product(models.Model):
     image = models.CharField(max_length=500, blank=True, null=True, help_text="Path to static image or URL")
     image_file = models.ImageField(upload_to='products/', blank=True, null=True, help_text="Uploaded file")
     
-    # Pricing
+    # Pricing & Additional metadata fields
     price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00, verbose_name="Regular Price")
+    list_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    purchase_price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    currency = models.CharField(max_length=10, default='INR')
     sale_price = models.DecimalField(max_digits=12, decimal_places=2, blank=True, null=True, verbose_name="Sale Price")
     discount_percent = models.PositiveIntegerField(default=0)
+    
+    # Extra prompt fields
+    publisher = models.CharField(max_length=255, blank=True, default='')
+    part_number = models.CharField(max_length=100, blank=True, default='')
+    billing_cycle = models.CharField(max_length=100, blank=True, default='')
+    term = models.CharField(max_length=100, blank=True, default='')
+    market = models.CharField(max_length=100, blank=True, default='')
+    purchase_unit = models.CharField(max_length=100, blank=True, default='')
+    minimum_quantity = models.IntegerField(default=1)
+    maximum_quantity = models.IntegerField(blank=True, null=True)
+    
+    # Read-only attributes stored in DB
+    catalog_key = models.CharField(max_length=100, blank=True, default='')
+    segment = models.CharField(max_length=100, blank=True, default='')
+    agreement = models.CharField(max_length=100, blank=True, default='')
+    region = models.CharField(max_length=100, blank=True, default='')
     
     # Inventory
     stock_qty = models.IntegerField(default=0)
@@ -92,6 +130,10 @@ class Product(models.Model):
     def save(self, *args, **kwargs):
         if not self.slug:
             self.slug = slugify(self.name)
+        if self.list_price == 0.00 and self.price > 0.00:
+            self.list_price = self.price
+        else:
+            self.price = self.list_price
         if self.sale_price and self.price > 0:
             self.discount_percent = int(((self.price - self.sale_price) / self.price) * 100)
         else:
@@ -187,3 +229,14 @@ class Wishlist(models.Model):
 
     def __str__(self):
         return f"{self.user.username} - {self.product.name}"
+
+
+class ProductVariant(models.Model):
+    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name='variants')
+    name = models.CharField(max_length=100)
+    price = models.DecimalField(max_digits=12, decimal_places=2, default=0.00)
+    sku_extension = models.CharField(max_length=50, blank=True, default='')
+
+    def __str__(self):
+        return f"{self.product.name} - {self.name} (₹{self.price})"
+

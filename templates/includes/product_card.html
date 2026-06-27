@@ -1,49 +1,48 @@
 {% load static %}
-<div class="product-card-t360 brand-{{ product.brand.slug }}" onclick="window.location.href='{% url 'product_detail' product.slug %}';" style="opacity: 1; transform: translateY(0); cursor: pointer;">
-  {% if product.discount_percent > 0 %}
-    <span class="product-card-deal-tag">Save {{ product.discount_percent }}%</span>
-  {% elif product.is_trending %}
-    <span class="product-card-deal-tag">Trending</span>
-  {% endif %}
+<div class="product-card-t360 brand-{{ product.brand.slug }}" onclick="window.location.href='{% url 'product_detail' product.slug %}';" data-price="{{ product.current_price_in_inr }}" style="opacity: 1; transform: translateY(0); cursor: pointer; position: relative; display: flex; flex-direction: column; height: 100%; transition: transform 0.3s ease; background: transparent; border: none; padding: 0; box-shadow: none;">
   
-  <button type="button" class="compare-circle-btn {% if product.sku in compared_ids %}active{% endif %}" onclick="event.stopPropagation(); toggleCompareState('{{ product.sku }}', this);" title="Add to Compare Matrix">
-    <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i>
-  </button>
-  
-  <div class="product-card-t360__logo-container">
+  <!-- Framed image card container -->
+  <div class="product-card-t360__logo-container" style="height: 180px; border: 1px solid #e2e8f0 !important; background: #ffffff !important; display: flex; align-items: center; justify-content: center; margin-bottom: 0px; margin-top: 0px; border-radius: 16px !important; box-shadow: 0 4px 12px rgba(0,0,0,0.02) !important; width: 100%; position: relative; overflow: hidden; transition: all 0.3s ease;">
+    {% if product.discount_percent > 0 %}
+      <span class="product-card-deal-tag" style="position: absolute; top: 10px; left: 10px; background: #10b981; color: white; padding: 3px 6px; border-radius: 5px; font-size: 10px; font-weight: 700; z-index: 10;">Save {{ product.discount_percent }}%</span>
+    {% elif product.is_trending %}
+      <span class="product-card-deal-tag" style="position: absolute; top: 10px; left: 10px; background: #e21b5a; color: white; padding: 3px 6px; border-radius: 5px; font-size: 10px; font-weight: 700; z-index: 10;">Trending</span>
+    {% endif %}
+    
+    <button type="button" class="wishlist-heart-btn" onclick="event.stopPropagation(); this.classList.toggle('active');" title="Add to Wishlist" style="position: absolute; top: 10px; right: 10px; z-index: 10; background: rgba(255, 255, 255, 0.9); border: none; cursor: pointer; color: #9ca3af; transition: color 0.2s; width: 28px; height: 28px; border-radius: 50%; display: flex; align-items: center; justify-content: center; box-shadow: 0 2px 6px rgba(0,0,0,0.06);">
+      <i data-lucide="heart" style="width: 1.05rem; height: 1.05rem;"></i>
+    </button>
+
     {% if product.image_file %}
-      <img src="{{ product.image_file.url }}" alt="{{ product.name }}" loading="lazy">
+      <img src="{{ product.image_file.url }}" alt="{{ product.name }}" loading="lazy" style="max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.3s ease;">
     {% elif product.image %}
       {% if 'http' in product.image %}
-        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy">
+        <img src="{{ product.image }}" alt="{{ product.name }}" loading="lazy" style="max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.3s ease;">
       {% else %}
-        <img src="{% static product.image %}" alt="{{ product.name }}" loading="lazy">
+        <img src="{% static product.image %}" alt="{{ product.name }}" loading="lazy" style="max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.3s ease;">
       {% endif %}
     {% else %}
-      <img src="{% static 'assets/zoho.png' %}" alt="{{ product.name }}" loading="lazy">
+      <img src="{% static 'assets/zoho.png' %}" alt="{{ product.name }}" loading="lazy" style="max-height: 85%; max-width: 85%; object-fit: contain; transition: transform 0.3s ease;">
     {% endif %}
   </div>
   
-  <h3 class="product-card-t360__title">{{ product.name }}</h3>
-  <div class="product-card-t360__vendor">By {{ product.brand.name }}</div>
-  <hr class="product-card-t360__divider">
-  
-  <div class="product-card-t360__footer">
-    <div class="product-card-t360__price-wrapper">
-      <span class="product-card-t360__price-label">Starting at</span>
-      <span class="product-card-t360__price-value">
+  <!-- Text content area outside the image card container -->
+  <div class="product-card-t360__content" style="padding: 10px 0 0 0; display: flex; flex-direction: column; flex-grow: 1; width: 100%;">
+    <h3 class="product-card-t360__title" style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 700; color: #111827; margin: 0 0 3px; text-align: left; line-height: 1.3;">{{ product.name }}</h3>
+    <div class="product-card-t360__vendor" style="font-size: 12px; color: #6b7280; margin-bottom: 8px; text-align: left;">By {{ product.brand.name }}</div>
+    
+    <div class="product-card-t360__price-wrapper" style="display: flex; flex-direction: column; gap: 1px; text-align: left; margin-top: auto; width: 100%;">
+      <span class="product-card-t360__price-label" style="font-size: 10px; font-weight: 700; color: #6b7280; text-transform: uppercase; letter-spacing: 0.3px;">Starting at</span>
+      <span class="product-card-t360__price-value" style="font-family: 'Outfit', sans-serif; font-size: 15px; font-weight: 800; color: #e21b5a; display: flex; align-items: baseline; flex-wrap: wrap;">
         {% if product.price > 0 %}
-          INR {{ product.current_price_in_inr|floatformat:"2" }}
+          INR {{ product.current_price_in_inr|floatformat:"0" }}
           {% if product.sale_price %}
-            <span class="product-card-t360__price-original">INR {{ product.price_in_inr|floatformat:"0" }}</span>
+            <span class="product-card-t360__price-original" style="font-size: 10px; color: #9ca3af; text-decoration: line-through; font-weight: 500; margin-left: 6px;">INR {{ product.price_in_inr|floatformat:"0" }}</span>
           {% endif %}
         {% else %}
           Get Quote
         {% endif %}
       </span>
     </div>
-    <button class="product-card-t360__btn" aria-label="View Product">
-      <i data-lucide="arrow-right"></i>
-    </button>
   </div>
 </div>

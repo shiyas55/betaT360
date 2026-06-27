@@ -4,7 +4,7 @@
   <div class="utility-bar__inner">
     <div class="utility-bar__group">
       <button class="utility-pill" type="button">English</button>
-      
+
       <div class="currency-picker">
         <button class="utility-pill currency-picker__trigger" type="button">
           <i data-lucide="globe" style="width: 0.95rem; height: 0.95rem; color: var(--muted);"></i>
@@ -20,11 +20,14 @@
     </div>
 
     <div class="utility-bar__group" style="gap: 1.25rem;">
-      <a href="{% url 'reseller_dashboard' %}" class="utility-pill" style="text-decoration: none; color: inherit;">Become a Partner</a>
+      <a href="{% url 'reseller_dashboard' %}" class="utility-pill"
+        style="text-decoration: none; color: inherit;">Become a Partner</a>
       {% if user.is_authenticated and user.is_staff %}
-        <a href="{% url 'admin_home' %}" class="utility-pill" style="text-decoration: none; color: inherit;">Admin Console</a>
+      <a href="{% url 'admin_home' %}" class="utility-pill" style="text-decoration: none; color: inherit;">Admin
+        Console</a>
       {% else %}
-        <a href="{% url 'admin_login' %}" class="utility-pill" style="text-decoration: none; color: inherit;">Workspace Portal</a>
+      <a href="{% url 'admin_login' %}" class="utility-pill" style="text-decoration: none; color: inherit;">Workspace
+        Portal</a>
       {% endif %}
     </div>
   </div>
@@ -33,10 +36,10 @@
 <!-- MASTHEAD HEADER -->
 <header class="masthead" id="app-header">
   <div class="masthead__inner">
-    
+
     <!-- Logo Branding -->
     <a class="storemark" href="{% url 'home' %}" style="text-decoration: none;">
-      <span class="storemark__title">TECHNO<br/>STORE<span>360</span></span>
+      <span class="storemark__title">TECHNO<br />STORE<span>360</span></span>
       <span class="storemark__tag">Empowering Diversity in Tech</span>
     </a>
 
@@ -44,20 +47,21 @@
     <nav class="masthead__nav desktop-only">
       <ul class="masthead__nav-list">
         <li class="masthead__nav-item">
-          <a href="{% url 'product_list' %}?category=software-solutions" class="masthead__nav-link">Products <i data-lucide="chevron-down"></i></a>
+          <a href="{% url 'product_list' %}?category=software-solutions" class="masthead__nav-link">Products <i
+              data-lucide="chevron-down"></i></a>
         </li>
         <li class="masthead__nav-item">
-          <a href="{% url 'product_list' %}" class="masthead__nav-link">Categories <i data-lucide="chevron-down"></i></a>
+          <a href="{% url 'product_list' %}" class="masthead__nav-link">Categories <i
+              data-lucide="chevron-down"></i></a>
         </li>
         <li class="masthead__nav-item">
-          <a href="{% url 'solution_packages' %}" class="masthead__nav-link">Solutions <i data-lucide="chevron-down"></i></a>
+          <a href="{% url 'solution_packages' %}" class="masthead__nav-link">Solutions <i
+              data-lucide="chevron-down"></i></a>
         </li>
         <li class="masthead__nav-item">
           <a href="{% url 'product_compare' %}" class="masthead__nav-link">Compare</a>
         </li>
-        <li class="masthead__nav-item">
-          <a href="{% url 'reseller_dashboard' %}" class="masthead__nav-link">Vendors</a>
-        </li>
+
         <li class="masthead__nav-item">
           <a href="{% url 'demo_request' %}" class="masthead__nav-link">Support <i data-lucide="chevron-down"></i></a>
         </li>
@@ -66,12 +70,13 @@
 
     <!-- Right Masthead actions -->
     <div class="masthead-actions">
-      
+
       <!-- Search trigger icon (Desktop) -->
-      <button class="header-search-trigger desktop-only" onclick="window.location.href='{% url 'product_list' %}';" title="Search">
+      <button class="header-search-trigger desktop-only" onclick="window.location.href='{% url 'product_list' %}';"
+        title="Search">
         <i data-lucide="search" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
       </button>
-      
+
       <!-- Vertical Divider -->
       <div class="header-divider desktop-only"></div>
 
@@ -83,27 +88,30 @@
       </button>
 
       <!-- Cart indicator link -->
-      <a href="{% url 'cart_detail' %}" class="header-signin-btn" style="position: relative; margin-right: 0.5rem; text-decoration: none;">
+      <a href="{% url 'cart_detail' %}" class="header-signin-btn"
+        style="position: relative; margin-right: 0.5rem; text-decoration: none;">
         <i data-lucide="shopping-cart" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
-        <span id="compare-badge-count" class="badge-pop" style="position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; border-radius: 50%; font-size: 0.6rem; padding: 0.1rem 0.3rem; font-weight: bold; display: {% if cart|length > 0 %}inline-block{% else %}none{% endif %};">
+        <span id="compare-badge-count" class="badge-pop"
+          style="position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; border-radius: 50%; font-size: 0.6rem; padding: 0.1rem 0.3rem; font-weight: bold; display: {% if cart|length > 0 %}inline-block{% else %}none{% endif %};">
           {{ cart|length }}
         </span>
       </a>
 
       <!-- Sign-in Link (Desktop) -->
       {% if user.is_authenticated %}
-        <a href="{% url 'customer_dashboard' %}" class="header-signin-btn desktop-only" style="text-decoration: none;">
-          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
-          <span>Dashboard</span>
-        </a>
-        <a href="{% url 'logout' %}" class="header-signin-btn desktop-only" style="text-decoration: none; color: var(--accent); margin-left: 0.5rem;">
-          <span>Sign Out</span>
-        </a>
+      <a href="{% url 'customer_dashboard' %}" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="{% url 'logout' %}" class="header-signin-btn desktop-only"
+        style="text-decoration: none; color: var(--accent); margin-left: 0.5rem;" title="Sign Out">
+        <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+      </a>
       {% else %}
-        <a href="{% url 'login' %}" class="header-signin-btn desktop-only" style="text-decoration: none;">
-          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
-          <span>Sign In</span>
-        </a>
+      <a href="{% url 'login' %}" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Sign In</span>
+      </a>
       {% endif %}
 
       <!-- Get Free Demo (Desktop) -->
@@ -124,42 +132,59 @@
   <!-- Mobile navigation panel -->
   <nav class="mobile-nav" id="mobile-nav-panel">
     <!-- Header with Close toggle for side-drawer -->
-    <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1.25rem 1rem 1.25rem; border-bottom: 1px solid var(--line);">
-      <span style="font-weight: 800; font-family: var(--font-heading); font-size: 1.1rem; color: var(--slate-900);">Navigation</span>
-      <button type="button" onclick="toggleMobileNav()" style="background: none; border: none; cursor: pointer; color: var(--slate-500); font-size: 1.75rem; font-weight: 300; line-height: 1; outline: none;">&times;</button>
+    <div
+      style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1.25rem 1rem 1.25rem; border-bottom: 1px solid var(--line);">
+      <span
+        style="font-weight: 800; font-family: var(--font-heading); font-size: 1.1rem; color: var(--slate-900);">Navigation</span>
+      <button type="button" onclick="toggleMobileNav()"
+        style="background: none; border: none; cursor: pointer; color: var(--slate-500); font-size: 1.75rem; font-weight: 300; line-height: 1; outline: none;">&times;</button>
     </div>
-    
+
     <!-- Mobile Search input -->
     <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--line);">
-      <form method="GET" action="{% url 'product_list' %}" style="position: relative; display: flex; align-items: center;">
-        <i data-lucide="search" style="position: absolute; left: 0.75rem; color: var(--slate-400); width: 1rem; height: 1rem;"></i>
-        <input type="text" name="search" placeholder="Search products, brands..." style="width: 100%; padding: 0.55rem 0.55rem 0.55rem 2.25rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem; outline: none; background-color: var(--slate-50); min-height: 40px;">
+      <form method="GET" action="{% url 'product_list' %}"
+        style="position: relative; display: flex; align-items: center;">
+        <i data-lucide="search"
+          style="position: absolute; left: 0.75rem; color: var(--slate-400); width: 1rem; height: 1rem;"></i>
+        <input type="text" name="search" placeholder="Search products, brands..."
+          style="width: 100%; padding: 0.55rem 0.55rem 0.55rem 2.25rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem; outline: none; background-color: var(--slate-50); min-height: 40px;">
       </form>
     </div>
 
     <ul class="mobile-nav__list" style="flex: 1; overflow-y: auto;">
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_list' %}"><span class="mobile-nav__label">Products</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_list' %}"><span class="mobile-nav__label">Categories</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'solution_packages' %}"><span class="mobile-nav__label">Solutions</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_compare' %}"><span class="mobile-nav__label">Compare</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'reseller_dashboard' %}"><span class="mobile-nav__label">Vendors</span></a></li>
-      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'demo_request' %}"><span class="mobile-nav__label">Support</span></a></li>
-      <li class="mobile-nav__item" style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--line);">
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_list' %}"><span
+            class="mobile-nav__label">Products</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_list' %}"><span
+            class="mobile-nav__label">Categories</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'solution_packages' %}"><span
+            class="mobile-nav__label">Solutions</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'product_compare' %}"><span
+            class="mobile-nav__label">Compare</span></a></li>
+
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="{% url 'demo_request' %}"><span
+            class="mobile-nav__label">Support</span></a></li>
+      <li class="mobile-nav__item"
+        style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--line);">
         {% if user.is_authenticated %}
-          <a href="{% url 'customer_dashboard' %}" class="header-signin-btn" style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
-            <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
-            <span>Dashboard</span>
-          </a>
-          <a href="{% url 'logout' %}" class="header-signin-btn" style="justify-content: center; width: 100%; text-decoration: none; color: var(--accent); min-height: 44px; display: flex; align-items: center;">
-            <span>Sign Out</span>
-          </a>
+        <a href="{% url 'customer_dashboard' %}" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="{% url 'logout' %}" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; color: var(--accent); min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+          <span>Sign Out</span>
+        </a>
         {% else %}
-          <a href="{% url 'login' %}" class="header-signin-btn" style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
-            <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
-            <span>Sign In</span>
-          </a>
+        <a href="{% url 'login' %}" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Sign In</span>
+        </a>
         {% endif %}
-        <a href="{% url 'demo_request' %}" class="header-demo-btn" style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center;">
+        <a href="{% url 'demo_request' %}" class="header-demo-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center;">
           Get Free Demo
         </a>
       </li>

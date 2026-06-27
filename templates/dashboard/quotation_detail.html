@@ -1,0 +1,649 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}Quotation Details - {{ quotation.quotation_number }} — TechnoStore360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ════════════════════════════════════════
+     ADMIN QUOTATION DETAIL — REDESIGN
+     ════════════════════════════════════════ */
+
+  .qd-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  .qd-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .qd-title-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .qd-btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-dark);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .qd-btn-back:hover {
+    background-color: var(--color-bg-main);
+    transform: translateX(-3px);
+  }
+
+  .qd-title-text h1 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .qd-title-text p {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  .qd-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--color-text-dark);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .qd-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .qd-details-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  
+  .qd-details-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .qd-details-label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+  
+  .qd-details-value {
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+  
+  .qd-info-panel {
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    font-size: 13px;
+    line-height: 1.6;
+    color: var(--color-text-dark);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qd-info-panel strong {
+    color: var(--color-text-dark);
+  }
+  
+  .qd-badge {
+    display: inline-flex;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
+  }
+  
+  .qd-badge.draft { background-color: var(--color-bg-main); color: var(--color-text-muted); }
+  .qd-badge.sent { background-color: #eff6ff; color: #1d4ed8; }
+  .qd-badge.viewed { background-color: #e0f2fe; color: #0284c7; }
+  .qd-badge.accepted { background-color: #ecfdf5; color: var(--color-success); }
+  .qd-badge.rejected { background-color: #fff5f5; color: var(--color-danger); }
+  .qd-badge.expired { background-color: #fff7ed; color: #ea580c; }
+  .qd-badge.converted { background-color: #e0e7ff; color: #4338ca; }
+  
+  /* Timeline styling */
+  .qd-timeline {
+    position: relative;
+    padding-left: 24px;
+    margin-top: 15px;
+    list-style: none;
+  }
+
+  .qd-timeline::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    bottom: 0;
+    left: 7px;
+    width: 2px;
+    background-color: var(--color-border);
+  }
+
+  .qd-timeline-item {
+    position: relative;
+    margin-bottom: 20px;
+  }
+
+  .qd-timeline-item::before {
+    content: '';
+    position: absolute;
+    left: -22px;
+    top: 4px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    background-color: var(--color-pink-primary);
+    border: 2px solid var(--color-bg-card);
+  }
+
+  .qd-timeline-date {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+  }
+
+  .qd-timeline-status {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+
+  .qd-timeline-notes {
+    font-size: 12px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+    font-style: italic;
+  }
+  
+  /* Staff internal notes */
+  .qd-notes-container {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    max-height: 350px;
+    overflow-y: auto;
+    padding-right: 4px;
+  }
+
+  .qd-note-card {
+    padding: 12px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    font-size: 13px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qd-note-header {
+    display: flex;
+    justify-content: space-between;
+    margin-bottom: 6px;
+    font-size: 11px;
+    color: var(--color-text-muted);
+  }
+
+  .qd-note-author {
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+
+  .qd-note-badge {
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-size: 9px;
+    text-transform: uppercase;
+    font-weight: 800;
+  }
+
+  .qd-note-badge-internal {
+    background-color: #fee2e2;
+    color: #ef4444;
+  }
+
+  .qd-note-badge-client {
+    background-color: #d1fae5;
+    color: #10b981;
+  }
+
+  .qd-note-text {
+    color: var(--color-text-dark);
+    line-height: 1.4;
+    white-space: pre-wrap;
+  }
+  
+  .qd-share-link-box {
+    display: flex;
+    gap: 8px;
+    margin-top: 10px;
+  }
+
+  .qd-share-input {
+    flex-grow: 1;
+    font-size: 12px;
+    padding: 8px 12px;
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-main);
+    color: var(--color-text-dark);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    outline: none;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qd-share-input:focus {
+    border-color: var(--color-pink-primary);
+  }
+  
+  @media (max-width: 991px) {
+    .qd-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="qd-title-row animate-fade-in">
+  <div class="qd-title-left">
+    <a href="{% url 'admin_quotations' %}" class="qd-btn-back">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div class="qd-title-text">
+      <h1>Quotation #{{ quotation.quotation_number }} Workspace</h1>
+      <p style="margin-left: 0;">B2B client details, scope items pricing, status history, and client actions.</p>
+    </div>
+  </div>
+  <div style="display: flex; align-items: center; gap: 12px; flex-wrap: wrap;">
+    {% if quotation.status == 'draft' %}
+      <a href="{% url 'admin_quotation_edit' quotation.id %}" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; height: 38px; font-size: 13px;">
+        <span class="material-symbols-outlined" style="font-size: 18px;">edit</span> Edit Draft
+      </a>
+    {% endif %}
+    <a href="{% url 'admin_quotation_pdf' quotation.quotation_number %}" target="_blank" class="btn btn-secondary" style="display: inline-flex; align-items: center; gap: 6px; height: 38px; font-size: 13px;">
+      <span class="material-symbols-outlined" style="font-size: 18px;">picture_as_pdf</span> Print / PDF
+    </a>
+    <span class="qd-badge qd-badge-{{ quotation.status }}">
+      {{ quotation.get_status_display }}
+    </span>
+  </div>
+</div>
+
+<div class="qd-grid">
+  <!-- Left Side: Scope Items, Client details, notes & T&C -->
+  <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+    
+    <!-- Items Card -->
+    <div class="card">
+      <h3 class="qd-section-title">Quoted Products & Services</h3>
+      
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Solution Details</th>
+              <th>Billing Plan</th>
+              <th style="text-align: center;">Qty</th>
+              <th style="text-align: right;">Unit Price</th>
+              <th style="text-align: right;">Discount</th>
+              <th style="text-align: right;">Tax %</th>
+              <th style="text-align: right;">Tax Amt</th>
+              <th style="text-align: right;">Total Price</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>
+                  <div style="font-weight: 700; color: var(--color-text-dark);">
+                    {% if item.product %}
+                      {{ item.product.name }}
+                    {% else %}
+                      {{ item.product_name }}
+                    {% endif %}
+                  </div>
+                  <div style="font-size: 11px; color: var(--color-text-muted); margin-top: 2px;">
+                    Category: {{ item.category.name|default:"General" }} 
+                    {% if item.variant_name %}
+                      | Variant: <span style="font-weight: 600; color: var(--color-pink-primary);">{{ item.variant_name }}</span>
+                    {% endif %}
+                    {% if item.product.sku %}
+                      | SKU: {{ item.product.sku }}
+                    {% endif %}
+                  </div>
+                  
+                  <!-- Add-ons Listing -->
+                  {% if item.addons.all %}
+                    <div style="margin-top: 8px; padding: 8px 12px; background-color: var(--color-bg-main); border-radius: var(--radius-sm); font-size: 11px; border-left: 2px solid var(--color-pink-primary); transition: all 0.3s;">
+                      <div style="font-weight: 800; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 4px; color: var(--color-text-dark);">Included Add-ons</div>
+                      {% for addon in item.addons.all %}
+                        <div style="display: flex; justify-content: space-between; color: var(--color-text-dark); margin-top: 2px;">
+                          <span>• {{ addon.name }} (x{{ addon.quantity }})</span>
+                          <span style="font-family: monospace; font-weight: 600;">+{{ quotation.currency }} {{ addon.price }}</span>
+                        </div>
+                      {% endfor %}
+                    </div>
+                  {% endif %}
+                </td>
+                <td>
+                  <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; background-color: var(--color-bg-main); color: var(--color-text-dark); padding: 3px 8px; border-radius: 20px;">
+                    {{ item.duration|default:"one-time" }}
+                  </span>
+                </td>
+                <td style="text-align: center; font-weight: 700; color: var(--color-text-dark);">{{ item.quantity }}</td>
+                <td style="text-align: right; font-weight: 600; color: var(--color-text-dark); font-family: monospace;">{{ quotation.currency }} {{ item.price }}</td>
+                <td style="text-align: right; font-weight: 600; color: var(--color-danger); font-family: monospace;">
+                  {% if item.discount_value > 0 %}
+                    -{% if item.discount_type == 'percentage' %}{{ item.discount_value }}%{% else %}{{ quotation.currency }} {{ item.discount_value }}{% endif %}
+                  {% else %}
+                    —
+                  {% endif %}
+                </td>
+                <td style="text-align: right; font-weight: 600; color: var(--color-text-muted); font-family: monospace;">{{ item.tax_percentage }}%</td>
+                <td style="text-align: right; font-weight: 600; color: var(--color-text-muted); font-family: monospace;">{{ quotation.currency }} {{ item.tax_amount }}</td>
+                <td style="text-align: right; font-weight: 800; color: var(--color-text-dark); font-family: monospace;">
+                  {{ quotation.currency }} {{ item.final_total }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Client Info Card -->
+    <div class="card">
+      <h3 class="qd-section-title">Client Details</h3>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+        <div>
+          <h4 style="font-family: var(--font-display); font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-dark);">B2B Company / Customer</h4>
+          <div class="qd-info-panel">
+            <strong>Company:</strong> {{ quotation.client_name|default:"Not specified" }}<br>
+            <strong>Contact Person:</strong> {{ quotation.contact_person|default:"Not specified" }}<br>
+            <strong>Market Region:</strong> {{ quotation.market_region|default:"Not specified" }}<br>
+            <strong>GST / Tax ID:</strong> {{ quotation.gstin_tax_id|default:"Not specified" }}
+          </div>
+        </div>
+        <div>
+          <h4 style="font-family: var(--font-display); font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-dark);">Contact Coordinates</h4>
+          <div class="qd-info-panel">
+            <strong>Email:</strong> <a href="mailto:{{ quotation.email }}" style="color: var(--color-pink-primary); text-decoration: none; font-weight: 600;">{{ quotation.email }}</a><br>
+            <strong>Phone:</strong> {{ quotation.phone|default:"Not specified" }}<br>
+            <strong>User Account:</strong> {% if quotation.user %}<span style="font-weight: 700; color: var(--color-text-dark);">{{ quotation.user.username }}</span>{% else %}<span style="color: var(--color-text-muted);">None (Guest)</span>{% endif %}<br>
+            <strong>Valid Until:</strong> <span style="font-weight: 700; color: var(--color-danger);">{{ quotation.valid_until|date:"Y-m-d" }}</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes & Terms -->
+    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+      <div class="card">
+        <h3 class="qd-section-title">Terms & Conditions</h3>
+        <div style="font-size: 13px; color: var(--color-text-dark); line-height: 1.6; white-space: pre-wrap; background-color: var(--color-bg-main); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); transition: background-color 0.3s;">{{ quotation.terms_conditions|default:"No specific terms attached." }}</div>
+      </div>
+      <div class="card">
+        <h3 class="qd-section-title">Client Notes</h3>
+        <div style="font-size: 13px; color: var(--color-text-dark); line-height: 1.6; white-space: pre-wrap; background-color: var(--color-bg-main); padding: 12px; border-radius: var(--radius-sm); border: 1px solid var(--color-border); transition: background-color 0.3s;">{{ quotation.customer_notes|default:"No notes left for client." }}</div>
+      </div>
+    </div>
+
+    <!-- Timeline / History -->
+    <div class="card">
+      <h3 class="qd-section-title">Quotation Timeline</h3>
+      {% if history %}
+        <ul class="qd-timeline">
+          {% for event in history %}
+            <li class="qd-timeline-item">
+              <div class="qd-timeline-date">{{ event.created_at|date:"Y-m-d H:i" }}</div>
+              <div class="qd-timeline-status">
+                Status changed to <span class="qd-badge qd-badge-{{ event.status }}" style="font-size: 9px; padding: 2px 8px; box-shadow: none;">{{ event.status }}</span> 
+                {% if event.changed_by %}
+                  by <span style="font-weight: 700;">{{ event.changed_by.username }}</span>
+                {% endif %}
+              </div>
+              {% if event.notes %}
+                <div class="qd-timeline-notes">"{{ event.notes }}"</div>
+              {% endif %}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p style="font-size: 13px; color: var(--color-text-muted);">No logs registered.</p>
+      {% endif %}
+    </div>
+
+  </div>
+
+  <!-- Right Side: Sidebar updates, copy link & internal notes -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Convert to Order Action -->
+    {% if quotation.status == 'accepted' %}
+      <div class="card" style="background-color: var(--color-pink-light); border: 1px solid rgba(226, 26, 97, 0.2); transition: all 0.3s;">
+        <h3 class="qd-section-title" style="color: var(--color-pink-primary); border-bottom: 1px solid rgba(226, 26, 97, 0.1);">Client Accepted!</h3>
+        <p style="font-size: 13px; color: var(--color-text-dark); margin-bottom: 15px; line-height: 1.5;">
+          This B2B quotation has been formally accepted by the client. Convert it to a live order now.
+        </p>
+        <form method="POST" action="{% url 'admin_quotation_convert_order' quotation.id %}">
+          {% csrf_token %}
+          <button type="submit" class="btn btn-primary" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px; height: 40px; font-size: 13px;">
+            <span class="material-symbols-outlined">shopping_cart</span> Convert to Order
+          </button>
+        </form>
+      </div>
+    {% elif quotation.status == 'converted' %}
+      <div class="card" style="background-color: rgba(37, 99, 235, 0.1); border: 1px solid rgba(37, 99, 235, 0.2); transition: all 0.3s;">
+        <h3 class="qd-section-title" style="color: #1e3a8a; border-bottom: 1px solid rgba(37, 99, 235, 0.15);">Converted Order</h3>
+        <p style="font-size: 13px; color: var(--color-text-dark); margin-bottom: 10px; line-height: 1.5;">
+          This quotation is finalized. Click below to view the linked active invoice.
+        </p>
+        <a href="{% url 'admin_orders' %}" class="btn btn-secondary" style="width: 100%; text-align: center; height: 40px; display: flex; align-items: center; justify-content: center; font-size: 13px;">
+          View Orders Panel
+        </a>
+      </div>
+    {% endif %}
+
+    <!-- Share Link Card -->
+    <div class="card">
+      <h3 class="qd-section-title">Shared Proposal Link</h3>
+      <p style="font-size: 12px; color: var(--color-text-muted); line-height: 1.4;">
+        Provide this direct link to the client for read-only view and interactive Accept/Reject actions.
+      </p>
+      
+      <div class="qd-share-link-box">
+        <input type="text" readonly id="shareUrl" class="qd-share-input" 
+               value="{{ request.scheme }}://{{ request.get_host }}{% url 'public_quotation_view' token=quotation.public_link.token %}">
+        <button onclick="copyShareUrl()" class="btn btn-secondary" style="padding: 8px 12px; font-size: 12px; height: 36px;">Copy</button>
+      </div>
+      
+      <div style="margin-top: 15px; font-size: 11.5px; color: var(--color-text-muted); display: flex; flex-direction: column; gap: 6px; border-top: 1px dashed var(--color-border); padding-top: 12px;">
+        <div style="display:flex; justify-content:space-between;"><span>View Count:</span> <strong>{{ quotation.public_link.view_count }}</strong></div>
+        {% if quotation.public_link.last_viewed %}
+          <div style="display:flex; justify-content:space-between;"><span>Last Viewed:</span> <strong>{{ quotation.public_link.last_viewed|date:"Y-m-d H:i" }}</strong></div>
+        {% else %}
+          <div style="display:flex; justify-content:space-between;"><span>Last Viewed:</span> <strong style="color:var(--color-text-muted);">Never</strong></div>
+        {% endif %}
+      </div>
+    </div>
+
+    <!-- Update Status Card -->
+    <div class="card">
+      <h3 class="qd-section-title">Update Status</h3>
+      
+      <form method="POST" action="{% url 'admin_quotation_detail' quotation.quotation_number %}" style="display: flex; flex-direction: column; gap: 14px;">
+        {% csrf_token %}
+        <input type="hidden" name="update_status" value="1">
+        
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="status" style="font-size: 12px; font-weight: 700;">Fulfillment State</label>
+          <select id="status" name="status" class="form-control" style="width: 100%; height: 38px; margin-top: 4px; padding: 4px 8px;">
+            {% for s_val, s_lbl in status_choices %}
+              <option value="{{ s_val }}" {% if quotation.status == s_val %}selected{% endif %}>{{ s_lbl }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="status_notes" style="font-size: 12px; font-weight: 700;">Change Notes</label>
+          <textarea id="status_notes" name="status_notes" class="form-control" rows="2" placeholder="Reason for status change..." style="width: 100%; padding: 8px; font-size: 12.5px; margin-top: 4px;"></textarea>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; height: 40px; font-size: 13px;">
+          Update Status
+        </button>
+      </form>
+    </div>
+
+    <!-- Financial Breakdown Sidebar -->
+    <div class="card" style="background-color: var(--color-sidebar-bg); color: #ffffff; border: none; box-shadow: var(--shadow-md);">
+      <h3 class="qd-section-title" style="color: #ffffff; border-bottom: 1px solid rgba(255, 255, 255, 0.1);">Financial Summary</h3>
+      
+      <div style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--color-sidebar-text);">Subtotal</span>
+          <span style="font-family: monospace; font-weight: 700;">{{ quotation.currency }} {{ quotation.subtotal }}</span>
+        </div>
+        
+        {% if quotation.item_discount > 0 %}
+          <div style="display: flex; justify-content: space-between; color: #f87171; font-weight: 600;">
+            <span>Line Items Discount</span>
+            <span style="font-family: monospace;">-{{ quotation.currency }} {{ quotation.item_discount }}</span>
+          </div>
+        {% endif %}
+        
+        {% if quotation.overall_discount_val > 0 %}
+          <div style="display: flex; justify-content: space-between; color: #f87171; font-weight: 600;">
+            <span>Overall Discount ({{ quotation.get_overall_discount_type_display }})</span>
+            <span style="font-family: monospace;">
+              -{% if quotation.overall_discount_type == 'percentage' %}{{ quotation.overall_discount_val }}%{% else %}{{ quotation.currency }} {{ quotation.overall_discount_val }}{% endif %}
+            </span>
+          </div>
+        {% endif %}
+        
+        <div style="border-bottom: 1px solid rgba(255, 255, 255, 0.1); margin: 4px 0;"></div>
+        
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--color-sidebar-text);">Taxable Amount</span>
+          <span style="font-family: monospace; font-weight: 700;">{{ quotation.currency }} {{ quotation.taxable_amount }}</span>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between;">
+          <span style="color: var(--color-sidebar-text);">Estimated Taxes (GST/VAT)</span>
+          <span style="font-family: monospace; font-weight: 700;">{{ quotation.currency }} {{ quotation.tax }}</span>
+        </div>
+        
+        <div style="border-bottom: 2px solid var(--color-pink-primary); margin: 6px 0;"></div>
+        
+        <div style="display: flex; justify-content: space-between; font-size: 18px; font-weight: 800; padding-top: 2px;">
+          <span style="font-family: var(--font-display);">Grand Total</span>
+          <span style="color: var(--color-pink-primary); font-family: monospace; font-size: 20px;">{{ quotation.currency }} {{ quotation.total }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Staff Notes Card -->
+    <div class="card">
+      <h3 class="qd-section-title">Staff Internal Notes</h3>
+      
+      <!-- New Note Form -->
+      <form method="POST" action="{% url 'admin_quotation_detail' quotation.quotation_number %}" style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 16px;">
+        {% csrf_token %}
+        <input type="hidden" name="add_note" value="1">
+        
+        <div class="form-group" style="margin-bottom: 0;">
+          <textarea name="note_text" class="form-control" rows="3" placeholder="Type internal staff notes here..." style="width: 100%; padding: 8px; font-size: 12.5px;"></textarea>
+        </div>
+        
+        <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+          <div style="display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--color-text-dark);">
+            <label style="display: flex; align-items: center; gap: 4px; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="note_type" value="internal" checked> Internal Only
+            </label>
+            <label style="display: flex; align-items: center; gap: 4px; font-weight: 600; cursor: pointer;">
+              <input type="radio" name="note_type" value="client"> Client Visible
+            </label>
+          </div>
+          <button type="submit" class="btn btn-primary btn-sm" style="padding: 6px 12px; font-size: 11px; height: 28px; border-radius: var(--radius-sm);">Log Note</button>
+        </div>
+      </form>
+      
+      <!-- Notes List -->
+      <div class="qd-notes-container">
+        {% for note in notes %}
+          <div class="qd-note-card">
+            <div class="qd-note-header">
+              <span class="qd-note-author">{{ note.author.username }}</span>
+              <span class="qd-note-badge qd-note-badge-{{ note.note_type }}">
+                {{ note.get_note_type_display }}
+              </span>
+            </div>
+            <div class="qd-note-text">{{ note.text }}</div>
+            <div style="font-size: 9.5px; color: var(--color-text-muted); text-align: right; margin-top: 6px; font-weight: 600;">
+              {{ note.created_at|date:"Y-m-d H:i" }}
+            </div>
+          </div>
+        {% empty %}
+          <p style="font-size: 12px; color: var(--color-text-muted); text-align: center; padding: 10px 0;">No logs or notes registered.</p>
+        {% endfor %}
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+  function copyShareUrl() {
+    var copyText = document.getElementById("shareUrl");
+    copyText.select();
+    copyText.setSelectionRange(0, 99999);
+    
+    navigator.clipboard.writeText(copyText.value).then(function() {
+      alert("Proposal Link copied to clipboard!");
+    }).catch(function(err) {
+      console.error('Could not copy text: ', err);
+    });
+  }
+</script>
+{% endblock %}

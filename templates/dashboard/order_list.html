@@ -1,67 +1,465 @@
 {% extends 'dashboard/base.html' %}
 
-{% block title %}Manage Orders - TechnoStore360 Admin{% endblock %}
+{% block title %}Orders — TechnoStore360 Admin{% endblock %}
 
-{% block admin_content %}
-<div class="space-y-6">
-  <div>
-    <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight font-display">Procure Orders Management</h1>
-    <p class="text-sm text-slate-500 mt-1">Audit, process, track, and update B2B transaction states.</p>
+{% block extra_css %}
+<style>
+  /* ════════════════════════════════════════
+     ADMIN ORDER LIST — REDESIGN
+     ════════════════════════════════════════ */
+
+  .ol-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .ol-header-left h1 {
+    font-family: var(--font-display);
+    font-size: 26px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .ol-header-left p {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 3px;
+  }
+
+  /* Stats Bar */
+  .ol-stats-bar {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .ol-stat-chip {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px 20px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ol-stat-chip:hover {
+    box-shadow: var(--shadow-md);
+    transform: translateY(-2px);
+  }
+
+  .ol-stat-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+  }
+
+  .ol-stat-icon .material-symbols-outlined { font-size: 20px; }
+  .ol-stat-icon.pink  { background: rgba(226, 26, 97, 0.1); color: var(--color-pink-primary); }
+  .ol-stat-icon.blue  { background: rgba(37, 99, 235, 0.1); color: #2563eb; }
+  .ol-stat-icon.green { background: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+  .ol-stat-icon.amber { background: rgba(245, 158, 11, 0.1); color: var(--color-warning); }
+
+  .ol-stat-info { min-width: 0; }
+
+  .ol-stat-value {
+    font-family: var(--font-display);
+    font-size: 22px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    line-height: 1;
+  }
+
+  .ol-stat-label {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    font-weight: 600;
+    margin-top: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  /* Toolbar Filter widget */
+  .ol-toolbar {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .ol-filter-form {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    width: 100%;
+  }
+
+  .ol-search-wrapper {
+    position: relative;
+    max-width: 320px;
+    width: 100%;
+  }
+
+  .ol-search-icon {
+    position: absolute;
+    left: 12px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: var(--color-text-muted);
+    font-size: 20px;
+  }
+
+  .ol-search-input {
+    padding-left: 40px;
+    height: 40px;
+  }
+
+  .ol-filter-select {
+    width: 200px;
+    height: 40px;
+  }
+
+  .ol-actions {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  /* Table styling overrides */
+  .ol-order-number {
+    font-weight: 800;
+    font-family: monospace;
+    color: var(--color-pink-primary);
+    font-size: 13.5px;
+    text-decoration: none;
+  }
+
+  .ol-order-number:hover {
+    text-decoration: underline;
+  }
+
+  .ol-customer-cell {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .ol-customer-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background-color: var(--color-pink-light);
+    color: var(--color-pink-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 700;
+    font-size: 12px;
+    border: 1px solid var(--color-border);
+  }
+
+  .ol-customer-name {
+    font-weight: 600;
+    color: var(--color-text-dark);
+  }
+
+  .ol-customer-email {
+    font-size: 11px;
+    color: var(--color-text-muted);
+    margin-top: 1px;
+  }
+
+  .ol-payment-method {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-dark);
+    text-transform: uppercase;
+    background: var(--color-bg-main);
+    padding: 3px 8px;
+    border-radius: 20px;
+  }
+
+  /* Badges */
+  .ol-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    padding: 3px 10px;
+    font-size: 10.5px;
+    font-weight: 800;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.3px;
+  }
+
+  .ol-badge.pending { background: #fffbeb; color: #d97706; }
+  .ol-badge.confirmed { background: #eff6ff; color: #1d4ed8; }
+  .ol-badge.processing { background: #e0e7ff; color: #4338ca; }
+  .ol-badge.shipped { background: #fdf2f8; color: #c026d3; }
+  .ol-badge.delivered { background: #ecfdf5; color: #059669; }
+  .ol-badge.cancelled { background: #fff5f5; color: #dc2626; }
+
+  .ol-pay-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    font-weight: 600;
+  }
+  .ol-pay-paid { color: var(--color-success); }
+  .ol-pay-pending { color: var(--color-warning); }
+  .ol-pay-failed { color: var(--color-danger); }
+
+  .ol-price-cell {
+    font-weight: 800;
+    font-family: monospace;
+    font-size: 15px;
+    color: var(--color-text-dark);
+  }
+
+  /* Responsive media queries */
+  @media (max-width: 991px) {
+    .ol-stats-bar {
+      grid-template-columns: repeat(2, 1fr);
+    }
+  }
+
+  @media (max-width: 640px) {
+    .ol-stats-bar {
+      grid-template-columns: 1fr;
+    }
+    .ol-filter-form {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    .ol-search-wrapper, .ol-filter-select, .ol-filter-form button {
+      max-width: 100%;
+      width: 100%;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="ol-header animate-fade-in">
+  <div class="ol-header-left">
+    <h1>Orders Fulfillment Center</h1>
+    <p>Track client purchases, manage payment checkpoints, and process shipping statuses.</p>
+  </div>
+</div>
+
+<!-- Stats Indicators -->
+<div class="ol-stats-bar">
+  <div class="ol-stat-chip">
+    <div class="ol-stat-icon pink">
+      <span class="material-symbols-outlined">shopping_cart</span>
+    </div>
+    <div class="ol-stat-info">
+      <div class="ol-stat-value">{{ page_obj.paginator.count }}</div>
+      <div class="ol-stat-label">Total Orders</div>
+    </div>
   </div>
 
-  <!-- Orders Table -->
-  <div class="bg-white shadow rounded-lg border border-slate-200 overflow-hidden">
-    <div class="overflow-x-auto">
-      <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-        <thead class="bg-slate-50 text-slate-500 font-semibold text-xs uppercase tracking-wider">
-          <tr>
-            <th class="p-4">Order ID</th>
-            <th class="p-4">Date</th>
-            <th class="p-4">Buyer Client</th>
-            <th class="p-4">Payment Method</th>
-            <th class="p-4">Payment Status</th>
-            <th class="p-4">Total Amount</th>
-            <th class="p-4">Fulfillment Status</th>
-            <th class="p-4 text-right">Actions</th>
-          </tr>
-        </thead>
-        <tbody class="divide-y divide-slate-100">
-          {% for order in orders %}
-            <tr class="hover:bg-slate-50 transition">
-              <td class="p-4 font-bold text-blue-600">
-                <a href="{% url 'admin_order_detail' order.order_number %}">{{ order.order_number }}</a>
-              </td>
-              <td class="p-4 text-slate-500">{{ order.created_at|date:"Y-m-d H:i" }}</td>
-              <td class="p-4">
-                <div class="font-bold text-slate-900">{{ order.billing_address.full_name }}</div>
-                <div class="text-xs text-slate-400 font-semibold">{{ order.user.email }}</div>
-              </td>
-              <td class="p-4 text-slate-500 font-semibold uppercase">{{ order.get_payment_method_display }}</td>
-              <td class="p-4">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold {% if order.payment_status == 'paid' %}bg-green-100 text-green-800{% else %}bg-yellow-100 text-yellow-800{% endif %}">
-                  {{ order.get_payment_status_display }}
-                </span>
-              </td>
-              <td class="p-4 font-bold text-slate-900">INR {{ order.total|floatformat:"2" }}</td>
-              <td class="p-4">
-                <span class="inline-flex items-center px-2 py-0.5 rounded text-xs font-bold bg-blue-100 text-blue-800 uppercase">
-                  {{ order.get_order_status_display }}
-                </span>
-              </td>
-              <td class="p-4 text-right whitespace-nowrap">
-                <a href="{% url 'admin_order_detail' order.order_number %}" class="inline-flex items-center px-2.5 py-1.5 text-xs font-bold rounded border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition">
-                  Manage Desk
-                </a>
-              </td>
-            </tr>
-          {% empty %}
-            <tr>
-              <td colspan="8" class="p-8 text-center text-slate-400">No B2B orders have been placed in the database.</td>
-            </tr>
-          {% endfor %}
-        </tbody>
-      </table>
+  <div class="ol-stat-chip">
+    <div class="ol-stat-icon amber">
+      <span class="material-symbols-outlined">hourglass_empty</span>
+    </div>
+    <div class="ol-stat-info">
+      <div class="ol-stat-value" id="pending-count">0</div>
+      <div class="ol-stat-label">Pending / Proc.</div>
+    </div>
+  </div>
+
+  <div class="ol-stat-chip">
+    <div class="ol-stat-icon green">
+      <span class="material-symbols-outlined">check_circle</span>
+    </div>
+    <div class="ol-stat-info">
+      <div class="ol-stat-value" id="delivered-count">0</div>
+      <div class="ol-stat-label">Delivered</div>
+    </div>
+  </div>
+
+  <div class="ol-stat-chip">
+    <div class="ol-stat-icon blue">
+      <span class="material-symbols-outlined">payments</span>
+    </div>
+    <div class="ol-stat-info">
+      <div class="ol-stat-value" id="paid-count">0</div>
+      <div class="ol-stat-label">Paid Invoices</div>
     </div>
   </div>
 </div>
+
+<!-- Toolbar Search & Filters -->
+<div class="ol-toolbar">
+  <form class="ol-filter-form" method="GET" action="{% url 'admin_orders' %}">
+    <div class="ol-search-wrapper">
+      <span class="material-symbols-outlined ol-search-icon">search</span>
+      <input type="text" name="search" value="{{ search_query }}" class="form-control ol-search-input" placeholder="Search order ID or customer...">
+    </div>
+    
+    <select name="status" class="form-control ol-filter-select" onchange="this.form.submit()">
+      <option value="">All Fulfillment Statuses</option>
+      {% for status_val, status_name in status_choices %}
+        <option value="{{ status_val }}" {% if status_filter == status_val %}selected{% endif %}>{{ status_name }}</option>
+      {% endfor %}
+    </select>
+    
+    <button type="submit" class="btn btn-primary" style="height: 40px;">Apply Filter</button>
+    
+    {% if search_query or status_filter %}
+      <a href="{% url 'admin_orders' %}" class="btn btn-secondary" style="height: 40px; display: inline-flex; align-items: center; color: var(--color-danger); border-color: rgba(239, 68, 68, 0.2);">Clear Filters</a>
+    {% endif %}
+  </form>
+</div>
+
+<!-- Data Table -->
+<div class="card" style="padding: 0; overflow: hidden; border-radius: var(--radius-md);">
+  <div class="table-container" style="border: none; border-radius: 0;">
+    <table class="data-table ol-table">
+      <thead>
+        <tr>
+          <th>Order ID</th>
+          <th>Order Date</th>
+          <th>Customer Account</th>
+          <th>Gateway</th>
+          <th>Payment</th>
+          <th>Fulfillment</th>
+          <th style="text-align: right;">Total Amount</th>
+          <th style="text-align: right; width: 120px;">Actions</th>
+        </tr>
+      </thead>
+      <tbody>
+        {% for order in page_obj %}
+          <tr style="animation: fadeInUp 0.3s ease; animation-fill-mode: both; animation-delay: {% widthratio forloop.counter0 1 25 %}ms;">
+            <td>
+              <a href="{% url 'admin_order_detail' order.order_number %}" class="ol-order-number">
+                #{{ order.order_number }}
+              </a>
+            </td>
+            <td style="font-size: 13px; color: var(--color-text-muted);">
+              {{ order.created_at|date:"Y-m-d H:i" }}
+            </td>
+            <td>
+              <div class="ol-customer-cell">
+                <div class="ol-customer-avatar">
+                  {{ order.user.username|slice:":2"|upper }}
+                </div>
+                <div>
+                  <div class="ol-customer-name">{{ order.user.first_name }} {{ order.user.last_name|default:'' }}</div>
+                  <div class="ol-customer-email">{{ order.user.email }}</div>
+                </div>
+              </div>
+            </td>
+            <td>
+              <span class="ol-payment-method">{{ order.get_payment_method_display }}</span>
+            </td>
+            <td>
+              <span class="ol-pay-badge {% if order.payment_status == 'paid' %}ol-pay-paid{% elif order.payment_status == 'pending' %}ol-pay-pending{% else %}ol-pay-failed{% endif %}">
+                ● {{ order.get_payment_status_display }}
+              </span>
+            </td>
+            <td>
+              <span class="ol-badge {{ order.order_status }}">
+                {{ order.get_order_status_display }}
+              </span>
+            </td>
+            <td style="text-align: right;" class="ol-price-cell">
+              ₹{{ order.total }}
+            </td>
+            <td>
+              <div style="display: flex; justify-content: flex-end;">
+                <a href="{% url 'admin_order_detail' order.order_number %}" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 12.5px; border-radius: var(--radius-sm);">
+                  Manage
+                </a>
+              </div>
+            </td>
+          </tr>
+        {% empty %}
+          <tr>
+            <td colspan="8" style="text-align: center; color: var(--color-text-muted); padding: 50px 0;">
+              <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); opacity: 0.5; margin-bottom: 12px; display: block;">shopping_cart</span>
+              <div style="font-weight: 600; font-size: 15px;">No client orders logged.</div>
+              <div style="font-size: 13px; margin-top: 4px;">Adjust filters or check back later.</div>
+            </td>
+          </tr>
+        {% endfor %}
+      </tbody>
+    </table>
+  </div>
+  
+  {% if page_obj.has_other_pages %}
+    <div style="padding: 16px 20px; display: flex; align-items: center; justify-content: space-between; border-top: 1px solid var(--color-border); background-color: var(--color-bg-card);">
+      <span style="font-size: 13px; color: var(--color-text-muted);">
+        Showing {{ page_obj.start_index }} to {{ page_obj.end_index }} of {{ page_obj.paginator.count }} orders
+      </span>
+      <div style="display: flex; gap: 8px;">
+        {% if page_obj.has_previous %}
+          <a href="?page={{ page_obj.previous_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 13px;">Previous</a>
+        {% endif %}
+        {% if page_obj.has_next %}
+          <a href="?page={{ page_obj.next_page_number }}{% if search_query %}&search={{ search_query }}{% endif %}{% if status_filter %}&status={{ status_filter }}{% endif %}" class="btn btn-secondary btn-sm" style="padding: 6px 12px; font-size: 13px;">Next</a>
+        {% endif %}
+      </div>
+    </div>
+  {% endif %}
+</div>
+
+<script>
+  // Dynamically count fulfillment states on client-side
+  (function() {
+    let rows = document.querySelectorAll('.ol-table tbody tr');
+    let pending = 0;
+    let delivered = 0;
+    let paid = 0;
+    
+    rows.forEach(function(row) {
+      // Check status badges
+      let badge = row.querySelector('.ol-badge');
+      if (badge) {
+        if (badge.classList.contains('pending') || badge.classList.contains('processing') || badge.classList.contains('confirmed')) {
+          pending++;
+        }
+        if (badge.classList.contains('delivered')) {
+          delivered++;
+        }
+      }
+      // Check payment
+      let payBadge = row.querySelector('.ol-pay-badge');
+      if (payBadge && payBadge.classList.contains('ol-pay-paid')) {
+        paid++;
+      }
+    });
+    
+    let pc = document.getElementById('pending-count');
+    let dc = document.getElementById('delivered-count');
+    let pac = document.getElementById('paid-count');
+    if (pc) pc.textContent = pending;
+    if (dc) dc.textContent = delivered;
+    if (pac) pac.textContent = paid;
+  })();
+</script>
 {% endblock %}
+

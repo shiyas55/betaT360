@@ -1,0 +1,819 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title> - TechnoStore360</title>
+  <meta name="description" content="Premium B2B Technology Marketplace. Compare software, hardware, cloud, security, and AI tools, request demos, and get quotes.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="../static/css/styles.css">
+  
+  
+</head>
+<body>
+
+  <div class="site-shell">
+    
+    <!-- Header component -->
+    
+<!-- TOP UTILITY BAR -->
+<div class="utility-bar">
+  <div class="utility-bar__inner">
+    <div class="utility-bar__group">
+      <button class="utility-pill" type="button">English</button>
+
+      <div class="currency-picker">
+        <button class="utility-pill currency-picker__trigger" type="button">
+          <i data-lucide="globe" style="width: 0.95rem; height: 0.95rem; color: var(--muted);"></i>
+          <span>India</span>
+        </button>
+      </div>
+
+      <div class="currency-picker">
+        <button class="utility-pill currency-picker__trigger" type="button">
+          <span>USD ($)</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="utility-bar__group" style="gap: 1.25rem;">
+      <a href="reseller_dashboard.html" class="utility-pill"
+        style="text-decoration: none; color: inherit;">Become a Partner</a>
+      
+      <a href="admin_home.html" class="utility-pill" style="text-decoration: none; color: inherit;">Admin
+        Console</a>
+      
+      <a href="admin_login.html" class="utility-pill" style="text-decoration: none; color: inherit;">Workspace
+        Portal</a>
+      
+    </div>
+  </div>
+</div>
+
+<!-- MASTHEAD HEADER -->
+<header class="masthead" id="app-header">
+  <div class="masthead__inner">
+
+    <!-- Logo Branding -->
+    <a class="storemark" href="home.html" style="text-decoration: none;">
+      <span class="storemark__title">TECHNO<br />STORE<span>360</span></span>
+      <span class="storemark__tag">Empowering Diversity in Tech</span>
+    </a>
+
+    <!-- Middle Navigation Menu -->
+    <nav class="masthead__nav desktop-only">
+      <ul class="masthead__nav-list">
+        <li class="masthead__nav-item">
+          <a href="product_list.html?category=software-solutions" class="masthead__nav-link">Products <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="product_list.html" class="masthead__nav-link">Categories <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="solution_packages.html" class="masthead__nav-link">Solutions <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="product_compare.html" class="masthead__nav-link">Compare</a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="reseller_dashboard.html" class="masthead__nav-link">Vendors</a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="demo_request.html" class="masthead__nav-link">Support <i data-lucide="chevron-down"></i></a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Right Masthead actions -->
+    <div class="masthead-actions">
+
+      <!-- Search trigger icon (Desktop) -->
+      <button class="header-search-trigger desktop-only" onclick="window.location.href='product_list.html';"
+        title="Search">
+        <i data-lucide="search" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
+      </button>
+
+      <!-- Vertical Divider -->
+      <div class="header-divider desktop-only"></div>
+
+      <!-- Globe & Country selector (Desktop) -->
+      <button class="header-country-btn desktop-only" type="button">
+        <i data-lucide="globe" style="width: 1.05rem; height: 1.05rem; color: var(--slate-700);"></i>
+        <span>India</span>
+        <i data-lucide="chevron-down" style="width: 0.75rem; height: 0.75rem; color: var(--slate-500);"></i>
+      </button>
+
+      <!-- Cart indicator link -->
+      <a href="cart_detail.html" class="header-signin-btn"
+        style="position: relative; margin-right: 0.5rem; text-decoration: none;">
+        <i data-lucide="shopping-cart" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
+        <span id="compare-badge-count" class="badge-pop"
+          style="position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; border-radius: 50%; font-size: 0.6rem; padding: 0.1rem 0.3rem; font-weight: bold; display: inline-blocknone;">
+          
+        </span>
+      </a>
+
+      <!-- Sign-in Link (Desktop) -->
+      
+      <a href="customer_dashboard.html" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="logout.html" class="header-signin-btn desktop-only"
+        style="text-decoration: none; color: var(--accent); margin-left: 0.5rem;" title="Sign Out">
+        <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+      </a>
+      
+      <a href="login.html" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Sign In</span>
+      </a>
+      
+
+      <!-- Get Free Demo (Desktop) -->
+      <a href="demo_request.html" class="header-demo-btn desktop-only" style="text-decoration: none;">
+        Get Free Demo
+      </a>
+
+      <!-- Mobile Hamburger -->
+      <button class="hamburger-button" onclick="toggleMobileNav()" aria-label="Open menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile navigation panel -->
+  <nav class="mobile-nav" id="mobile-nav-panel">
+    <!-- Header with Close toggle for side-drawer -->
+    <div
+      style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1.25rem 1rem 1.25rem; border-bottom: 1px solid var(--line);">
+      <span
+        style="font-weight: 800; font-family: var(--font-heading); font-size: 1.1rem; color: var(--slate-900);">Navigation</span>
+      <button type="button" onclick="toggleMobileNav()"
+        style="background: none; border: none; cursor: pointer; color: var(--slate-500); font-size: 1.75rem; font-weight: 300; line-height: 1; outline: none;">&times;</button>
+    </div>
+
+    <!-- Mobile Search input -->
+    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--line);">
+      <form method="GET" action="product_list.html"
+        style="position: relative; display: flex; align-items: center;">
+        <i data-lucide="search"
+          style="position: absolute; left: 0.75rem; color: var(--slate-400); width: 1rem; height: 1rem;"></i>
+        <input type="text" name="search" placeholder="Search products, brands..."
+          style="width: 100%; padding: 0.55rem 0.55rem 0.55rem 2.25rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem; outline: none; background-color: var(--slate-50); min-height: 40px;">
+      </form>
+    </div>
+
+    <ul class="mobile-nav__list" style="flex: 1; overflow-y: auto;">
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_list.html"><span
+            class="mobile-nav__label">Products</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_list.html"><span
+            class="mobile-nav__label">Categories</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="solution_packages.html"><span
+            class="mobile-nav__label">Solutions</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_compare.html"><span
+            class="mobile-nav__label">Compare</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="reseller_dashboard.html"><span
+            class="mobile-nav__label">Vendors</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="demo_request.html"><span
+            class="mobile-nav__label">Support</span></a></li>
+      <li class="mobile-nav__item"
+        style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--line);">
+        
+        <a href="customer_dashboard.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="logout.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; color: var(--accent); min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+          <span>Sign Out</span>
+        </a>
+        
+        <a href="login.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Sign In</span>
+        </a>
+        
+        <a href="demo_request.html" class="header-demo-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center;">
+          Get Free Demo
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+    <!-- Dynamic alert alerts -->
+    
+      <div id="toast-container" class="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
+        
+          <div class="toast-notification toast- flex items-center space-x-3 px-4 py-3 rounded-xl border shadow-md font-nav-link text-xs font-semibold" style="display: flex; align-items: center; gap: 10px; background: #d1e7dd#f8d7da#fff3cd; color: #0f5132#842029#664d03; border: 1px solid #badbcc#f5c2c7#ffecb5;">
+            <span></span>
+          </div>
+        
+      </div>
+      <script>
+        setTimeout(() => {
+          const container = document.getElementById('toast-container');
+          if (container) {
+            container.style.opacity = '0';
+            container.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => container.remove(), 500);
+          }
+        }, 4000);
+      </script>
+    
+
+    <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+    <main class="site-main" id="app-container">
+      
+<div style="padding-top: 0.5rem; padding-bottom: 4rem;">
+  
+  <!-- Breadcrumb -->
+  <div style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--slate-500);">
+    <a href="home.html" style="color: inherit; text-decoration: none;">Home</a> &gt; 
+    <a href="product_list.html" style="color: inherit; text-decoration: none;">Catalog</a> &gt; 
+    <a href="product_list.html?brand=" style="color: inherit; text-decoration: none;"></a> &gt; 
+    <span></span>
+  </div>
+
+  <!-- Main Columns Grid -->
+  <div class="detail-layout">
+    
+    <!-- Left details pane -->
+    <div class="detail-left-pane">
+      
+      <!-- Product Title Banner -->
+      <div class="detail-title-banner" style="display: flex; align-items: start; gap: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--slate-200);">
+        <div style="width: 4.5rem; height: 4.5rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center; background-color: var(--white); flex-shrink: 0; box-shadow: var(--shadow-sm); overflow: hidden; padding: 0.25rem;">
+          
+            <img src="" style="width: 100%; height: 100%; object-fit: contain;" alt="">
+          
+            
+              <img src="" style="width: 100%; height: 100%; object-fit: contain;" alt="">
+            
+              <img src="" style="width: 100%; height: 100%; object-fit: contain;" alt="">
+            
+          
+            <img src="../static/assets/zoho.png" style="width: 100%; height: 100%; object-fit: contain;" alt="">
+          
+        </div>
+        <div>
+          <div style="display: flex; gap: 0.35rem; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap;">
+            <span class="badge" style="background-color: rgba(255, 20, 100, 0.08); color: var(--accent); border: none; font-size: 0.65rem; padding: 0.2rem 0.6rem; letter-spacing: 0.5px; margin: 0; font-weight: 700;"> VERIFIED PARTNER</span>
+            
+              <span class="badge" style="background-color: rgba(0, 82, 255, 0.08); color: var(--primary-blue); font-size: 0.65rem; font-weight: 700; border: none; border-radius: 4px; padding: 0.2rem 0.6rem;"><i data-lucide="video" style="width: 0.75rem; display: inline-block; vertical-align: text-top; margin-right: 2px;"></i> Sandbox Enabled</span>
+            
+          </div>
+          <h1 style="font-size: 1.85rem; line-height: 1.2; font-weight: 800; color: var(--slate-900); margin: 0;"></h1>
+          
+          <!-- Review Row -->
+          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.82rem; flex-wrap: wrap; color: var(--slate-500); font-weight: 500;">
+            <div style="display: flex; align-items: center; gap: 0.15rem; color: #f59e0b;">
+              <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
+            </div>
+            <strong style="color: var(--slate-900); font-weight: 700;"></strong>
+            <span>( Reviews)</span>
+            <span style="color: var(--slate-300);">|</span>
+            <span>10K+ Businesses Trust </span>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4-Column Trust checklist strip -->
+      <div class="trust-checklist-strip">
+        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
+          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="shield-check" style="width: 1.25rem; height: 1.25rem;"></i></div>
+          <div class="trust-strip-text">
+            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Official License</h4>
+            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">100% Genuine</p>
+          </div>
+        </div>
+        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
+          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="zap" style="width: 1.25rem; height: 1.25rem;"></i></div>
+          <div class="trust-strip-text">
+            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Instant Delivery</h4>
+            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">Digital Access</p>
+          </div>
+        </div>
+        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
+          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="headset" style="width: 1.25rem; height: 1.25rem;"></i></div>
+          <div class="trust-strip-text">
+            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">24/7 Support</h4>
+            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">Expert Assistance</p>
+          </div>
+        </div>
+        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
+          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="lock" style="width: 1.25rem; height: 1.25rem;"></i></div>
+          <div class="trust-strip-text">
+            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Secure Payment</h4>
+            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">SSL Encrypted</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- Left Media showcase container -->
+      <div class="showcase-media-container" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; aspect-ratio: 16/9; background-color: var(--slate-50); border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;">
+        
+          <img src="" alt="" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
+        
+          
+            <img src="" alt="" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
+          
+            <img src="" alt="" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
+          
+        
+          <img src="../static/assets/zoho.png" alt="" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
+        
+      </div>
+
+      <!-- Tabs Nav -->
+      <div class="tabs-nav" style="display: flex; border-bottom: 2px solid var(--slate-200); margin-bottom: 1.5rem; gap: 1rem;">
+        <button type="button" class="tab-btn active" onclick="switchDetailTab('overview', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Overview</button>
+        <button type="button" class="tab-btn" onclick="switchDetailTab('features', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Key Features</button>
+        <button type="button" class="tab-btn" onclick="switchDetailTab('pricing', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Specs & Info</button>
+        <button type="button" class="tab-btn" onclick="switchDetailTab('reviews', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Reviews ()</button>
+      </div>
+
+      <!-- Tab Content Panels -->
+      <div class="tab-panels-wrapper">
+        
+        <!-- Tab 1: Overview -->
+        <div class="tab-content-panel active" id="detail-tab-overview">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Product Summary</h3>
+          <p style="color: var(--slate-600); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.85rem;"></p>
+          
+          <!-- Pros & Cons -->
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Vendor Assessment</h3>
+          <div class="vendor-assessment-grid" style="margin-bottom: 1.5rem;">
+            <div style="background-color: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 1rem;">
+              <h4 style="color: var(--primary-green); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-up" style="width: 0.95rem;"></i> Highlighted Pros</h4>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
+                
+                  <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> </li>
+                
+                  <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> Industry leader performance standards</li>
+                
+              </ul>
+            </div>
+            <div style="background-color: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); padding: 1rem;">
+              <h4 style="color: #ef4444; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-down" style="width: 0.95rem;"></i> Considerations</h4>
+              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
+                <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="alert-circle" style="color: #ef4444; width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> Enterprise configuration pathway required</li>
+                <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="alert-circle" style="color: #ef4444; width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> B2B domain verification required for registration</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+
+        <!-- Tab 2: Features -->
+        <div class="tab-content-panel" id="detail-tab-features" style="display:none;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Core Capabilities</h3>
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0; margin-bottom: 1.5rem;">
+            
+              <li style="display: flex; gap: 0.75rem; align-items: start; padding: 0.75rem; background-color: var(--slate-50); border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
+                <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">0</span>
+                <div>
+                  <h4 style="font-size: 0.85rem; margin: 0 0 0.15rem 0; color: var(--slate-900); font-weight: 700;"></h4>
+                </div>
+              </li>
+            
+              <li style="font-size: 0.8rem; color: var(--slate-500);">No specific features listed. Contact sales for details.</li>
+            
+          </ul>
+        </div>
+
+        <!-- Tab 3: Specs -->
+        <div class="tab-content-panel" id="detail-tab-pricing" style="display:none;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Technical Specifications</h3>
+          <div style="border: 1px solid var(--slate-200); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem;">
+            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
+              <tbody>
+                <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
+                  <td style="padding: 0.75rem; font-weight: 700; width: 180px; color: var(--slate-600);">Deployment Model</td>
+                  <td style="padding: 0.75rem; color: var(--slate-800);"></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--slate-200);">
+                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">Business Size Class</td>
+                  <td style="padding: 0.75rem; color: var(--slate-800);"></td>
+                </tr>
+                <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
+                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SLA Technical Support</td>
+                  <td style="padding: 0.75rem; color: var(--slate-800);"></td>
+                </tr>
+                <tr style="border-bottom: none;">
+                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SKU Code</td>
+                  <td style="padding: 0.75rem; color: var(--slate-800); font-family: monospace;"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- Tab 4: Reviews -->
+        <div class="tab-content-panel" id="detail-tab-reviews" style="display:none;">
+          <h3 style="font-size: 1.15rem; margin-bottom: 1rem; font-weight: 800;">Customer Reviews</h3>
+          
+          <div class="review-score-grid" style="margin-bottom: 2rem; align-items: center;">
+            <div class="review-summary-left">
+              <div style="font-size: 3rem; font-weight: 800; color: var(--slate-900); line-height: 1;"></div>
+              <div style="display: flex; justify-content: center; gap: 0.15rem; color: #f59e0b; margin-top: 0.5rem; margin-bottom: 0.25rem;">
+                <i data-lucide="star" style="width: 1.25rem; height: 1.25rem; fill: currentColor;"></i>
+              </div>
+              <div style="font-size: 0.75rem; color: var(--slate-500); font-weight: 600;">Based on  reviews</div>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
+              
+                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
+                  <span style="width: 50px; text-align: right; color: var(--slate-600); font-weight: 600;"> stars</span>
+                  <div style="flex: 1; background-color: var(--slate-100); height: 8px; border-radius: 4px; overflow: hidden;">
+                    <div style="background-color: #f59e0b; width: %; height: 100%;"></div>
+                  </div>
+                  <span style="width: 35px; color: var(--slate-400);">%</span>
+                </div>
+              
+            </div>
+          </div>
+
+          <!-- Add Review Form -->
+          
+            <div class="card" style="padding: 1.25rem; border-radius: var(--radius-md); border: 1px dashed var(--slate-300); margin-bottom: 2rem; background-color: var(--slate-50);">
+              <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 0.75rem;">Write a Corporate Review</h4>
+              <form method="POST" action="submit_review.html">
+                
+                <div class="form-group" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
+                  <label style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700);">Rating Score:</label>
+                  <select name="rating" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border: 1px solid var(--slate-200); border-radius: 4px;">
+                    <option value="5">5 Stars (Excellent)</option>
+                    <option value="4">4 Stars (Good)</option>
+                    <option value="3">3 Stars (Average)</option>
+                    <option value="2">2 Stars (Poor)</option>
+                    <option value="1">1 Star (Very Poor)</option>
+                  </select>
+                </div>
+                <div class="form-group" style="margin-bottom: 1rem;">
+                  <textarea name="comment" rows="3" required placeholder="Write your verified procurement experience, deployment speeds, or SLA comments..." style="width:100%; padding: 0.5rem; font-size: 0.75rem; border: 1px solid var(--slate-200); border-radius: 4px; resize: vertical;"></textarea>
+                </div>
+                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">Submit Review</button>
+              </form>
+            </div>
+          
+
+          <!-- Review List -->
+          <div style="display: flex; flex-direction: column; gap: 1rem;">
+            
+              <div style="border-bottom: 1px solid var(--slate-100); padding-bottom: 1rem;">
+                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.35rem;">
+                  <div>
+                    <h5 style="font-size: 0.85rem; font-weight: 700; margin: 0; color: var(--slate-900);"></h5>
+                    <span style="font-size: 0.7rem; color: var(--slate-400);"></span>
+                  </div>
+                  <div style="display: flex; gap: 0.25rem; align-items: center;">
+                    <div style="display: flex; color: #f59e0b;">
+                      <i data-lucide="star" style="width: 0.8rem; height: 0.8rem; fill: currentColor;"></i>
+                    </div>
+                    <span style="font-size: 0.75rem; font-weight: 700; color: #d97706;">.0</span>
+                  </div>
+                </div>
+                <p style="font-size: 0.8rem; color: var(--slate-600); margin: 0.25rem 0; line-height: 1.4;"></p>
+                
+                  <span class="badge" style="font-size: 0.6rem; background-color: rgba(16, 185, 129, 0.08); color: var(--primary-green); border-radius: 4px; padding: 0.1rem 0.35rem; font-weight: bold;"><i data-lucide="check-circle" style="width:0.6rem; height:0.6rem; display:inline-block; vertical-align:text-top;"></i> Verified Purchase</span>
+                
+              </div>
+            
+              <div style="font-size: 0.8rem; color: var(--slate-400); text-align: center; padding: 1.5rem 0;">No reviews yet. Be the first to review!</div>
+            
+          </div>
+        </div>
+        </div>
+
+        <!-- Product FAQ Section -->
+        <div id="product-faq-section" class="card" style="padding: 1.5rem; margin-top: 2rem; border-radius: var(--radius-lg); border: 1px solid var(--slate-200); background-color: var(--white); display: none;">
+            <div style="display: flex; align-items: center; gap: 0.5rem; margin-bottom: 1.25rem;">
+                <i data-lucide="help-circle" style="width: 1.25rem; height: 1.25rem; color: var(--primary-color);"></i>
+                <h3 style="font-size: 1.15rem; font-family: var(--font-display); font-weight: 800; color: var(--slate-900); margin: 0;">Frequently Asked Questions</h3>
+            </div>
+            <div id="faq-display-container">
+                <!-- FAQs will be loaded here via JS -->
+            </div>
+        </div>
+
+
+      </div>
+
+    </div>
+
+    <!-- Right Column: Sidebar (Pricing, Actions, and Alternatives) -->
+    <aside class="detail-aside" style="display: flex; flex-direction: column; gap: 1.5rem;">
+      
+      <!-- Procurement Action Card -->
+      <div class="card" style="padding: 1.5rem; border-radius: var(--radius-lg); background-color: var(--white); border-color: var(--slate-200);">
+        
+        <div style="margin-bottom: 1.25rem;">
+          <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Procurement Starting at</span>
+          <div style="display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.15rem;">
+            <span id="detail-price-value" style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">
+              
+                INR 
+              
+                Get Quote
+              
+            </span>
+            <span id="detail-price-period" style="font-size: 0.75rem; color: var(--slate-400);">/ month</span>
+          </div>
+          
+            <div style="font-size: 0.75rem; color: var(--error-red); font-weight: 600; margin-top: 0.15rem;">
+              Regular price: <span style="text-decoration: line-through;">INR </span> (Save %)
+            </div>
+          
+        </div>
+
+        <hr style="border: none; border-top: 1px solid var(--slate-100); margin: 0 0 1.25rem 0;">
+
+        <!-- Stock Status -->
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
+          <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-500);">Inventory Level:</span>
+          
+            <span style="font-size: 0.75rem; color: var(--primary-green); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--primary-green); display: inline-block;"></span> In Stock ( left)
+            </span>
+          
+            <span style="font-size: 0.75rem; color: #d97706; font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #f59e0b; display: inline-block;"></span> Low Stock ( left)
+            </span>
+          
+            <span style="font-size: 0.75rem; color: var(--error-red); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
+              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--error-red); display: inline-block;"></span> Out of Stock
+            </span>
+          
+        </div>
+
+        <!-- Forms for Add to Cart -->
+        
+          <form method="POST" action="cart_add.html" style="display: flex; flex-direction: column; gap: 0.75rem;">
+            
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">Billing Cycle:</span>
+              <select name="plan" id="detail-plan-select" style="border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none; direction: rtl; cursor: pointer; color: var(--slate-900);">
+                <option value="monthly">Monthly Plan</option>
+                <option value="yearly">Yearly Plan (Save 10%)</option>
+              </select>
+            </div>
+            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
+              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">User Licenses:</span>
+              <input type="number" name="quantity" value="1" min="1" max="" style="width: 60px; border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none;">
+            </div>
+            
+            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem;">
+              Add to Procurement Cart
+            </button>
+            <button type="submit" name="buy_now" value="true" class="btn btn-secondary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem; background-color: var(--slate-900); color: white; border-color: var(--slate-900);">
+              Buy Now
+            </button>
+          </form>
+        
+          <button class="btn btn-primary btn-sm" disabled style="width: 100%; padding: 0.65rem;">Out of Stock</button>
+        
+
+        <!-- Compare and Wishlist actions stacked -->
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
+          <!-- Compare Matrix Button -->
+          
+            <a href="product_compare.html?action=remove&sku=" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+              <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i> Compared
+            </a>
+          
+            <a href="product_compare.html?action=add&sku=" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+              <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i> Compare Spec
+            </a>
+          
+
+          <!-- Wishlist Button -->
+          
+            
+              <a href="wishlist_remove.html" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; color: var(--error-red); border-color: var(--error-red);">
+                <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem; fill: currentColor;"></i> Saved
+              </a>
+            
+              <a href="wishlist_add.html" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+                <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack
+              </a>
+            
+          
+            <a href="login.html?next=" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
+              <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack
+            </a>
+          
+        </div>
+
+      </div>
+
+    </aside>
+
+  </div>
+
+  <!-- Related Alternatives Section -->
+  <div style="margin-top: 2rem; border-top: 1px solid var(--slate-200); padding-top: 1.5rem;">
+    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--slate-900);">Alternatives & Solutions</h3>
+    <div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.5rem; padding: 0.5rem 0.25rem 1.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: thin; -ms-overflow-style: -ms-autohiding-scrollbar;">
+      
+        <div style="flex: 0 0 280px; scroll-snap-align: start; display: flex; flex-direction: column;">
+          
+        </div>
+      
+        <div style="font-size: 0.85rem; color: var(--slate-400); text-align: center; width: 100%; padding: 2rem 0;">No related alternatives found.</div>
+      
+    </div>
+  </div>
+</div>
+
+    </main>
+
+    <!-- Footer component -->
+    <!-- GLOBAL TECHNO FOOTER -->
+<footer class="techno-footer">
+  <div class="techno-footer__inner techno-footer__top">
+    
+    <div class="techno-footer__brand">
+      <div class="storemark storemark--footer">
+        <span class="storemark__title" style="color: white;">TECHNO<br/>STORE<span style="color: var(--accent);">360</span></span>
+        <span class="storemark__tag" style="color: rgba(255,255,255,0.65);">Empowering Diversity in Tech</span>
+      </div>
+      <p style="margin-top: 1rem; color: rgba(255,255,255,0.75);">sales@technostore360.com</p>
+      <p style="color: rgba(255,255,255,0.75);">Kinfra Tech Park, Kakkanchery, Kerala, India</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.45);">Instagram | Twitter | Facebook | LinkedIn</p>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">Categories <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="product_list.html?category=software-solutions" style="color: inherit; text-decoration: none;">Software Brands</a></p>
+        <p><a href="product_list.html?category=hardware-products" style="color: inherit; text-decoration: none;">Hardware Products</a></p>
+        <p><a href="product_list.html?category=cloud-security" style="color: inherit; text-decoration: none;">Cloud & Security</a></p>
+        <p><a href="product_list.html?category=ai-tools" style="color: inherit; text-decoration: none;">AI Automation</a></p>
+        <p><a href="product_list.html?category=it-services" style="color: inherit; text-decoration: none;">On-demand IT Services</a></p>
+      </div>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">Business <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="reseller_dashboard.html" style="color: inherit; text-decoration: none;">Become a Partner</a></p>
+        <p><a href="reseller_dashboard.html" style="color: inherit; text-decoration: none;">Affiliate Program</a></p>
+        <p><a href="admin_login.html" style="color: inherit; text-decoration: none;">Admin Workspace</a></p>
+        <p><a href="demo_request.html" style="color: inherit; text-decoration: none;">Schedule B2B Demo</a></p>
+      </div>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">About <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">About TechnoStore360</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Blog & Case Studies</a></p>
+        <p><a href="demo_request.html" style="color: inherit; text-decoration: none;">Contact Support</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Return and Refund Policy</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Privacy Policy</a></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OFFICES SECTION -->
+  <div class="techno-footer__offices">
+    <div class="techno-footer__inner techno-footer__inner--offices">
+      
+      <div class="office-card">
+        <span class="office-card__index">1</span>
+        <div>
+          <h5>India Office</h5>
+          <p>+91 96337 06212</p>
+          <p>sales@technostore360.com</p>
+          <p>Kinfra Tech Park, Kakkanchery, Kerala</p>
+        </div>
+      </div>
+
+      <div class="office-card">
+        <span class="office-card__index">2</span>
+        <div>
+          <h5>UAE Office</h5>
+          <p>+971 4 2766 345</p>
+          <p>sales@technostore360.com</p>
+          <p>Latifa Tower, 17th Floor, Sheikh Zayed Road, Dubai</p>
+        </div>
+      </div>
+
+      <div class="office-card">
+        <span class="office-card__index">3</span>
+        <div>
+          <h5>Oman Office</h5>
+          <p>+968 7904 0022</p>
+          <p>sales@technostore360.com</p>
+          <p>2nd Floor, Tamimah Building, Al Wattayah, Muscat</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TRUST & COPYRIGHT BASE -->
+  <div class="techno-footer__base">
+    <div class="techno-footer__inner techno-footer__inner--base">
+      <div class="trust-row">
+        <span>BBB Accredited</span>
+        <span>Norton Secured</span>
+        <span>Verified Business</span>
+        <span>Trusted Commerce</span>
+      </div>
+      <p style="margin-top: 1rem; color: rgba(255,255,255,0.45); font-size: 0.75rem;">&copy; 2026 TechnoStore360. Empowering Diversity in Tech. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleFooterSection(element) {
+    if (window.innerWidth <= 768) {
+      const column = element.closest('.techno-footer__column');
+      column.classList.toggle('active');
+    }
+  }
+</script>
+
+
+  </div>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top-btn" aria-label="Back to top">
+    <i data-lucide="arrow-up" style="width: 1.25rem; height: 1.25rem;"></i>
+  </button>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Static App JS interactions -->
+  <script src="../static/js/app.js"></script>
+
+  
+<script>
+  function switchDetailTab(tabName, btn) {
+    // Reset active buttons
+    btn.parentNode.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+    
+    // Hide all panels
+    const wrapper = btn.parentNode.parentNode;
+    wrapper.querySelectorAll('.tab-content-panel').forEach(panel => {
+      panel.style.display = 'none';
+      panel.classList.remove('active');
+    });
+    
+    // Show active panel
+    const activePanel = wrapper.querySelector(`#detail-tab-${tabName}`);
+    if (activePanel) {
+      activePanel.style.display = 'block';
+      activePanel.classList.add('active');
+    }
+  }
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const basePrice = parseFloat("");
+    const planSelect = document.getElementById('detail-plan-select');
+    const priceValue = document.getElementById('detail-price-value');
+    const pricePeriod = document.getElementById('detail-price-period');
+
+    if (planSelect && priceValue && pricePeriod && basePrice > 0) {
+      planSelect.addEventListener('change', function() {
+        if (this.value === 'yearly') {
+          const yearlyPrice = basePrice * 12 * 0.90;
+          priceValue.textContent = 'INR ' + yearlyPrice.toFixed(2);
+          pricePeriod.textContent = '/ year';
+        } else {
+          priceValue.textContent = 'INR ' + basePrice.toFixed(2);
+          pricePeriod.textContent = '/ month';
+        }
+      });
+    }
+  });
+</script>
+
+
+  <script>
+    // Initialize icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+<script src="/static/js/prototype.js"></script>
+</body>
+</html>

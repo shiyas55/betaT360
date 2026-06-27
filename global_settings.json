@@ -1,0 +1,14 @@
+{
+  "maintenance_mode": false,
+  "self_registration": true,
+  "auto_key_dispatch": true,
+  "slack_integration": false,
+  "debug_logs": false,
+  "base_currency": "INR",
+  "tax_rate": 18,
+  "shop_enabled": true,
+  "checkout_enabled": true,
+  "cart_enabled": true,
+  "website_logo": "/static/images/logo.png",
+  "admin_email": "support@techno360.com"
+}

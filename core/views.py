@@ -222,4 +222,6 @@ def demo_request(request):
     return render(request, 'core/demo.html', context)
 
 def reseller_dashboard(request):
+    if not request.user.is_authenticated:
+        return redirect('login')
     return render(request, 'core/reseller.html')

@@ -1,196 +1,527 @@
 {% extends 'dashboard/base.html' %}
 
-{% block title %}Manage Order {{ order.order_number }} - TechnoStore360 Admin{% endblock %}
+{% block title %}Order #{{ order.order_number }} Details — TechnoStore360 Admin{% endblock %}
 
-{% block admin_content %}
-<div class="space-y-6">
+{% block extra_css %}
+<style>
+  /* ════════════════════════════════════════
+     ADMIN ORDER DETAIL — REDESIGN
+     ════════════════════════════════════════ */
+
+  .od-grid {
+    display: grid;
+    grid-template-columns: 2.2fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
   
-  <div class="flex items-center justify-between flex-wrap gap-4">
-    <div>
-      <span class="text-xs text-slate-500 font-bold uppercase tracking-wider"><a href="{% url 'admin_orders' %}" class="hover:text-blue-600">Orders</a> &gt; Edit Order</span>
-      <h1 class="text-3xl font-extrabold text-slate-900 tracking-tight font-display mt-1">Order {{ order.order_number }}</h1>
-      <p class="text-xs text-slate-400 font-semibold mt-1">Placed on: {{ order.created_at|date:"Y-m-d H:i" }}</p>
-    </div>
-    <div>
-      <a href="{% url 'order_invoice' order.order_number %}" target="_blank" class="inline-flex items-center px-4 py-2 text-sm font-bold rounded-lg border border-slate-300 bg-white hover:bg-slate-50 text-slate-700 transition shadow-sm">
-        <span class="material-symbols-outlined mr-2 text-sm">print</span>
-        View Tax Invoice
-      </a>
+  .od-title-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 16px;
+    margin-bottom: 24px;
+  }
+
+  .od-title-left {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .od-btn-back {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    color: var(--color-text-dark);
+    text-decoration: none;
+    transition: all 0.2s ease;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .od-btn-back:hover {
+    background-color: var(--color-bg-main);
+    transform: translateX(-3px);
+  }
+
+  .od-title-text h1 {
+    font-family: var(--font-display);
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    letter-spacing: -0.5px;
+    margin: 0;
+  }
+
+  .od-title-text p {
+    font-size: 13px;
+    color: var(--color-text-muted);
+    margin-top: 2px;
+  }
+
+  /* Progress Stepper */
+  .od-stepper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    position: relative;
+    margin: 10px 0 32px 0;
+    padding: 0 10px;
+  }
+
+  .od-stepper::before {
+    content: '';
+    position: absolute;
+    top: 22px;
+    left: 40px;
+    right: 40px;
+    height: 4px;
+    background-color: var(--color-border);
+    z-index: 1;
+  }
+
+  .od-stepper-progress {
+    position: absolute;
+    top: 22px;
+    left: 40px;
+    height: 4px;
+    background-color: var(--color-success);
+    z-index: 2;
+    transition: width 0.4s ease;
+  }
+
+  .od-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    z-index: 3;
+    width: 80px;
+  }
+
+  .od-step-circle {
+    width: 44px;
+    height: 44px;
+    border-radius: 50%;
+    background-color: var(--color-bg-card);
+    border: 3px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-text-muted);
+    font-weight: 700;
+    transition: all 0.3s;
+  }
+
+  .od-step-circle .material-symbols-outlined {
+    font-size: 20px;
+  }
+
+  .od-step.active .od-step-circle {
+    border-color: var(--color-pink-primary);
+    background-color: var(--color-pink-light);
+    color: var(--color-pink-primary);
+    box-shadow: 0 0 0 4px rgba(226, 26, 97, 0.15);
+  }
+
+  .od-step.completed .od-step-circle {
+    border-color: var(--color-success);
+    background-color: rgba(16, 185, 129, 0.15);
+    color: var(--color-success);
+  }
+
+  .od-step-label {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    margin-top: 8px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: center;
+  }
+
+  .od-step.active .od-step-label {
+    color: var(--color-pink-primary);
+  }
+
+  .od-step.completed .od-step-label {
+    color: var(--color-text-dark);
+  }
+
+  /* Addresses Cards Grid */
+  .od-address-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+
+  .od-address-box {
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 18px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--color-text-dark);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .od-address-box strong {
+    font-size: 14.5px;
+    display: block;
+    margin-bottom: 6px;
+    color: var(--color-text-dark);
+    font-family: var(--font-display);
+  }
+
+  /* Stat details */
+  .od-details-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .od-details-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    padding-bottom: 8px;
+    border-bottom: 1px dashed var(--color-border);
+  }
+  
+  .od-details-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+  }
+  
+  .od-details-label {
+    font-weight: 600;
+    color: var(--color-text-muted);
+  }
+  
+  .od-details-value {
+    font-weight: 700;
+    color: var(--color-text-dark);
+  }
+
+  .od-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    margin-bottom: 16px;
+    color: var(--color-text-dark);
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+  }
+
+  .od-status-pill {
+    display: inline-flex;
+    padding: 4px 12px;
+    font-size: 11px;
+    font-weight: 800;
+    border-radius: 20px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    box-shadow: var(--shadow-sm);
+  }
+
+  .od-status-pending { background-color: #fffbeb; color: #d97706; }
+  .od-status-confirmed { background-color: #eff6ff; color: #1d4ed8; }
+  .od-status-processing { background-color: #e0e7ff; color: #4338ca; }
+  .od-status-shipped { background-color: #fdf2f8; color: #c026d3; }
+  .od-status-delivered { background-color: #ecfdf5; color: #059669; }
+  .od-status-cancelled { background-color: #fff5f5; color: #dc2626; }
+
+  /* Responsive media queries */
+  @media (max-width: 991px) {
+    .od-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .od-stepper {
+      flex-direction: column;
+      gap: 16px;
+      align-items: flex-start;
+      padding-left: 20px;
+    }
+    .od-stepper::before, .od-stepper-progress {
+      display: none;
+    }
+    .od-step {
+      flex-direction: row;
+      width: 100%;
+      gap: 12px;
+      align-items: center;
+    }
+    .od-step-label {
+      margin-top: 0;
+      text-align: left;
+    }
+    .od-address-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="od-title-row animate-fade-in">
+  <div class="od-title-left">
+    <a href="{% url 'admin_orders' %}" class="od-btn-back">
+      <span class="material-symbols-outlined">arrow_back</span>
+    </a>
+    <div class="od-title-text">
+      <h1>Order #{{ order.order_number }} Workspace</h1>
+      <p>Manage fulfillment state, review gateway details, and monitor customer items.</p>
     </div>
   </div>
+  <div>
+    <span class="od-status-pill od-status-{{ order.order_status }}">
+      {{ order.get_order_status_display }}
+    </span>
+  </div>
+</div>
 
-  <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
-    
-    <!-- Left column: update forms and items -->
-    <div class="lg:col-span-2 space-y-6">
+<!-- Progress Stepper component -->
+<div class="card" style="margin-bottom: 24px;">
+  {% with s=order.order_status %}
+    <div class="od-stepper">
+      <!-- Stepper Progress Line -->
+      <div class="od-stepper-progress" style="width: {% if s == 'confirmed' %}25%{% elif s == 'processing' %}50%{% elif s == 'shipped' %}75%{% elif s == 'delivered' %}100%{% elif s == 'cancelled' %}100%{% else %}0%{% endif %}; {% if s == 'cancelled' %}background-color: var(--color-danger);{% endif %}"></div>
       
-      <!-- Management Controls -->
-      <div class="bg-white shadow rounded-lg border border-slate-200 p-6 space-y-6">
-        <h3 class="text-lg font-bold text-slate-900 border-b border-slate-100 pb-3">Operational Status Panel</h3>
-        
-        <!-- Status and Tracking update Form -->
-        <form method="POST" action="{% url 'admin_order_status_update' order.order_number %}" class="space-y-4">
-          {% csrf_token %}
-          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div class="form-group">
-              <label for="status" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Fulfillment Status</label>
-              <select name="status" id="status" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-                <option value="pending" {% if order.order_status == 'pending' %}selected{% endif %}>Pending</option>
-                <option value="confirmed" {% if order.order_status == 'confirmed' %}selected{% endif %}>Confirmed</option>
-                <option value="processing" {% if order.order_status == 'processing' %}selected{% endif %}>Processing</option>
-                <option value="shipped" {% if order.order_status == 'shipped' %}selected{% endif %}>Shipped</option>
-                <option value="out_for_delivery" {% if order.order_status == 'out_for_delivery' %}selected{% endif %}>Out for Delivery</option>
-                <option value="delivered" {% if order.order_status == 'delivered' %}selected{% endif %}>Delivered</option>
-                <option value="cancelled" {% if order.order_status == 'cancelled' %}selected{% endif %}>Cancelled</option>
-              </select>
-            </div>
-            
-            <div class="form-group">
-              <label for="tracking_number" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Courier Tracking Number (DHL / FedEx)</label>
-              <input type="text" name="tracking_number" id="tracking_number" value="{{ order.tracking_number|default:'' }}" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="e.g. DHL9876543210">
-            </div>
-          </div>
-
-          <div class="form-group">
-            <label for="admin_notes" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Administrator / Vendor Notes</label>
-            <textarea name="admin_notes" id="admin_notes" rows="2" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm" placeholder="Notes seen by customer and sales representatives...">{{ order.admin_notes|default:'' }}</textarea>
-          </div>
-
-          <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-blue-600 hover:bg-blue-700 transition">
-            Save Status & Tracking
-          </button>
-        </form>
-        
-        <hr class="border-slate-100">
-
-        <!-- Payment Status update Form -->
-        <form method="POST" action="{% url 'admin_order_payment_update' order.order_number %}" class="flex items-end gap-4">
-          {% csrf_token %}
-          <div class="form-group flex-1">
-            <label for="payment_status" class="block text-xs font-bold text-slate-500 uppercase tracking-wider">Payment Status</label>
-            <select name="payment_status" id="payment_status" class="mt-1 block w-full rounded-md border-slate-300 shadow-sm focus:ring-blue-500 focus:border-blue-500 sm:text-sm">
-              <option value="pending" {% if order.payment_status == 'pending' %}selected{% endif %}>Pending</option>
-              <option value="paid" {% if order.payment_status == 'paid' %}selected{% endif %}>Paid</option>
-              <option value="failed" {% if order.payment_status == 'failed' %}selected{% endif %}>Failed</option>
-              <option value="refund_pending" {% if order.payment_status == 'refund_pending' %}selected{% endif %}>Refund Pending</option>
-              <option value="refunded" {% if order.payment_status == 'refunded' %}selected{% endif %}>Refunded</option>
-            </select>
-          </div>
-          <button type="submit" class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-bold rounded-md text-white bg-slate-800 hover:bg-slate-900 transition">
-            Update Payment
-          </button>
-        </form>
-      </div>
-
-      <!-- Items List -->
-      <div class="bg-white shadow rounded-lg border border-slate-200 overflow-hidden">
-        <h3 class="text-lg font-bold text-slate-900 p-6 border-b border-slate-100">Order Items</h3>
-        <div class="overflow-x-auto">
-          <table class="min-w-full divide-y divide-slate-200 text-left text-sm">
-            <thead class="bg-slate-50 text-slate-500 font-semibold text-xs">
-              <tr>
-                <th class="p-4">Item details</th>
-                <th class="p-4 text-right">Price</th>
-                <th class="p-4 text-center">Qty</th>
-                <th class="p-4 text-right">Total</th>
-              </tr>
-            </thead>
-            <tbody class="divide-y divide-slate-100">
-              {% for item in order.items.all %}
-                <tr class="hover:bg-slate-50 transition">
-                  <td class="p-4 flex items-center gap-3">
-                    <div class="w-8 h-8 rounded border border-slate-200 flex items-center justify-center bg-slate-50 text-slate-600 font-black flex-shrink-0 text-xs">
-                      {{ item.product.brand.name|slice:":1" }}
-                    </div>
-                    <div>
-                      <h4 class="font-bold text-slate-900 line-clamp-1">{{ item.product.name }}</h4>
-                      <span class="text-[10px] text-slate-400 font-semibold uppercase">SKU: {{ item.product.sku }} | Plan: {{ item.plan|title }}</span>
-                    </div>
-                  </td>
-                  <td class="p-4 text-right font-semibold text-slate-700">INR {{ item.price|floatformat:"2" }}</td>
-                  <td class="p-4 text-center font-bold text-slate-700">{{ item.quantity }}</td>
-                  <td class="p-4 text-right font-extrabold text-slate-900">INR {{ item.item_total|floatformat:"2" }}</td>
-                </tr>
-              {% endfor %}
-            </tbody>
-          </table>
+      <!-- Step 1: Pending -->
+      <div class="od-step {% if s != 'pending' and s != 'cancelled' %}completed{% elif s == 'pending' %}active{% else %}completed{% endif %}">
+        <div class="od-step-circle">
+          <span class="material-symbols-outlined">receipt_long</span>
         </div>
+        <div class="od-step-label">Pending</div>
+      </div>
+      
+      <!-- Step 2: Confirmed -->
+      <div class="od-step {% if s == 'processing' or s == 'shipped' or s == 'delivered' %}completed{% elif s == 'confirmed' %}active{% endif %}">
+        <div class="od-step-circle">
+          <span class="material-symbols-outlined">task_alt</span>
+        </div>
+        <div class="od-step-label">Confirmed</div>
       </div>
 
-    </div>
+      <!-- Step 3: Processing -->
+      <div class="od-step {% if s == 'shipped' or s == 'delivered' %}completed{% elif s == 'processing' %}active{% endif %}">
+        <div class="od-step-circle">
+          <span class="material-symbols-outlined">manufacturing</span>
+        </div>
+        <div class="od-step-label">Processing</div>
+      </div>
 
-    <!-- Right column: addresses & financial summary -->
-    <div class="space-y-6">
+      <!-- Step 4: Shipped -->
+      <div class="od-step {% if s == 'delivered' %}completed{% elif s == 'shipped' %}active{% endif %}">
+        <div class="od-step-circle">
+          <span class="material-symbols-outlined">local_shipping</span>
+        </div>
+        <div class="od-step-label">Shipped</div>
+      </div>
+
+      <!-- Step 5: Delivered/Cancelled -->
+      <div class="od-step {% if s == 'delivered' %}completed{% elif s == 'cancelled' %}active{% endif %}">
+        <div class="od-step-circle">
+          <span class="material-symbols-outlined">{% if s == 'cancelled' %}cancel{% else %}check_circle{% endif %}</span>
+        </div>
+        <div class="od-step-label">{% if s == 'cancelled' %}Cancelled{% else %}Delivered{% endif %}</div>
+      </div>
+    </div>
+  {% endwith %}
+</div>
+
+<div class="od-grid">
+  <!-- Left Side: Order Items and Address Info -->
+  <div style="display: flex; flex-direction: column; gap: 24px; min-width: 0;">
+    
+    <!-- Procured items card -->
+    <div class="card">
+      <h3 class="od-section-title">Procured Solutions</h3>
       
-      <!-- Buyer Information -->
-      <div class="bg-white shadow rounded-lg border border-slate-200 p-6 space-y-4">
-        <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2">Client Profile</h3>
-        <div class="text-xs text-slate-600 space-y-2">
-          <div><strong>Buyer Name:</strong> {{ order.billing_address.full_name }}</div>
-          <div><strong>Corporate Email:</strong> {{ order.user.email }}</div>
-          <div><strong>Company Phone:</strong> {{ order.billing_address.phone }}</div>
-          {% if order.customer_notes %}
-            <div class="bg-slate-50 p-2.5 rounded border border-slate-200 mt-2 font-semibold">
-              <strong class="text-slate-800">Customer Requirements:</strong>
-              <p class="mt-1 font-normal italic">{{ order.customer_notes }}</p>
+      <div class="table-container">
+        <table class="data-table">
+          <thead>
+            <tr>
+              <th>Product Details</th>
+              <th>Billing Plan</th>
+              <th style="text-align: center;">Quantity</th>
+              <th style="text-align: right;">Unit Cost</th>
+              <th style="text-align: right;">Total</th>
+            </tr>
+          </thead>
+          <tbody>
+            {% for item in items %}
+              <tr>
+                <td>
+                  <div style="font-weight: 700; color: var(--color-text-dark);">{{ item.product.name }}</div>
+                  <div style="font-size: 11px; color: var(--color-text-muted); margin-top: 2px;">
+                    SKU: <span style="font-family: monospace; font-weight: 600;">{{ item.product.sku }}</span> | Fam: {{ item.product.category.name }}
+                  </div>
+                </td>
+                <td>
+                  <span style="font-size: 11px; font-weight: 800; text-transform: uppercase; background-color: var(--color-bg-main); color: var(--color-text-dark); padding: 3px 8px; border-radius: 20px;">
+                    {{ item.plan|default:"one-time" }}
+                  </span>
+                </td>
+                <td style="text-align: center; font-weight: 700;">{{ item.quantity }}</td>
+                <td style="text-align: right; font-weight: 600;">₹{{ item.price }}</td>
+                <td style="text-align: right; font-weight: 800; font-family: monospace;" class="text-primary">
+                  ₹{{ item.item_total }}
+                </td>
+              </tr>
+            {% endfor %}
+          </tbody>
+        </table>
+      </div>
+      
+      <!-- Financial summary panel -->
+      <div style="display: flex; justify-content: flex-end; margin-top: 24px;">
+        <div style="width: 320px; display: flex; flex-direction: column; gap: 10px;">
+          <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+            <span style="color: var(--color-text-muted); font-weight: 600;">Subtotal:</span>
+            <span style="font-weight: 700; font-family: monospace;">₹{{ order.subtotal }}</span>
+          </div>
+          {% if order.discount > 0 %}
+            <div style="display: flex; justify-content: space-between; font-size: 13.5px; color: var(--color-danger);">
+              <span style="font-weight: 600;">Coupon Discount:</span>
+              <span style="font-weight: 700; font-family: monospace;">-₹{{ order.discount }}</span>
             </div>
           {% endif %}
+          <div style="display: flex; justify-content: space-between; font-size: 13.5px;">
+            <span style="color: var(--color-text-muted); font-weight: 600;">GST / Estimated Tax (18%):</span>
+            <span style="font-weight: 700; font-family: monospace;">₹{{ order.tax }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 13.5px; border-bottom: 1px solid var(--color-border); padding-bottom: 10px; margin-bottom: 4px;">
+            <span style="color: var(--color-text-muted); font-weight: 600;">Shipping/Setup Cost:</span>
+            <span style="font-weight: 700; font-family: monospace;">₹{{ order.shipping_cost }}</span>
+          </div>
+          <div style="display: flex; justify-content: space-between; font-size: 17px; font-weight: 800; padding-top: 2px;">
+            <span style="font-family: var(--font-display);">Grand Total:</span>
+            <span style="color: var(--color-pink-primary); font-family: monospace; font-size: 19px;">₹{{ order.total }}</span>
+          </div>
         </div>
       </div>
-
-      <!-- Financial totals -->
-      <div class="bg-white shadow rounded-lg border border-slate-200 p-6 space-y-3 text-xs text-slate-600">
-        <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2 uppercase tracking-wider">Financials</h3>
-        <div class="flex justify-between">
-          <span>Subtotal:</span>
-          <span class="font-bold text-slate-800">INR {{ order.subtotal|floatformat:"2" }}</span>
+    </div>
+    
+    <!-- Addresses Card -->
+    <div class="card">
+      <h3 class="od-section-title">Billing & Shipping Context</h3>
+      <div class="od-address-grid">
+        <!-- Billing Address -->
+        <div>
+          <h4 style="font-family: var(--font-display); font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-dark);">Billing Address</h4>
+          <div class="od-address-box">
+            <strong>{{ order.billing_address.full_name }}</strong>
+            Phone: {{ order.billing_address.phone }}<br>
+            {{ order.billing_address.address_line1 }}<br>
+            {% if order.billing_address.address_line2 %}
+              {{ order.billing_address.address_line2 }}<br>
+            {% endif %}
+            {{ order.billing_address.city }}, {{ order.billing_address.state }} - {{ order.billing_address.postal_code }}<br>
+            {{ order.billing_address.country }}
+          </div>
         </div>
-        {% if order.discount > 0 %}
-          <div class="flex justify-between">
-            <span class="text-red-600">Coupon Discount:</span>
-            <span class="font-bold text-red-600">- INR {{ order.discount|floatformat:"2" }}</span>
+        
+        <!-- Shipping Address -->
+        <div>
+          <h4 style="font-family: var(--font-display); font-size: 13.5px; font-weight: 700; margin-bottom: 8px; color: var(--color-text-dark);">Shipping Address</h4>
+          <div class="od-address-box">
+            <strong>{{ order.shipping_address.full_name }}</strong>
+            Phone: {{ order.shipping_address.phone }}<br>
+            {{ order.shipping_address.address_line1 }}<br>
+            {% if order.shipping_address.address_line2 %}
+              {{ order.shipping_address.address_line2 }}<br>
+            {% endif %}
+            {{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.postal_code }}<br>
+            {{ order.shipping_address.country }}
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  
+  <!-- Right Side: Status Form, Profile, Payment details -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Order fulfillment action card -->
+    <div class="card">
+      <h3 class="od-section-title">Order Status Action</h3>
+      <form method="POST" action="{% url 'admin_order_status_update' order.order_number %}" style="display: flex; flex-direction: column; gap: 14px;">
+        {% csrf_token %}
+        <div class="form-group" style="margin-bottom: 0;">
+          <label for="status" style="font-size: 12px; font-weight: 700;">Fulfillment State</label>
+          <select id="status" name="status" class="form-control" style="font-size: 13px; height: 40px; margin-top: 4px;">
+            {% for s_val, s_lbl in status_choices %}
+              <option value="{{ s_val }}" {% if order.order_status == s_val %}selected{% endif %}>{{ s_lbl }}</option>
+            {% endfor %}
+          </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary" style="width: 100%; height: 40px; font-size: 13px;">
+          Update Status
+        </button>
+      </form>
+    </div>
+    
+    <!-- Customer Profile card -->
+    <div class="card">
+      <h3 class="od-section-title">Customer Profile</h3>
+      <div class="od-details-list">
+        <div class="od-details-row">
+          <span class="od-details-label">User Account</span>
+          <span class="od-details-value">{{ order.user.username }}</span>
+        </div>
+        <div class="od-details-row">
+          <span class="od-details-label">Full Name</span>
+          <span class="od-details-value">{{ order.user.first_name }} {{ order.user.last_name|default:'' }}</span>
+        </div>
+        <div class="od-details-row">
+          <span class="od-details-label">Email Address</span>
+          <span class="od-details-value" style="font-size: 12.5px;">{{ order.user.email }}</span>
+        </div>
+        <div class="od-details-row">
+          <span class="od-details-label">Company Name</span>
+          <span class="od-details-value">{{ order.user.profile.company_name|default:"Not specified" }}</span>
+        </div>
+        <div class="od-details-row">
+          <span class="od-details-label">Privilege Type</span>
+          <span class="od-details-value">{{ order.user.get_user_type_display }}</span>
+        </div>
+      </div>
+    </div>
+    
+    <!-- Payment information card -->
+    <div class="card">
+      <h3 class="od-section-title">Payment & Gateway Details</h3>
+      <div class="od-details-list">
+        <div class="od-details-row">
+          <span class="od-details-label">Method</span>
+          <span class="od-details-value" style="text-transform: uppercase; font-size: 12.5px;">{{ order.get_payment_method_display }}</span>
+        </div>
+        <div class="od-details-row">
+          <span class="od-details-label">Payment Status</span>
+          <span class="od-details-value" style="font-weight: 700; color: {% if order.payment_status == 'paid' %}var(--color-success){% else %}var(--color-warning){% endif %};">
+            {{ order.get_payment_status_display }}
+          </span>
+        </div>
+        {% if order.tracking_number %}
+          <div class="od-details-row">
+            <span class="od-details-label">Tracking No</span>
+            <span class="od-details-value" style="font-family: monospace;">{{ order.tracking_number }}</span>
           </div>
         {% endif %}
-        <div class="flex justify-between">
-          <span>GST Tax (18%):</span>
-          <span class="font-bold text-slate-800">INR {{ order.tax|floatformat:"2" }}</span>
-        </div>
-        <div class="flex justify-between">
-          <span>B2B Transit charge:</span>
-          <span class="font-bold text-slate-800">INR {{ order.shipping_cost|floatformat:"2" }}</span>
-        </div>
-        <hr class="border-slate-100">
-        <div class="flex justify-between font-black text-sm text-slate-900">
-          <span>Grand Total:</span>
-          <span>INR {{ order.total|floatformat:"2" }}</span>
-        </div>
       </div>
-
-      <!-- Address Snapshot details -->
-      <div class="bg-white shadow rounded-lg border border-slate-200 p-6 space-y-4 text-xs text-slate-600">
-        <div>
-          <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2 uppercase tracking-wider">Shipping Address Snapshot</h3>
-          <p class="mt-2 font-semibold text-slate-800">{{ order.shipping_address.full_name }}</p>
-          <p>{{ order.shipping_address.address_line1 }}</p>
-          {% if order.shipping_address.address_line2 %}<p>{{ order.shipping_address.address_line2 }}</p>{% endif %}
-          <p>{{ order.shipping_address.city }}, {{ order.shipping_address.state }} - {{ order.shipping_address.postal_code }}</p>
-          <p>Phone: {{ order.shipping_address.phone }}</p>
-        </div>
-        
-        <hr class="border-slate-100">
-        
-        <div>
-          <h3 class="text-md font-bold text-slate-900 border-b border-slate-100 pb-2 uppercase tracking-wider">Billing Address Snapshot</h3>
-          <p class="mt-2 font-semibold text-slate-800">{{ order.billing_address.full_name }}</p>
-          <p>{{ order.billing_address.address_line1 }}</p>
-          {% if order.billing_address.address_line2 %}<p>{{ order.billing_address.address_line2 }}</p>{% endif %}
-          <p>{{ order.billing_address.city }}, {{ order.billing_address.state }} - {{ order.billing_address.postal_code }}</p>
-          <p>Phone: {{ order.billing_address.phone }}</p>
-        </div>
-      </div>
-
     </div>
-
   </div>
 </div>
 {% endblock %}

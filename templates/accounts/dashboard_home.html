@@ -1,0 +1,287 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}Client Dashboard - TechnoStore360{% endblock %}
+
+{% block content %}
+<!-- Welcome message -->
+<div class="mb-8 flex flex-col md:flex-row md:items-center md:justify-between">
+  <div>
+    <h1 class="text-3xl font-extrabold text-navy-900 tracking-tight font-display">Welcome back, {{ user.first_name|default:user.username }}!</h1>
+    <p class="text-sm text-slate-500 mt-1">Here is your corporate procurement overview for today.</p>
+  </div>
+  <div class="mt-4 md:mt-0 flex space-x-3">
+    <a href="{% url 'product_list' %}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-white bg-accent-blue hover:bg-blue-600 rounded-full transition shadow-sm">
+      <span class="material-symbols-outlined text-sm mr-2">add_shopping_cart</span>
+      Browse Catalog
+    </a>
+    <a href="{% url 'customer_tickets' %}" class="inline-flex items-center px-4 py-2 text-sm font-semibold text-slate-700 bg-white border border-slate-200 hover:bg-slate-50 rounded-full transition shadow-sm">
+      <span class="material-symbols-outlined text-sm mr-2">help</span>
+      Get Help
+    </a>
+  </div>
+</div>
+
+<!-- Stats Grid -->
+<div class="grid grid-cols-2 lg:grid-cols-6 gap-4 mb-8">
+  
+  <!-- Total Orders -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Orders</span>
+      <span class="p-1.5 rounded-lg bg-blue-50 text-accent-blue material-symbols-outlined text-sm">shopping_bag</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-navy-900 font-display">{{ total_orders }}</span>
+      <span class="block text-[10px] text-slate-400 mt-0.5">Total processed</span>
+    </div>
+  </div>
+
+  <!-- Active Quotes -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Quotations</span>
+      <span class="p-1.5 rounded-lg bg-pink-50 text-accent-pink material-symbols-outlined text-sm">description</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-navy-900 font-display">{{ active_quotes }}</span>
+      <span class="block text-[10px] text-slate-400 mt-0.5">Active quotes</span>
+    </div>
+  </div>
+
+  <!-- Active Licenses -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Licenses</span>
+      <span class="p-1.5 rounded-lg bg-amber-50 text-amber-500 material-symbols-outlined text-sm">key</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-navy-900 font-display">{{ active_licenses }}</span>
+      <span class="block text-[10px] text-slate-400 mt-0.5">Active product keys</span>
+    </div>
+  </div>
+
+  <!-- Active Subscriptions -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Subscriptions</span>
+      <span class="p-1.5 rounded-lg bg-emerald-50 text-emerald-500 material-symbols-outlined text-sm">autorenew</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-navy-900 font-display">{{ active_subs }}</span>
+      <span class="block text-[10px] text-slate-400 mt-0.5">Recurring plans</span>
+    </div>
+  </div>
+
+  <!-- Pending Payments -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Payments</span>
+      <span class="p-1.5 rounded-lg bg-rose-50 text-rose-500 material-symbols-outlined text-sm">payment</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-rose-600 font-display">{{ pending_payments }}</span>
+      <span class="block text-[10px] text-rose-400 mt-0.5">Awaiting wire</span>
+    </div>
+  </div>
+
+  <!-- Open Tickets -->
+  <div class="bg-white p-5 rounded-2xl border border-slate-200/80 shadow-sm transition hover:shadow-md">
+    <div class="flex items-center justify-between">
+      <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Help Ticket</span>
+      <span class="p-1.5 rounded-lg bg-indigo-50 text-indigo-500 material-symbols-outlined text-sm">support_agent</span>
+    </div>
+    <div class="mt-4">
+      <span class="text-2xl font-black text-navy-900 font-display">{{ open_tickets }}</span>
+      <span class="block text-[10px] text-slate-400 mt-0.5">Open issues</span>
+    </div>
+  </div>
+
+</div>
+
+<!-- Expiry alerts band -->
+{% if licence_alerts or sub_renewals %}
+<div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+  
+  <!-- Licence Expiry alerts -->
+  {% if licence_alerts %}
+  <div class="bg-amber-50 border border-amber-200/70 p-5 rounded-2xl flex items-start space-x-3">
+    <span class="material-symbols-outlined text-amber-500 text-2xl">warning</span>
+    <div>
+      <h4 class="font-bold text-amber-800 text-sm">License Expiry Alerts</h4>
+      <div class="mt-2 space-y-1">
+        {% for lic in licence_alerts %}
+          <div class="text-xs text-amber-700">
+            <strong>{{ lic.product.name }}</strong> key expires on {{ lic.expires_at|date:"M d, Y" }}
+          </div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'customer_licenses' %}" class="inline-block mt-3 text-xs font-semibold text-amber-800 hover:underline">Manage Licenses</a>
+    </div>
+  </div>
+  {% endif %}
+
+  <!-- Subscription Renewals -->
+  {% if sub_renewals %}
+  <div class="bg-blue-50 border border-blue-200/70 p-5 rounded-2xl flex items-start space-x-3">
+    <span class="material-symbols-outlined text-accent-blue text-2xl">event_repeat</span>
+    <div>
+      <h4 class="font-bold text-blue-800 text-sm">Upcoming Subscription Renewals</h4>
+      <div class="mt-2 space-y-1">
+        {% for sub in sub_renewals %}
+          <div class="text-xs text-blue-700">
+            <strong>{{ sub.product.name }}</strong> ({{ sub.plan_type|title }}) renews on {{ sub.end_date|date:"M d, Y" }} (₹{{ sub.price }})
+          </div>
+        {% endfor %}
+      </div>
+      <a href="{% url 'customer_subscriptions' %}" class="inline-block mt-3 text-xs font-semibold text-blue-800 hover:underline">Manage Subscriptions</a>
+    </div>
+  </div>
+  {% endif %}
+
+</div>
+{% endif %}
+
+<!-- Lists Section Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
+  
+  <!-- Recent Orders Table -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-bold text-lg text-navy-900 font-display">Recent Orders</h3>
+      <a href="{% url 'customer_orders' %}" class="text-xs font-semibold text-accent-blue hover:underline">View All</a>
+    </div>
+    <div class="flex-1 overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-slate-50 text-slate-400 uppercase font-semibold border-b border-slate-100">
+            <th class="px-6 py-3">Order No</th>
+            <th class="px-6 py-3">Date</th>
+            <th class="px-6 py-3">Total</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-slate-700">
+          {% for order in recent_orders %}
+            <tr class="hover:bg-slate-50/50">
+              <td class="px-6 py-3 font-semibold text-navy-950">#{{ order.order_number }}</td>
+              <td class="px-6 py-3">{{ order.created_at|date:"M d, Y" }}</td>
+              <td class="px-6 py-3 font-bold">₹{{ order.total }}</td>
+              <td class="px-6 py-3">
+                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {% if order.order_status == 'delivered' %}bg-emerald-50 text-emerald-700{% elif order.order_status == 'cancelled' %}bg-slate-100 text-slate-500{% else %}bg-amber-50 text-amber-700{% endif %}">
+                  {{ order.get_order_status_display }}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-right">
+                <a href="{% url 'customer_order_detail' order.order_number %}" class="text-accent-blue font-semibold hover:underline">Details</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-slate-400">No orders placed yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Quotations Table -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-bold text-lg text-navy-900 font-display">Recent Quotations</h3>
+      <a href="{% url 'customer_quotations' %}" class="text-xs font-semibold text-accent-blue hover:underline">View All</a>
+    </div>
+    <div class="flex-1 overflow-x-auto">
+      <table class="w-full text-left border-collapse text-xs">
+        <thead>
+          <tr class="bg-slate-50 text-slate-400 uppercase font-semibold border-b border-slate-100">
+            <th class="px-6 py-3">Quote No</th>
+            <th class="px-6 py-3">Valid Until</th>
+            <th class="px-6 py-3">Total</th>
+            <th class="px-6 py-3">Status</th>
+            <th class="px-6 py-3 text-right">Action</th>
+          </tr>
+        </thead>
+        <tbody class="divide-y divide-slate-100 text-slate-700">
+          {% for quote in recent_quotes %}
+            <tr class="hover:bg-slate-50/50">
+              <td class="px-6 py-3 font-semibold text-navy-950">#{{ quote.quotation_number }}</td>
+              <td class="px-6 py-3">{{ quote.valid_until|date:"M d, Y"|default:"N/A" }}</td>
+              <td class="px-6 py-3 font-bold">₹{{ quote.total }}</td>
+              <td class="px-6 py-3">
+                <span class="inline-flex px-2 py-0.5 rounded-full text-[10px] font-bold uppercase {% if quote.status == 'accepted' or quote.status == 'converted' %}bg-emerald-50 text-emerald-700{% elif quote.status == 'rejected' %}bg-rose-50 text-rose-700{% else %}bg-slate-100 text-slate-600{% endif %}">
+                  {{ quote.get_status_display }}
+                </span>
+              </td>
+              <td class="px-6 py-3 text-right">
+                <a href="{% url 'customer_quotation_detail' quote.quotation_number %}" class="text-accent-blue font-semibold hover:underline">View</a>
+              </td>
+            </tr>
+          {% empty %}
+            <tr>
+              <td colspan="5" class="px-6 py-8 text-center text-slate-400">No quotation requests submitted yet.</td>
+            </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<!-- Notifications & Recommendations Grid -->
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+  
+  <!-- Recommended Products (2 cols) -->
+  <div class="lg:col-span-2 flex flex-col">
+    <div class="flex items-center justify-between mb-4">
+      <h3 class="font-bold text-lg text-navy-900 font-display">Recommended B2B Softwares</h3>
+      <a href="{% url 'product_list' %}" class="text-xs font-semibold text-accent-blue hover:underline">Explore Store</a>
+    </div>
+    
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 flex-1">
+      {% for prod in recommended_products %}
+        <div class="bg-white p-5 rounded-2xl border border-slate-200 shadow-sm flex flex-col justify-between hover:shadow-md transition">
+          <div>
+            <span class="inline-block px-2.5 py-0.5 rounded-full bg-navy-50 text-navy-800 text-[10px] font-extrabold uppercase tracking-wide">{{ prod.category.name }}</span>
+            <h4 class="font-bold text-navy-950 text-sm mt-3">{{ prod.name }}</h4>
+            <p class="text-xs text-slate-500 mt-1 line-clamp-2">{{ prod.short_desc }}</p>
+          </div>
+          <div class="mt-4 pt-4 border-t border-slate-100 flex items-center justify-between">
+            <div>
+              <span class="block text-[10px] text-slate-400 uppercase">Regular Price</span>
+              <span class="font-extrabold text-navy-900 text-sm">₹{{ prod.price }}</span>
+            </div>
+            <a href="{% url 'product_detail' prod.slug %}" class="px-3 py-1.5 bg-accent-blue hover:bg-blue-600 text-white rounded-full text-xs font-semibold transition">Buy Now</a>
+          </div>
+        </div>
+      {% empty %}
+        <div class="bg-white rounded-2xl border border-slate-200 shadow-sm p-6 text-center text-slate-400 col-span-2">No recommended solutions.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Recent Notifications -->
+  <div class="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col">
+    <div class="px-6 py-4 border-b border-slate-100 flex items-center justify-between">
+      <h3 class="font-bold text-lg text-navy-900 font-display">Unread Notifications</h3>
+      <a href="{% url 'customer_notifications' %}" class="text-xs font-semibold text-accent-blue hover:underline">View All</a>
+    </div>
+    <div class="flex-1 p-4 space-y-3 divide-y divide-slate-50 overflow-y-auto max-h-72 custom-scrollbar">
+      {% for notif in recent_notifications %}
+        <div class="pt-3 {% if forloop.first %}pt-0{% endif %}">
+          <div class="flex justify-between items-start">
+            <span class="font-semibold text-navy-950 text-xs">{{ notif.title }}</span>
+            <span class="text-[9px] text-slate-400">{{ notif.created_at|date:"M d, H:i" }}</span>
+          </div>
+          <p class="text-slate-500 text-[11px] mt-1 line-clamp-2 leading-relaxed">{{ notif.message }}</p>
+        </div>
+      {% empty %}
+        <div class="py-8 text-center text-slate-400 text-xs">No unread notifications.</div>
+      {% endfor %}
+    </div>
+  </div>
+
+</div>
+{% endblock %}

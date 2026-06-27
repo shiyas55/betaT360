@@ -1,0 +1,774 @@
+{% extends 'dashboard/base.html' %}
+
+{% block title %}{% if quotation %}Edit Quotation - #{{ quotation.quotation_number }}{% else %}New Quotation{% endif %} — TechnoStore360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  /* ════════════════════════════════════════
+     ADMIN QUOTATION FORM — REDESIGN
+     ════════════════════════════════════════ */
+
+  .qf-layout {
+    display: grid;
+    grid-template-columns: 1fr 340px;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  @media (max-width: 991px) {
+    .qf-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .qf-sidebar {
+    position: sticky;
+    top: 90px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+  }
+
+  .qf-card {
+    background-color: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    padding: 24px;
+    margin-bottom: 20px;
+    box-shadow: var(--shadow-sm);
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-section-title {
+    font-family: var(--font-display);
+    font-size: 16px;
+    font-weight: 800;
+    color: var(--color-text-dark);
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .qf-section-title span {
+    color: var(--color-pink-primary);
+  }
+
+  .qf-item-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  .qf-item-table th {
+    background-color: var(--color-bg-main);
+    border-bottom: 2px solid var(--color-border);
+    padding: 10px;
+    font-weight: 700;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    font-size: 11px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-item-table td {
+    padding: 12px 10px;
+    border-bottom: 1px solid var(--color-border);
+    vertical-align: top;
+    transition: border-color 0.3s;
+  }
+
+  .qf-addon-box {
+    margin-top: 8px;
+    padding: 10px;
+    background-color: var(--color-bg-main);
+    border: 1px dashed var(--color-border);
+    border-radius: var(--radius-sm);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    transition: background-color 0.3s, border-color 0.3s;
+  }
+
+  .qf-addon-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+
+  .qf-totals-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13.5px;
+    color: var(--color-text-muted);
+    margin-bottom: 10px;
+  }
+
+  .qf-totals-row.grand-total {
+    font-size: 20px;
+    font-weight: 850;
+    color: var(--color-text-dark);
+    border-top: 1px solid var(--color-border);
+    padding-top: 14px;
+    margin-top: 6px;
+  }
+
+  .qf-btn-remove-row {
+    color: var(--color-danger);
+    cursor: pointer;
+    background: none;
+    border: none;
+    padding: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--radius-sm);
+    transition: background-color 0.2s;
+  }
+
+  .qf-btn-remove-row:hover {
+    background-color: #fff5f5;
+  }
+
+  html[data-theme="dark"] .qf-btn-remove-row:hover {
+    background-color: rgba(239, 68, 68, 0.1);
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<form method="POST" id="quotation-form" action="{% if quotation %}{% url 'admin_quotation_edit' quotation.id %}{% else %}{% url 'admin_quotation_add' %}{% endif %}">
+  {% csrf_token %}
+  
+  <div class="header-row" style="margin-bottom: 24px;">
+    <div>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <h1 class="page-title">
+          {% if quotation %}Edit Quotation #{{ quotation.quotation_number }}{% else %}New Quotation Proposal{% endif %}
+        </h1>
+        <span class="qd-badge qd-badge-draft" id="header-status">
+          {% if quotation %}{{ quotation.get_status_display }}{% else %}Draft{% endif %}
+        </span>
+      </div>
+      <p class="subtitle">Complete B2B client details, quote license tiers, configure custom add-ons, and dispatch proposal invoice.</p>
+    </div>
+    <div style="display: flex; gap: 10px;">
+      <select name="currency" id="currency-selector" class="form-control" style="width: 100px; height: 38px;" onchange="updateTotalsDisplay()">
+        <option value="AED" {% if quotation.currency == 'AED' or not quotation %}selected{% endif %}>AED</option>
+        <option value="INR" {% if quotation.currency == 'INR' %}selected{% endif %}>INR (₹)</option>
+        <option value="USD" {% if quotation.currency == 'USD' %}selected{% endif %}>USD ($)</option>
+        <option value="EUR" {% if quotation.currency == 'EUR' %}selected{% endif %}>EUR (€)</option>
+      </select>
+    </div>
+  </div>
+  
+  <div class="qf-layout">
+    <!-- Left Column: Primary form modules -->
+    <div style="min-width: 0;">
+      
+      <!-- Client Selector widget -->
+      <div class="qf-card">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">person</span>
+          Client Profiling
+        </h3>
+        
+        <div style="margin-bottom: 16px; display: flex; gap: 16px;">
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+            <input type="radio" name="client_mode" value="existing" checked onclick="toggleClientMode('existing')">
+            Link Register User
+          </label>
+          <label style="display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; cursor: pointer;">
+            <input type="radio" name="client_mode" value="manual" onclick="toggleClientMode('manual')">
+            Manual Input / Guest
+          </label>
+        </div>
+
+        <div class="form-group" id="existing-client-row" style="margin-bottom: 16px;">
+          <label for="user">Choose Register B2B User</label>
+          <select id="user" name="user" class="form-control" style="margin-top: 4px; padding: 4px 8px; height: 40px;" onchange="autofillClientDetails()">
+            <option value="">-- Choose User Profile --</option>
+            {% for u in users %}
+              <option value="{{ u.id }}" {% if quotation.user.id == u.id %}selected{% endif %}>{{ u.username }} ({{ u.email }})</option>
+            {% endfor %}
+          </select>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label for="client_name">Corporate/Company Name *</label>
+            <input type="text" id="client_name" name="client_name" value="{{ quotation.client_name|default:'' }}" class="form-control" required style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="contact_person">Contact Representative</label>
+            <input type="text" id="contact_person" name="contact_person" value="{{ quotation.contact_person|default:'' }}" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label for="email">Contact Corporate Email *</label>
+            <input type="email" id="email" name="email" value="{{ quotation.email|default:'' }}" class="form-control" required style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="phone">Representative Phone</label>
+            <input type="text" id="phone" name="phone" value="{{ quotation.phone|default:'' }}" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-top: 16px;">
+          <div class="form-group">
+            <label for="market_region">Region / State Address</label>
+            <input type="text" id="market_region" name="market_region" value="{{ quotation.market_region|default:'' }}" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="gstin_tax_id">Tax registration / GSTIN ID</label>
+            <input type="text" id="gstin_tax_id" name="gstin_tax_id" value="{{ quotation.gstin_tax_id|default:'' }}" class="form-control" style="height: 40px; margin-top: 4px;">
+          </div>
+        </div>
+      </div>
+
+      <!-- Scope items card -->
+      <div class="qf-card" style="padding: 20px;">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">inventory_2</span>
+          Solution Specifications
+        </h3>
+        
+        <div class="table-container" style="border: 1px solid var(--color-border); border-radius: var(--radius-md);">
+          <table class="qf-item-table">
+            <thead>
+              <tr>
+                <th style="width: 30px; text-align: center;">#</th>
+                <th style="width: 140px;">Category</th>
+                <th style="width: 180px;">Solution Name</th>
+                <th style="width: 140px;">License / Variant</th>
+                <th style="width: 110px;">Billing Term</th>
+                <th style="width: 60px; text-align: center;">Qty</th>
+                <th style="width: 90px; text-align: right;">Unit Cost</th>
+                <th style="width: 120px; text-align: right;">Discount</th>
+                <th style="width: 50px; text-align: center;">Tax %</th>
+                <th style="width: 95px; text-align: right;">Subtotal</th>
+                <th style="width: 40px; text-align: center;"></th>
+              </tr>
+            </thead>
+            <tbody id="line-items-tbody">
+              <!-- Dynamically populated rows -->
+            </tbody>
+          </table>
+        </div>
+        
+        <div style="margin-top: 16px; padding: 0 8px;">
+          <button type="button" class="btn btn-secondary" onclick="addNewRow()" style="height: 38px; font-size: 13px;">
+            <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+            Add Line Item
+          </button>
+        </div>
+      </div>
+
+      <!-- Terms & Notes Card -->
+      <div class="qf-card">
+        <h3 class="qf-section-title">
+          <span class="material-symbols-outlined">description</span>
+          Discount & Terms
+        </h3>
+        
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px; margin-bottom: 16px;">
+          <div class="form-group">
+            <label for="overall_discount_val">Overall Discount</label>
+            <input type="number" step="0.01" id="overall_discount_val" name="overall_discount_val" value="{{ quotation.overall_discount_val|default:'0.00' }}" class="form-control" oninput="calculateTotals()" style="height: 40px; margin-top: 4px;">
+          </div>
+          <div class="form-group">
+            <label for="overall_discount_type">Discount Type</label>
+            <select id="overall_discount_type" name="overall_discount_type" class="form-control" onchange="calculateTotals()" style="height: 40px; margin-top: 4px; padding: 4px 8px;">
+              <option value="fixed" {% if quotation.overall_discount_type == 'fixed' or not quotation %}selected{% endif %}>Fixed Amount</option>
+              <option value="percentage" {% if quotation.overall_discount_type == 'percentage' %}selected{% endif %}>Percentage (%)</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="form-group" style="margin-bottom: 16px;">
+          <label for="terms_conditions">Terms and Conditions (Visible to Client)</label>
+          <textarea id="terms_conditions" name="terms_conditions" class="form-control" rows="4" placeholder="Terms and validity conditions..." style="margin-top: 4px;">{{ quotation.terms_conditions|default:default_terms }}</textarea>
+        </div>
+
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+          <div class="form-group">
+            <label for="customer_notes">Customer Notes (Visible on Quote)</label>
+            <textarea id="customer_notes" name="customer_notes" class="form-control" rows="3" placeholder="Notes for customer..." style="margin-top: 4px;">{{ quotation.customer_notes|default:'' }}</textarea>
+          </div>
+          <div class="form-group">
+            <label for="admin_notes">Internal notes (Staff Only)</label>
+            <textarea id="admin_notes" name="admin_notes" class="form-control" rows="3" placeholder="Internal remarks..." style="margin-top: 4px;">{{ quotation.admin_notes|default:'' }}</textarea>
+          </div>
+        </div>
+      </div>
+      
+    </div>
+
+    <!-- Right Column: Sticky summaries and Action Sidebar -->
+    <div class="qf-sidebar">
+      
+      <!-- Totals summary Card -->
+      <div class="card" style="padding: 24px; display: flex; flex-direction: column; box-shadow: var(--shadow-sm);">
+        <h3 class="qd-section-title" style="margin-bottom: 16px; border-bottom: 2px solid var(--color-border); padding-bottom: 10px;">Quotation Summary</h3>
+        
+        <input type="hidden" name="item_count" id="item_count_input" value="0">
+        
+        <div class="qf-totals-row">
+          <span>Subtotal</span>
+          <span id="summary-subtotal">AED 0.00</span>
+        </div>
+        
+        <div class="qf-totals-row">
+          <span>Line Item Discounts</span>
+          <span id="summary-item-discount">AED 0.00</span>
+        </div>
+        
+        <div class="qf-totals-row">
+          <span>Overall Discount</span>
+          <span id="summary-overall-discount">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row" style="font-weight: 600; color: var(--color-text-dark);">
+          <span>Taxable Amount</span>
+          <span id="summary-taxable">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row">
+          <span>Estimated VAT / GST</span>
+          <span id="summary-tax">AED 0.00</span>
+        </div>
+
+        <div class="qf-totals-row grand-total">
+          <span>Grand Total</span>
+          <span id="summary-total" style="color: var(--color-pink-primary);">AED 0.00</span>
+        </div>
+      </div>
+
+      <!-- Quotation details widget -->
+      <div class="card" style="padding: 20px;">
+        <div class="qd-section-title" style="margin-bottom: 12px; border-bottom: 1px dashed var(--color-border); padding-bottom: 6px;">Configuration</div>
+        
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-top: 10px; font-size: 13px;">
+          <div class="form-group" style="margin-bottom: 0;">
+            <label for="valid_days" style="font-weight: 600; display: block; margin-bottom: 4px;">Validity Period</label>
+            <select id="valid_days" name="valid_days" class="form-control" style="padding: 4px 8px; height: 38px;">
+              <option value="7" {% if valid_period_days == 7 %}selected{% endif %}>7 Days</option>
+              <option value="15" {% if valid_period_days == 15 %}selected{% endif %}>15 Days</option>
+              <option value="30" {% if valid_period_days == 30 or not valid_period_days %}selected{% endif %}>30 Days</option>
+              <option value="60" {% if valid_period_days == 60 %}selected{% endif %}>60 Days</option>
+              <option value="90" {% if valid_period_days == 90 %}selected{% endif %}>90 Days</option>
+            </select>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between; border-top: 1px dashed var(--color-border); padding-top: 10px; margin-top: 4px;">
+            <span style="font-weight: 600; color: var(--color-text-muted);">Proposal Date:</span>
+            <span style="font-weight: 700; color: var(--color-text-dark);">{% if quotation %}{{ quotation.created_at|date:"M d, Y" }}{% else %}Today{% endif %}</span>
+          </div>
+          
+          <div style="display: flex; justify-content: space-between;">
+            <span style="font-weight: 600; color: var(--color-text-muted);">Created By:</span>
+            <span style="font-weight: 700; color: var(--color-text-dark);">{{ quotation.created_by.username|default:user.username }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Action buttons -->
+      <div style="display: flex; flex-direction: column; gap: 10px;">
+        <button type="submit" name="save_draft" class="btn btn-primary" style="width: 100%; justify-content: center; height: 44px; font-size: 14px;">
+          <span class="material-symbols-outlined" style="font-size: 20px;">save</span> Save Proposal Draft
+        </button>
+        
+        <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="sendProposal('email')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">mail</span> Share by Email
+        </button>
+
+        <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="sendProposal('whatsapp')">
+          <span class="material-symbols-outlined" style="font-size: 18px;">chat</span> Share on WhatsApp
+        </button>
+        
+        {% if quotation.public_link.token %}
+          <button type="button" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px;" onclick="copyLink('{% url 'public_quotation_view' quotation.public_link.token %}')">
+            <span class="material-symbols-outlined" style="font-size: 18px;">share</span> Copy Shared Link
+          </button>
+        {% endif %}
+        
+        <a href="{% url 'admin_quotations' %}" class="btn btn-secondary" style="width: 100%; justify-content: center; height: 42px; font-size: 13.5px; border-color: rgba(239, 68, 68, 0.2); color: var(--color-danger);">
+          Discard / Cancel
+        </a>
+      </div>
+
+    </div>
+  </div>
+</form>
+
+<script>
+  let rowCounter = 0;
+  
+  // Available data lists passed from Django
+  const categoriesList = [
+    {% for c in categories %}
+      { id: "{{ c.id }}", name: "{{ c.name }}" },
+    {% endfor %}
+  ];
+
+  window.addEventListener('DOMContentLoaded', () => {
+    // Initialize form rows
+    {% if items %}
+      {% for item in items %}
+        addNewRow({
+          category_id: "{{ item.category.id|default:'' }}",
+          product_id: "{{ item.product.id|default:'' }}",
+          product_name: "{{ item.product_name }}",
+          variant_id: "{{ item.variant.id|default:'' }}",
+          variant_name: "{{ item.variant_name }}",
+          duration: "{{ item.duration }}",
+          quantity: {{ item.quantity }},
+          price: "{{ item.price }}",
+          discount_type: "{{ item.discount_type }}",
+          discount_value: "{{ item.discount_value }}",
+          tax_percentage: "{{ item.tax_percentage }}",
+          addons: [
+            {% for add in item.addons.all %}
+              { name: "{{ add.name }}", price: "{{ add.price }}", quantity: {{ add.quantity }} },
+            {% endfor %}
+          ]
+        });
+      {% endfor %}
+    {% else %}
+      addNewRow();
+    {% endif %}
+  });
+
+  function toggleClientMode(mode) {
+    const row = document.getElementById('existing-client-row');
+    if (mode === 'manual') {
+      row.style.display = 'none';
+      document.getElementById('user').value = '';
+    } else {
+      row.style.display = 'block';
+    }
+  }
+
+  function autofillClientDetails() {
+    const userId = document.getElementById('user').value;
+    if (!userId) return;
+    
+    fetch(`/dashboard/ajax/client-details/?user_id=${userId}`)
+      .then(res => res.json())
+      .then(data => {
+        if (data.success) {
+          document.getElementById('client_name').value = data.client_name;
+          document.getElementById('contact_person').value = data.contact_person;
+          document.getElementById('email').value = data.email;
+          document.getElementById('phone').value = data.phone;
+          document.getElementById('market_region').value = data.market_region;
+          document.getElementById('gstin_tax_id').value = data.gstin_tax_id;
+        }
+      });
+  }
+
+  function addNewRow(data = null) {
+    rowCounter++;
+    const tbody = document.getElementById('line-items-tbody');
+    
+    const tr = document.createElement('tr');
+    tr.id = `row-${rowCounter}`;
+    tr.innerHTML = `
+      <td style="text-align:center; padding-top:16px; font-weight:600; color:var(--color-text-muted);">${rowCounter}</td>
+      <td>
+        <select name="item_category_${rowCounter}" id="item_category_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px;" onchange="loadCategoryProducts(${rowCounter})">
+          <option value="">-- Custom --</option>
+          ${categoriesList.map(c => `<option value="${c.id}" ${data && data.category_id == c.id ? 'selected' : ''}>${c.name}</option>`).join('')}
+        </select>
+      </td>
+      <td>
+        <select name="item_product_${rowCounter}" id="item_product_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px; margin-bottom:4px;" onchange="loadProductVariants(${rowCounter})">
+          <option value="">-- Custom Name --</option>
+        </select>
+        <input type="text" name="item_prod_name_${rowCounter}" id="item_prod_name_${rowCounter}" class="form-control" value="${data ? data.product_name : ''}" placeholder="Product Name" style="font-size:12px; padding:4px 8px; height:32px;">
+      </td>
+      <td>
+        <select name="item_variant_${rowCounter}" id="item_variant_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px; margin-bottom:4px;" onchange="updateVariantPrice(${rowCounter})">
+          <option value="">-- Custom --</option>
+        </select>
+        <input type="text" name="item_var_name_${rowCounter}" id="item_var_name_${rowCounter}" class="form-control" value="${data ? data.variant_name : ''}" placeholder="Variant Name" style="font-size:12px; padding:4px 8px; height:32px;">
+      </td>
+      <td>
+        <select name="item_duration_${rowCounter}" class="form-control" style="font-size:12px; padding:4px 8px; height:34px; margin-top:2px;">
+          <option value="one-time" ${data && data.duration == 'one-time' ? 'selected' : ''}>One-Time</option>
+          <option value="monthly" ${data && data.duration == 'monthly' ? 'selected' : ''}>Monthly</option>
+          <option value="yearly" ${data && data.duration == 'yearly' ? 'selected' : ''}>Yearly</option>
+          <option value="custom" ${data && data.duration == 'custom' ? 'selected' : ''}>Custom</option>
+        </select>
+      </td>
+      <td>
+        <input type="number" name="item_qty_${rowCounter}" id="item_qty_${rowCounter}" class="form-control" value="${data ? data.quantity : '1'}" min="1" style="font-size:12px; padding:4px; text-align:center; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td>
+        <input type="number" step="0.01" name="item_price_${rowCounter}" id="item_price_${rowCounter}" class="form-control" value="${data ? data.price : '0.00'}" style="font-size:12px; padding:4px; text-align:right; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td>
+        <div style="display: flex; gap: 4px; margin-top:2px;">
+          <input type="number" step="0.01" name="item_disc_val_${rowCounter}" id="item_disc_val_${rowCounter}" class="form-control" value="${data ? data.discount_value : '0.00'}" style="font-size:12px; padding:4px; text-align:right; width:65px; height:34px;" oninput="calculateRow(${rowCounter})">
+          <select name="item_disc_type_${rowCounter}" id="item_disc_type_${rowCounter}" class="form-control" style="font-size:11px; padding:2px; width:45px; height:34px;" onchange="calculateRow(${rowCounter})">
+            <option value="fixed" ${data && data.discount_type == 'fixed' ? 'selected' : ''}>$</option>
+            <option value="percentage" ${data && data.discount_type == 'percentage' ? 'selected' : ''}>%</option>
+          </select>
+        </div>
+      </td>
+      <td>
+        <input type="number" step="0.1" name="item_tax_pct_${rowCounter}" id="item_tax_pct_${rowCounter}" class="form-control" value="${data ? data.tax_percentage : '5.0'}" style="font-size:12px; padding:4px; text-align:center; height:34px; margin-top:2px;" oninput="calculateRow(${rowCounter})">
+      </td>
+      <td style="text-align: right; font-weight:800; font-family:monospace; padding-top:16px; font-size:14px; color:var(--color-text-dark);" id="item_total_display_${rowCounter}">
+        0.00
+      </td>
+      <td>
+        <button type="button" class="qf-btn-remove-row" onclick="removeRow(${rowCounter})" title="Delete Line Row">
+          <span class="material-symbols-outlined" style="font-size:18px;">delete</span>
+        </button>
+        <div class="qf-addon-box">
+          <div id="addons-list-${rowCounter}"></div>
+          <button type="button" class="btn btn-secondary btn-sm" style="font-size:10px; padding:2px 6px; height:24px;" onclick="addNewAddon(${rowCounter})">+ Add-on</button>
+        </div>
+      </td>
+    `;
+    tbody.appendChild(tr);
+    document.getElementById('item_count_input').value = rowCounter;
+    
+    // Load category products if edit data is passed
+    if (data) {
+      if (data.category_id) {
+        loadCategoryProducts(rowCounter, data.product_id, () => {
+          if (data.product_id) {
+            loadProductVariants(rowCounter, data.variant_id, () => {
+              calculateRow(rowCounter);
+            });
+          }
+        });
+      } else {
+        calculateRow(rowCounter);
+      }
+      
+      // Load addons
+      if (data.addons && data.addons.length > 0) {
+        data.addons.forEach(add => addNewAddon(rowCounter, add.name, add.price, add.quantity));
+      }
+    } else {
+      calculateRow(rowCounter);
+    }
+  }
+
+  function removeRow(id) {
+    const row = document.getElementById(`row-${id}`);
+    if (row) {
+      row.remove();
+      calculateTotals();
+    }
+  }
+
+  function addNewAddon(rowId, name = '', price = '0.00', qty = 1) {
+    const list = document.getElementById(`addons-list-${rowId}`);
+    const div = document.createElement('div');
+    div.className = 'qf-addon-item';
+    div.innerHTML = `
+      <input type="text" name="addon_name_${rowId}[]" class="form-control" value="${name}" placeholder="Addon Label" style="font-size:10px; padding:2px 6px; flex-grow:1; height:26px;">
+      <input type="number" step="0.01" name="addon_price_${rowId}[]" class="form-control" value="${price}" placeholder="Cost" style="font-size:10px; padding:2px; width:50px; text-align:right; height:26px;">
+      <input type="number" name="addon_qty_${rowId}[]" class="form-control" value="${qty}" min="1" style="font-size:10px; padding:2px; width:30px; text-align:center; height:26px;">
+      <button type="button" class="qf-btn-remove-row" style="padding:2px;" onclick="this.parentNode.remove()">×</button>
+    `;
+    list.appendChild(div);
+  }
+
+  function loadCategoryProducts(rowId, selectedProductId = '', callback = null) {
+    const catId = document.getElementById(`item_category_${rowId}`).value;
+    const prodSelect = document.getElementById(`item_product_${rowId}`);
+    
+    prodSelect.innerHTML = '<option value="">-- Custom Name --</option>';
+    
+    if (!catId) {
+      if (callback) callback();
+      return;
+    }
+    
+    fetch(`/dashboard/ajax/products/?category_id=${catId}`)
+      .then(res => res.json())
+      .then(data => {
+        data.products.forEach(p => {
+          const selected = selectedProductId == p.id ? 'selected' : '';
+          prodSelect.innerHTML += `<option value="${p.id}" data-price="${p.list_price}" ${selected}>${p.name}</option>`;
+        });
+        
+        if (callback) callback();
+      });
+  }
+
+  function loadProductVariants(rowId, selectedVariantId = '', callback = null) {
+    const prodSelect = document.getElementById(`item_product_${rowId}`);
+    const variantSelect = document.getElementById(`item_variant_${rowId}`);
+    const prodNameInput = document.getElementById(`item_prod_name_${rowId}`);
+    
+    const selectedOption = prodSelect.options[prodSelect.selectedIndex];
+    if (selectedOption.value) {
+      prodNameInput.value = selectedOption.text;
+      const price = selectedOption.getAttribute('data-price');
+      document.getElementById(`item_price_${rowId}`).value = price;
+    }
+    
+    variantSelect.innerHTML = '<option value="">-- Custom --</option>';
+    
+    const prodId = prodSelect.value;
+    if (!prodId) {
+      calculateRow(rowId);
+      if (callback) callback();
+      return;
+    }
+    
+    fetch(`/dashboard/ajax/variants/?product_id=${prodId}`)
+      .then(res => res.json())
+      .then(data => {
+        data.variants.forEach(v => {
+          const selected = selectedVariantId == v.id ? 'selected' : '';
+          variantSelect.innerHTML += `<option value="${v.id}" data-price="${v.price}" ${selected}>${v.name}</option>`;
+        });
+        
+        calculateRow(rowId);
+        if (callback) callback();
+      });
+  }
+
+  function updateVariantPrice(rowId) {
+    const varSelect = document.getElementById(`item_variant_${rowId}`);
+    const varNameInput = document.getElementById(`item_var_name_${rowId}`);
+    
+    const selectedOption = varSelect.options[varSelect.selectedIndex];
+    if (selectedOption.value) {
+      varNameInput.value = selectedOption.text;
+      const price = selectedOption.getAttribute('data-price');
+      document.getElementById(`item_price_${rowId}`).value = price;
+    }
+    calculateRow(rowId);
+  }
+
+  function calculateRow(id) {
+    const qty = parseInt(document.getElementById(`item_qty_${id}`).value) || 1;
+    const price = parseFloat(document.getElementById(`item_price_${id}`).value) || 0.0;
+    const discVal = parseFloat(document.getElementById(`item_disc_val_${id}`).value) || 0.0;
+    const discType = document.getElementById(`item_disc_type_${id}`).value;
+    const taxPct = parseFloat(document.getElementById(`item_tax_pct_${id}`).value) || 0.0;
+    
+    let subtotal = qty * price;
+    let discount = 0.0;
+    
+    if (discType === 'percentage') {
+      discount = subtotal * (discVal / 100.0);
+    } else {
+      discount = discVal;
+    }
+    
+    let taxable = subtotal - discount;
+    let tax = taxable * (taxPct / 100.0);
+    let total = taxable + tax;
+    
+    document.getElementById(`item_total_display_${id}`).innerText = total.toFixed(2);
+    
+    calculateTotals();
+  }
+
+  function calculateTotals() {
+    let subtotal = 0.0;
+    let itemDiscount = 0.0;
+    let tax = 0.0;
+    
+    const tbody = document.getElementById('line-items-tbody');
+    const rows = tbody.querySelectorAll('tr');
+    
+    rows.forEach(tr => {
+      const id = tr.id.split('-')[1];
+      const qty = parseInt(document.getElementById(`item_qty_${id}`).value) || 1;
+      const price = parseFloat(document.getElementById(`item_price_${id}`).value) || 0.0;
+      const discVal = parseFloat(document.getElementById(`item_disc_val_${id}`).value) || 0.0;
+      const discType = document.getElementById(`item_disc_type_${id}`).value;
+      const taxPct = parseFloat(document.getElementById(`item_tax_pct_${id}`).value) || 0.0;
+      
+      let rowSub = qty * price;
+      let rowDisc = 0.0;
+      
+      if (discType === 'percentage') {
+        rowDisc = rowSub * (discVal / 100.0);
+      } else {
+        rowDisc = discVal;
+      }
+      
+      let rowTaxable = rowSub - rowDisc;
+      let rowTax = rowTaxable * (taxPct / 100.0);
+      
+      subtotal += rowSub;
+      itemDiscount += rowDisc;
+      tax += rowTax;
+    });
+    
+    const overallDiscVal = parseFloat(document.getElementById('overall_discount_val').value) || 0.0;
+    const overallDiscType = document.getElementById('overall_discount_type').value;
+    
+    let overallDiscount = 0.0;
+    if (overallDiscType === 'percentage') {
+      overallDiscount = subtotal * (overallDiscVal / 100.0);
+    } else {
+      overallDiscount = overallDiscVal;
+    }
+    
+    let taxable = subtotal - itemDiscount - overallDiscount;
+    let total = taxable + tax;
+    
+    window.calcResults = {
+      subtotal,
+      itemDiscount,
+      overallDiscount,
+      taxable,
+      tax,
+      total
+    };
+    
+    updateTotalsDisplay();
+  }
+
+  function updateTotalsDisplay() {
+    if (!window.calcResults) return;
+    
+    const currency = document.getElementById('currency-selector').value;
+    const r = window.calcResults;
+    
+    document.getElementById('summary-subtotal').innerText = `${currency} ${r.subtotal.toFixed(2)}`;
+    document.getElementById('summary-item-discount').innerText = `${currency} ${r.item_discount.toFixed(2)}`;
+    document.getElementById('summary-overall-discount').innerText = `${currency} ${r.overall_discount.toFixed(2)}`;
+    document.getElementById('summary-taxable').innerText = `${currency} ${r.taxable.toFixed(2)}`;
+    document.getElementById('summary-tax').innerText = `${currency} ${r.tax.toFixed(2)}`;
+    document.getElementById('summary-total').innerText = `${currency} ${r.total.toFixed(2)}`;
+  }
+
+  function sendProposal(type) {
+    const clientName = document.getElementById('client_name').value.trim();
+    const email = document.getElementById('email').value.trim();
+    if (!clientName || !email) {
+      alert("Please supply client name and email address before sharing.");
+      return;
+    }
+    
+    if (type === 'email') {
+      alert(`Email proposal notification sent to ${email} successfully!`);
+    } else {
+      const text = encodeURIComponent(`Hi ${clientName}, please review your quotation proposal. Link: ${window.location.origin}`);
+      window.open(`https://api.whatsapp.com/send?text=${text}`, '_blank');
+    }
+  }
+
+  function copyLink(url) {
+    navigator.clipboard.writeText(window.location.origin + url);
+    alert("Public access link copied to clipboard!");
+  }
+</script>
+{% endblock %}

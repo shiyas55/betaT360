@@ -101,6 +101,9 @@ def product_list(request):
     }
     return render(request, 'products/list.html', context)
 
+def demo_selection(request):
+    return render(request, 'products/demo_selection.html')
+
 def product_detail(request, slug):
     product = get_object_or_404(Product, slug=slug, is_active=True)
     reviews = product.reviews.filter(is_approved=True)

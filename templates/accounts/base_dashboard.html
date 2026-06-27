@@ -1,0 +1,262 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>{% block title %}User Dashboard - TechnoStore360{% endblock %}</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS with Forms and Container Queries plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script src="{% static 'js/user_dashboard.js' %}"></script>
+
+  <link rel="stylesheet" href="{% static 'css/user_dashboard.css' %}">
+  {% block extra_css %}{% endblock %}
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mini-wrap">
+        <span class="logo-mini" style="display: none;">T360</span>
+      </div>
+      <div class="logo-container">
+        <span class="logo-text">TECHNO<span>360</span></span>
+      </div>
+      <div class="sub-logo">Client Dashboard</div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <div class="menu-section-title">Client Center</div>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_dashboard' %}active{% endif %}">
+        <a href="{% url 'customer_dashboard' %}">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_profile' %}active{% endif %}">
+        <a href="{% url 'customer_profile' %}">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_addresses' %}active{% endif %}">
+        <a href="{% url 'customer_addresses' %}">
+          <span class="material-symbols-outlined">home_pin</span>
+          <span>Addresses</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Procurement</div>
+      <li
+        class="menu-item {% if request.resolver_match.url_name == 'customer_orders' or request.resolver_match.url_name == 'customer_order_detail' %}active{% endif %}">
+        <a href="{% url 'customer_orders' %}">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          <span>Orders</span>
+        </a>
+      </li>
+      <li
+        class="menu-item {% if request.resolver_match.url_name == 'customer_quotations' or request.resolver_match.url_name == 'customer_quotation_detail' %}active{% endif %}">
+        <a href="{% url 'customer_quotations' %}">
+          <span class="material-symbols-outlined">description</span>
+          <span>Quotations</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_subscriptions' %}active{% endif %}">
+        <a href="{% url 'customer_subscriptions' %}">
+          <span class="material-symbols-outlined">autorenew</span>
+          <span>Subscriptions</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Favorites & Tools</div>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_wishlist' %}active{% endif %}">
+        <a href="{% url 'customer_wishlist' %}">
+          <span class="material-symbols-outlined">favorite</span>
+          <span>Wishlist</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_wallet' %}active{% endif %}">
+        <a href="{% url 'customer_wallet' %}">
+          <span class="material-symbols-outlined">account_balance_wallet</span>
+          <span>Wallet</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_referrals' %}active{% endif %}">
+        <a href="{% url 'customer_referrals' %}">
+          <span class="material-symbols-outlined">group_add</span>
+          <span>Referrals</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Vendor Hub</div>
+      <li class="menu-item">
+        <a href="{% url 'reseller_dashboard' %}">
+          <span class="material-symbols-outlined">storefront</span>
+          <span>Vendor Dashboard</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Help desk</div>
+
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_notifications' %}active{% endif %}">
+        <a href="{% url 'customer_notifications' %}">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>Notifications</span>
+        </a>
+      </li>
+      <li class="menu-item {% if request.resolver_match.url_name == 'customer_settings' %}active{% endif %}">
+        <a href="{% url 'customer_settings' %}">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="menu-item" style="list-style:none;">
+        <a href="{% url 'home' %}" style="color:var(--color-sidebar-text);">
+          <span class="material-symbols-outlined">storefront</span>
+          <span>Go to Storefront</span>
+        </a>
+      </li>
+      <li class="menu-item" style="list-style:none;">
+        <a href="{% url 'logout' %}" style="color:#f87171;">
+          <span class="material-symbols-outlined">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <!-- Sidebar Toggle -->
+        <button class="toggle-btn desktop-only-btn" onclick="toggleSidebarCollapse()" title="Toggle Sidebar">
+          <span class="material-symbols-outlined" id="collapse-icon">menu_open</span>
+        </button>
+        <button class="toggle-btn mobile-only-btn" id="mobile-toggle-btn">
+          <span class="material-symbols-outlined" style="font-size: 28px;">menu</span>
+        </button>
+        <div class="search-bar-wrapper">
+          <form method="GET" action="{% url 'customer_orders' %}">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input type="text" name="search" class="search-input-top" placeholder="Search orders, invoices, tickets...">
+          </form>
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <!-- Dark Mode Toggle Button -->
+        <button class="nav-icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+          <span class="material-symbols-outlined" id="dark-mode-icon">dark_mode</span>
+        </button>
+
+        <!-- Notifications Dropdown -->
+        <div class="dropdown-container">
+          <button type="button" class="nav-icon-btn" onclick="toggleDropdownMenu(event, 'notifications-dropdown')"
+            title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="dropdown-menu notifications-dropdown" id="notifications-dropdown">
+            <div class="dropdown-header">Latest Notifications</div>
+            <div class="dropdown-body">
+              <div class="notification-item">
+                <span class="material-symbols-outlined info-icon">info</span>
+                <div class="notification-content">
+                  <div class="notification-text">Welcome to your TechnoStore360 customer dashboard!</div>
+                  <div class="notification-time">Just now</div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer">
+              <a href="{% url 'customer_notifications' %}">View All Notifications</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="width: 1px; height: 24px; background-color: var(--color-border); margin: 0 4px;"></div>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown-container" style="display: flex; align-items: center; gap: 12px;">
+          <div class="user-name-top" style="cursor: pointer;" onclick="toggleDropdownMenu(event, 'user-dropdown')">
+            <span style="display: block;">{{ user.first_name }} {{ user.last_name|default:user.username }}</span>
+            <span class="user-role-top" style="display: block;">{{ user.get_user_type_display }}</span>
+          </div>
+          <div class="user-avatar-btn" onclick="toggleDropdownMenu(event, 'user-dropdown')">
+            <span>{{ user.username|slice:":1"|upper }}</span>
+          </div>
+
+          <div class="dropdown-menu user-dropdown" id="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-name">{{ user.first_name }} {{ user.last_name|default:user.username }}</div>
+              <div class="user-dropdown-email">{{ user.email }}</div>
+            </div>
+            <a href="{% url 'customer_profile' %}" class="dropdown-item">
+              <span class="material-symbols-outlined">person</span>
+              My Profile
+            </a>
+            <a href="{% url 'customer_addresses' %}" class="dropdown-item">
+              <span class="material-symbols-outlined">home_pin</span>
+              Addresses
+            </a>
+            <a href="{% url 'customer_settings' %}" class="dropdown-item">
+              <span class="material-symbols-outlined">settings</span>
+              Settings
+            </a>
+            <hr class="dropdown-divider">
+            <a href="{% url 'logout' %}" class="dropdown-item text-danger">
+              <span class="material-symbols-outlined">logout</span>
+              Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="admin-main">
+      {% if messages %}
+      <div class="alert-container">
+        {% for message in messages %}
+        <div class="alert {% if message.tags == 'success' %}alert-success{% else %}alert-error{% endif %}">
+          <span class="material-symbols-outlined">
+            {% if message.tags == 'success' %}check_circle{% else %}error{% endif %}
+          </span>
+          {{ message }}
+        </div>
+        {% endfor %}
+      </div>
+      {% endif %}
+
+      {% block content %}{% endblock %}
+    </main>
+  </div>
+
+  <script src="{% static 'js/admin_dashboard.js' %}"></script>
+  <script src="{% static 'dashboard/js/ui-feedback.js' %}"></script>
+  <script src="{% static 'dashboard/js/wallet.js' %}"></script>
+  <script src="{% static 'dashboard/js/referral.js' %}"></script>
+  
+  {% block extra_js %}{% endblock %}
+</body>
+
+</html>

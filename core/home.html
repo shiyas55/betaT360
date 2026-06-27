@@ -1,0 +1,1041 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>T360 Commerce - TechnoStore360</title>
+  <meta name="description" content="Premium B2B Technology Marketplace. Compare software, hardware, cloud, security, and AI tools, request demos, and get quotes.">
+  
+  <!-- CSS Stylesheet -->
+  <link rel="stylesheet" href="../static/css/styles.css">
+  
+  
+</head>
+<body>
+
+  <div class="site-shell">
+    
+    <!-- Header component -->
+    
+<!-- TOP UTILITY BAR -->
+<div class="utility-bar">
+  <div class="utility-bar__inner">
+    <div class="utility-bar__group">
+      <button class="utility-pill" type="button">English</button>
+
+      <div class="currency-picker">
+        <button class="utility-pill currency-picker__trigger" type="button">
+          <i data-lucide="globe" style="width: 0.95rem; height: 0.95rem; color: var(--muted);"></i>
+          <span>India</span>
+        </button>
+      </div>
+
+      <div class="currency-picker">
+        <button class="utility-pill currency-picker__trigger" type="button">
+          <span>USD ($)</span>
+        </button>
+      </div>
+    </div>
+
+    <div class="utility-bar__group" style="gap: 1.25rem;">
+      <a href="reseller_dashboard.html" class="utility-pill"
+        style="text-decoration: none; color: inherit;">Become a Partner</a>
+      
+      <a href="admin_home.html" class="utility-pill" style="text-decoration: none; color: inherit;">Admin
+        Console</a>
+      
+      <a href="admin_login.html" class="utility-pill" style="text-decoration: none; color: inherit;">Workspace
+        Portal</a>
+      
+    </div>
+  </div>
+</div>
+
+<!-- MASTHEAD HEADER -->
+<header class="masthead" id="app-header">
+  <div class="masthead__inner">
+
+    <!-- Logo Branding -->
+    <a class="storemark" href="home.html" style="text-decoration: none;">
+      <span class="storemark__title">TECHNO<br />STORE<span>360</span></span>
+      <span class="storemark__tag">Empowering Diversity in Tech</span>
+    </a>
+
+    <!-- Middle Navigation Menu -->
+    <nav class="masthead__nav desktop-only">
+      <ul class="masthead__nav-list">
+        <li class="masthead__nav-item">
+          <a href="product_list.html?category=software-solutions" class="masthead__nav-link">Products <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="product_list.html" class="masthead__nav-link">Categories <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="solution_packages.html" class="masthead__nav-link">Solutions <i
+              data-lucide="chevron-down"></i></a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="product_compare.html" class="masthead__nav-link">Compare</a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="reseller_dashboard.html" class="masthead__nav-link">Vendors</a>
+        </li>
+        <li class="masthead__nav-item">
+          <a href="demo_request.html" class="masthead__nav-link">Support <i data-lucide="chevron-down"></i></a>
+        </li>
+      </ul>
+    </nav>
+
+    <!-- Right Masthead actions -->
+    <div class="masthead-actions">
+
+      <!-- Search trigger icon (Desktop) -->
+      <button class="header-search-trigger desktop-only" onclick="window.location.href='product_list.html';"
+        title="Search">
+        <i data-lucide="search" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
+      </button>
+
+      <!-- Vertical Divider -->
+      <div class="header-divider desktop-only"></div>
+
+      <!-- Globe & Country selector (Desktop) -->
+      <button class="header-country-btn desktop-only" type="button">
+        <i data-lucide="globe" style="width: 1.05rem; height: 1.05rem; color: var(--slate-700);"></i>
+        <span>India</span>
+        <i data-lucide="chevron-down" style="width: 0.75rem; height: 0.75rem; color: var(--slate-500);"></i>
+      </button>
+
+      <!-- Cart indicator link -->
+      <a href="cart_detail.html" class="header-signin-btn"
+        style="position: relative; margin-right: 0.5rem; text-decoration: none;">
+        <i data-lucide="shopping-cart" style="width: 1.15rem; height: 1.15rem; color: var(--slate-700);"></i>
+        <span id="compare-badge-count" class="badge-pop"
+          style="position: absolute; top: -5px; right: -5px; background: var(--accent); color: white; border-radius: 50%; font-size: 0.6rem; padding: 0.1rem 0.3rem; font-weight: bold; display: inline-blocknone;">
+          
+        </span>
+      </a>
+
+      <!-- Sign-in Link (Desktop) -->
+      
+      <a href="customer_dashboard.html" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Dashboard</span>
+      </a>
+      <a href="logout.html" class="header-signin-btn desktop-only"
+        style="text-decoration: none; color: var(--accent); margin-left: 0.5rem;" title="Sign Out">
+        <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+      </a>
+      
+      <a href="login.html" class="header-signin-btn desktop-only" style="text-decoration: none;">
+        <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+        <span>Sign In</span>
+      </a>
+      
+
+      <!-- Get Free Demo (Desktop) -->
+      <a href="demo_request.html" class="header-demo-btn desktop-only" style="text-decoration: none;">
+        Get Free Demo
+      </a>
+
+      <!-- Mobile Hamburger -->
+      <button class="hamburger-button" onclick="toggleMobileNav()" aria-label="Open menu">
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+        <span class="hamburger-line"></span>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Mobile navigation panel -->
+  <nav class="mobile-nav" id="mobile-nav-panel">
+    <!-- Header with Close toggle for side-drawer -->
+    <div
+      style="display: flex; align-items: center; justify-content: space-between; padding: 0.5rem 1.25rem 1rem 1.25rem; border-bottom: 1px solid var(--line);">
+      <span
+        style="font-weight: 800; font-family: var(--font-heading); font-size: 1.1rem; color: var(--slate-900);">Navigation</span>
+      <button type="button" onclick="toggleMobileNav()"
+        style="background: none; border: none; cursor: pointer; color: var(--slate-500); font-size: 1.75rem; font-weight: 300; line-height: 1; outline: none;">&times;</button>
+    </div>
+
+    <!-- Mobile Search input -->
+    <div style="padding: 1rem 1.25rem; border-bottom: 1px solid var(--line);">
+      <form method="GET" action="product_list.html"
+        style="position: relative; display: flex; align-items: center;">
+        <i data-lucide="search"
+          style="position: absolute; left: 0.75rem; color: var(--slate-400); width: 1rem; height: 1rem;"></i>
+        <input type="text" name="search" placeholder="Search products, brands..."
+          style="width: 100%; padding: 0.55rem 0.55rem 0.55rem 2.25rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem; outline: none; background-color: var(--slate-50); min-height: 40px;">
+      </form>
+    </div>
+
+    <ul class="mobile-nav__list" style="flex: 1; overflow-y: auto;">
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_list.html"><span
+            class="mobile-nav__label">Products</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_list.html"><span
+            class="mobile-nav__label">Categories</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="solution_packages.html"><span
+            class="mobile-nav__label">Solutions</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="product_compare.html"><span
+            class="mobile-nav__label">Compare</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="reseller_dashboard.html"><span
+            class="mobile-nav__label">Vendors</span></a></li>
+      <li class="mobile-nav__item"><a class="mobile-nav__link" href="demo_request.html"><span
+            class="mobile-nav__label">Support</span></a></li>
+      <li class="mobile-nav__item"
+        style="padding: 1rem 1.25rem; display: flex; flex-direction: column; gap: 0.75rem; border-top: 1px solid var(--line);">
+        
+        <a href="customer_dashboard.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Dashboard</span>
+        </a>
+        <a href="logout.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; color: var(--accent); min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="log-out" style="width: 1.05rem; height: 1.05rem; color: var(--accent);"></i>
+          <span>Sign Out</span>
+        </a>
+        
+        <a href="login.html" class="header-signin-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center; gap: 0.5rem;">
+          <i data-lucide="user" style="width: 1.05rem; height: 1.05rem; color: var(--slate-500);"></i>
+          <span>Sign In</span>
+        </a>
+        
+        <a href="demo_request.html" class="header-demo-btn"
+          style="justify-content: center; width: 100%; text-decoration: none; min-height: 44px; display: flex; align-items: center;">
+          Get Free Demo
+        </a>
+      </li>
+    </ul>
+  </nav>
+</header>
+
+    <!-- Dynamic alert alerts -->
+    
+      <div id="toast-container" class="toast-container" style="position: fixed; bottom: 20px; right: 20px; z-index: 9999; display: flex; flex-direction: column; gap: 10px;">
+        
+          <div class="toast-notification toast- flex items-center space-x-3 px-4 py-3 rounded-xl border shadow-md font-nav-link text-xs font-semibold" style="display: flex; align-items: center; gap: 10px; background: #d1e7dd#f8d7da#fff3cd; color: #0f5132#842029#664d03; border: 1px solid #badbcc#f5c2c7#ffecb5;">
+            <span></span>
+          </div>
+        
+      </div>
+      <script>
+        setTimeout(() => {
+          const container = document.getElementById('toast-container');
+          if (container) {
+            container.style.opacity = '0';
+            container.style.transition = 'opacity 0.5s ease';
+            setTimeout(() => container.remove(), 500);
+          }
+        }, 4000);
+      </script>
+    
+
+    <!-- MAIN DYNAMIC CONTENT CONTAINER -->
+    <main class="site-main" id="app-container">
+      
+<!-- Top Hero Banner (technostore360.com live style) -->
+<section class="hero-section" style="position: relative; overflow: hidden; border-radius: 32px;">
+  <!-- Background Video -->
+  <video autoplay loop muted playsinline style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; object-fit: cover; z-index: 1; pointer-events: none;">
+    <source src="../static/assets/IMG_0799.MP4" type="video/mp4">
+  </video>
+  
+  <!-- Left side: soft blur plus light white overlay for text readability -->
+  <div class="hero-readability-overlay" style="position: absolute; top: 0; left: 0; width: 65%; height: 100%; background: linear-gradient(to right, rgba(255, 255, 255, 0.45) 0%, rgba(255, 255, 255, 0.20) 60%, rgba(255, 255, 255, 0) 100%); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); z-index: 2; pointer-events: none; mask-image: linear-gradient(to right, black 60%, transparent 100%); -webkit-mask-image: linear-gradient(to right, black 60%, transparent 100%);"></div>
+  
+  <!-- Outer edges/border area: subtle blur overlay for a premium hero look -->
+  <div class="hero-outer-blur-overlay" style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 32px; z-index: 3; pointer-events: none; backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); mask-image: radial-gradient(circle, transparent 65%, black 100%); -webkit-mask-image: radial-gradient(circle, transparent 65%, black 100%);"></div>
+  
+  <!-- Soft white inner vignette for smooth border transition -->
+  <div style="position: absolute; top: 0; left: 0; width: 100%; height: 100%; border-radius: 32px; box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5); z-index: 3; pointer-events: none;"></div>
+  
+  <div class="hero-section__copy" style="position: relative; z-index: 5;">
+    <!-- Pink badge kicker -->
+    <div class="hero-kicker-badge">
+      <i data-lucide="sparkles" style="width: 0.85rem; height: 0.85rem; color: var(--accent);"></i>
+      <span>Your All-in-One Tech Marketplace for Business</span>
+    </div>
+    
+    <h1 class="hero-title">Find, Compare & Choose <br>Smart Business <br><span class="highlight-pink" id="hero-typing-text"></span><span class="typing-cursor">|</span></h1>
+    
+    <p class="hero-desc">Empower Your Business with the Perfect Software and Technology Solutions. Explore 20,000+ trusted products and solutions across software, hardware, cloud, security, AI tools and more — all in one place.</p>
+    
+    <!-- Interactive B2B search bar -->
+    <div class="hero-search-shell">
+      <button class="hero-search-btn" onclick="handleHeroSearch()"><i data-lucide="search" style="width: 1.15rem; height: 1.15rem; stroke-width: 2.5px;"></i></button>
+      <input type="text" id="hero-search-input" placeholder="Search products, software, brands or solutions..." autocomplete="off" onkeydown="if(event.key === 'Enter') handleHeroSearch()">
+      <div class="hero-search-divider"></div>
+      <div class="hero-search-category">
+        <span>All Categories</span>
+        <i data-lucide="chevron-down" style="width: 0.95rem; height: 0.95rem; margin-left: 0.25rem;"></i>
+      </div>
+    </div>
+
+    <!-- 3-Column Hero Benefits Strip -->
+    <div class="hero-benefits-strip reveal-on-scroll-group">
+      <div class="hero-benefit-item reveal-on-scroll-child">
+        <div class="hero-benefit-icon pink-icon">
+          <i data-lucide="box" style="width: 1.15rem; height: 1.15rem;"></i>
+        </div>
+        <div class="hero-benefit-text">
+          <h4 class="counter-val" data-target="20000" data-suffix="+">0+</h4>
+          <p>Products</p>
+        </div>
+      </div>
+      <div class="hero-benefit-divider"></div>
+      <div class="hero-benefit-item reveal-on-scroll-child">
+        <div class="hero-benefit-icon blue-icon">
+          <i data-lucide="shield" style="width: 1.15rem; height: 1.15rem;"></i>
+        </div>
+        <div class="hero-benefit-text">
+          <h4 class="counter-val" data-target="500" data-suffix="+">0+</h4>
+          <p>Trusted Brands</p>
+        </div>
+      </div>
+      <div class="hero-benefit-divider"></div>
+      <div class="hero-benefit-item reveal-on-scroll-child">
+        <div class="hero-benefit-icon pink-icon">
+          <i data-lucide="users" style="width: 1.15rem; height: 1.15rem;"></i>
+        </div>
+        <div class="hero-benefit-text">
+          <h4 class="counter-val" data-target="12" data-suffix="M+">0M+</h4>
+          <p>Business Customers</p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+
+</section>
+
+<!-- Trusted By Businesses Bar -->
+<div class="trusted-bar reveal-on-scroll">
+  <div class="trusted-bar__title">Trusted by <br></div>
+  <div class="marquee-container">
+    <div class="marquee-track">
+      <div class="marquee-content">
+        <!-- Microsoft SVG Logo -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 23 23" style="width: 16px; height: 16px; min-width: 16px;">
+            <rect x="0" y="0" width="10.5" height="10.5" fill="#f25022"/>
+            <rect x="11.5" y="0" width="10.5" height="10.5" fill="#7fba00"/>
+            <rect x="0" y="11.5" width="10.5" height="10.5" fill="#00a4ef"/>
+            <rect x="11.5" y="11.5" width="10.5" height="10.5" fill="#ffb900"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #4f5b70; font-weight: 600; font-family: 'Segoe UI', sans-serif; font-size: 0.95rem; margin-left: 5px;">Microsoft</span>
+        </div>
+
+        <!-- AWS Logo -->
+        <div class="trust-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+          <div style="display: flex; align-items: baseline; gap: 1px;">
+            <span class="trust-logo-text" style="color: #1a222e; font-size: 1.1rem; font-weight: 800; font-family: sans-serif; letter-spacing: -0.5px;">aws</span>
+          </div>
+          <svg viewBox="0 0 30 6" style="width: 30px; height: 6px; margin-top: -2px;">
+            <path d="M2,1 C10,5 20,5 28,1" stroke="#ff9900" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Google Cloud SVG Logo -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px;">
+            <path d="M12.0003 4.7502L18.4953 8.5002L18.4953 15.5002L12.0003 19.2502L5.5053 15.5002L5.5053 8.5002L12.0003 4.7502Z" fill="none" stroke="#4285F4" stroke-width="2"/>
+            <path d="M12.0003 4.7502L18.4953 8.5002L12.0003 12.2502L5.5053 8.5002L12.0003 4.7502Z" fill="#EA4335" opacity="0.85"/>
+            <path d="M12.0003 12.2502L18.4953 15.5002L12.0003 19.2502L5.5053 15.5002L12.0003 12.2502Z" fill="#34A853" opacity="0.85"/>
+            <path d="M5.5053 8.5002L12.0003 12.2502L5.5053 15.5002L5.5053 8.5002Z" fill="#FBBC05" opacity="0.85"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #4f5b70; font-weight: 600; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; margin-left: 5px;">Google Cloud</span>
+        </div>
+
+        <!-- Dell Technologies -->
+        <div class="trust-logo">
+          <span style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #0076a3; font-size: 0.95rem; letter-spacing: -0.2px;">DELL Technologies</span>
+        </div>
+
+        <!-- Palo Alto -->
+        <div class="trust-logo" style="gap: 2px;">
+          <svg viewBox="0 0 10 16" style="width: 8px; height: 14px; fill: #ec5a29; min-width: 8px;">
+            <polygon points="10,0 2,16 0,16 8,0"/>
+          </svg>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #1a222e; font-size: 1rem; letter-spacing: -0.2px;">paloalto</span>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; color: #78829b; font-size: 0.65rem; text-transform: uppercase; align-self: flex-end; margin-bottom: 2px; margin-left: 2px;">networks</span>
+        </div>
+
+        <!-- Adobe -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 30 30" style="width: 18px; height: 18px; fill: #fa0f00; min-width: 18px;">
+            <polygon points="19,3 30,27 24.3,27 21.2,20.3 14.8,20.3 11.7,27 6,27"/>
+            <polygon points="15,6.5 17.5,12 12.5,12"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #2c2c2c; font-weight: 800; font-family: 'Clean', sans-serif; font-size: 0.95rem; margin-left: 5px;">Adobe</span>
+        </div>
+      </div>
+      
+      <div class="marquee-content" aria-hidden="true">
+        <!-- Microsoft SVG Logo -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 23 23" style="width: 16px; height: 16px; min-width: 16px;">
+            <rect x="0" y="0" width="10.5" height="10.5" fill="#f25022"/>
+            <rect x="11.5" y="0" width="10.5" height="10.5" fill="#7fba00"/>
+            <rect x="0" y="11.5" width="10.5" height="10.5" fill="#00a4ef"/>
+            <rect x="11.5" y="11.5" width="10.5" height="10.5" fill="#ffb900"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #4f5b70; font-weight: 600; font-family: 'Segoe UI', sans-serif; font-size: 0.95rem; margin-left: 5px;">Microsoft</span>
+        </div>
+
+        <!-- AWS Logo -->
+        <div class="trust-logo" style="flex-direction: column; align-items: flex-start; gap: 0;">
+          <div style="display: flex; align-items: baseline; gap: 1px;">
+            <span class="trust-logo-text" style="color: #1a222e; font-size: 1.1rem; font-weight: 800; font-family: sans-serif; letter-spacing: -0.5px;">aws</span>
+          </div>
+          <svg viewBox="0 0 30 6" style="width: 30px; height: 6px; margin-top: -2px;">
+            <path d="M2,1 C10,5 20,5 28,1" stroke="#ff9900" stroke-width="2" fill="none" stroke-linecap="round"/>
+          </svg>
+        </div>
+
+        <!-- Google Cloud SVG Logo -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 24 24" style="width: 18px; height: 18px; min-width: 18px;">
+            <path d="M12.0003 4.7502L18.4953 8.5002L18.4953 15.5002L12.0003 19.2502L5.5053 15.5002L5.5053 8.5002L12.0003 4.7502Z" fill="none" stroke="#4285F4" stroke-width="2"/>
+            <path d="M12.0003 4.7502L18.4953 8.5002L12.0003 12.2502L5.5053 8.5002L12.0003 4.7502Z" fill="#EA4335" opacity="0.85"/>
+            <path d="M12.0003 12.2502L18.4953 15.5002L12.0003 19.2502L5.5053 15.5002L12.0003 12.2502Z" fill="#34A853" opacity="0.85"/>
+            <path d="M5.5053 8.5002L12.0003 12.2502L5.5053 15.5002L5.5053 8.5002Z" fill="#FBBC05" opacity="0.85"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #4f5b70; font-weight: 600; font-family: 'Segoe UI', sans-serif; font-size: 0.9rem; margin-left: 5px;">Google Cloud</span>
+        </div>
+
+        <!-- Dell Technologies -->
+        <div class="trust-logo">
+          <span style="font-family: 'Segoe UI', sans-serif; font-weight: 700; color: #0076a3; font-size: 0.95rem; letter-spacing: -0.2px;">DELL Technologies</span>
+        </div>
+
+        <!-- Palo Alto -->
+        <div class="trust-logo" style="gap: 2px;">
+          <svg viewBox="0 0 10 16" style="width: 8px; height: 14px; fill: #ec5a29; min-width: 8px;">
+            <polygon points="10,0 2,16 0,16 8,0"/>
+          </svg>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 800; color: #1a222e; font-size: 1rem; letter-spacing: -0.2px;">paloalto</span>
+          <span style="font-family: 'Outfit', sans-serif; font-weight: 400; color: #78829b; font-size: 0.65rem; text-transform: uppercase; align-self: flex-end; margin-bottom: 2px; margin-left: 2px;">networks</span>
+        </div>
+
+        <!-- Adobe -->
+        <div class="trust-logo">
+          <svg viewBox="0 0 30 30" style="width: 18px; height: 18px; fill: #fa0f00; min-width: 18px;">
+            <polygon points="19,3 30,27 24.3,27 21.2,20.3 14.8,20.3 11.7,27 6,27"/>
+            <polygon points="15,6.5 17.5,12 12.5,12"/>
+          </svg>
+          <span class="trust-logo-text" style="color: #2c2c2c; font-weight: 800; font-family: 'Clean', sans-serif; font-size: 0.95rem; margin-left: 5px;">Adobe</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Trending Products Grid -->
+<section style="margin-top: 4rem; margin-bottom: 4rem;">
+  <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem;">
+    <div>
+      <span class="section-kicker">TOP TRENDING PRODUCTS</span>
+      <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">See what's popular and loved by businesses like yours.</h2>
+    </div>
+    <a href="product_list.html" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">View All <i data-lucide="arrow-right" style="width: 0.8rem; margin-left: 0.25rem;"></i></a>
+  </div>
+  <div class="product-grid product-grid-4">
+    
+      
+    
+  </div>
+</section>
+
+<!-- Category Section -->
+<section style="margin-top: 4rem; margin-bottom: 4rem;">
+  <div style="margin-bottom: 1.5rem;">
+    <span class="section-kicker">EXPLORE TOP CATEGORIES</span>
+    <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">Find the right solution for every need.</h2>
+  </div>
+  <div class="category-grid">
+    
+      
+    
+  </div>
+</section>
+
+<!-- AI-Powered Solutions Banner -->
+<section style="margin-top: 4rem; margin-bottom: 4rem;">
+  <a href="product_list.html?category=ai-tools" style="display: block; width: 100%; border-radius: 28px; overflow: hidden; border: 1px solid var(--slate-200); box-shadow: var(--shadow-sm); transition: transform 0.2s ease, box-shadow 0.2s ease;">
+    <img src="../static/assets/chatgpt_image_jun_16.png" alt="AI-Powered Solutions for a Smarter Tomorrow" style="width: 100%; display: block; height: auto; object-fit: cover;">
+  </a>
+</section>
+
+<!-- Solution Bundles Section -->
+<section style="margin-top: 4rem; margin-bottom: 4rem;">
+  <div style="margin-bottom: 1.5rem;">
+    <span class="section-kicker">SOLUTION BUNDLES</span>
+    <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">Pre-Configured Business Solution Kits</h2>
+  </div>
+  <div class="product-grid product-grid-3">
+    
+      <div class="card solution-bundle-card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--primary-blue); border-radius: var(--radius-lg);">
+        <div>
+          <span class="badge" style="background-color: rgba(0, 82, 255, 0.08); color: var(--primary-blue); margin-bottom: 0.5rem;"></span>
+          <h3 style="font-size: 1.15rem; font-weight: 700; margin-bottom: 0.25rem;"></h3>
+          <p style="font-size: 0.8rem; color: var(--slate-600); margin-bottom: 1rem; line-height: 1.4;"></p>
+          
+          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; margin-bottom: 1.25rem; padding-left: 0;">
+            
+              <li style="font-size: 0.75rem; display: flex; align-items: center; gap: 0.35rem;">
+                <i data-lucide="check-circle" style="color: var(--primary-green); width: 0.8rem; height: 0.8rem;"></i> 
+              </li>
+            
+          </ul>
+        </div>
+
+        <div style="border-top: 1px solid var(--slate-100); padding-top: 1rem; display: flex; align-items: center; justify-content: space-between; gap: 1rem;">
+          <div>
+            <span style="font-size: 0.65rem; color: var(--slate-400); font-weight: 600;">PRICING FROM</span>
+            <div style="font-size: 1rem; font-weight: 800; color: var(--slate-900);"></div>
+          </div>
+          <a href="demo_request.html?package=" class="btn btn-primary btn-sm">Consultation</a>
+        </div>
+      </div>
+    
+  </div>
+</section>
+
+<!-- AI Recommendation questionnaire Stepper -->
+<section class="card ai-wizard-card" style="padding: 2.5rem; margin-top: 4rem; margin-bottom: 4rem;">
+  <div style="text-align: center; margin-bottom: 2rem;">
+    <span class="badge" style="background-color: rgba(255,20,100,0.08); color: var(--accent); margin-bottom: 0.5rem; font-size: 0.65rem;">AI STACK WIZARD</span>
+    <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem; font-weight: 800;">Get Smart B2B Stack Recommendations</h2>
+    <p style="color: var(--slate-500); max-width: 500px; margin: 0 auto; font-size: 0.8rem;">Answer 5 quick questions about your company, budget, and workflows, and our algorithm will suggest optimal tech packs.</p>
+  </div>
+
+  <div class="stepper-container" style="background: none; border: none; padding: 0; max-width: 680px; margin: 0 auto;">
+    
+    <!-- Step indicator header -->
+    <div class="stepper-header" style="margin-bottom: 2rem;">
+      <div class="step-node active" id="step-indicator-1">1</div>
+      <div class="step-node" id="step-indicator-2">2</div>
+      <div class="step-node" id="step-indicator-3">3</div>
+      <div class="step-node" id="step-indicator-4">4</div>
+      <div class="step-node" id="step-indicator-5">5</div>
+    </div>
+
+    <form id="ai-recom-form" onsubmit="event.preventDefault();">
+      
+      <!-- Panel 1: Business Type -->
+      <div class="step-panel active" id="step-panel-1">
+        <h3 style="margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">What is your business type?</h3>
+        <div class="chip-grid">
+          <div class="chip-option" data-wizard-field="businessType" data-wizard-value="Startup" onclick="selectWizardChip(this)">
+            <i data-lucide="rocket" style="width: 1.5rem; color: var(--accent);"></i>
+            <span style="font-size: 0.85rem;">Startup</span>
+          </div>
+          <div class="chip-option" data-wizard-field="businessType" data-wizard-value="SMB" onclick="selectWizardChip(this)">
+            <i data-lucide="building" style="width: 1.5rem; color: var(--accent);"></i>
+            <span style="font-size: 0.85rem;">SMB (Mid-Market)</span>
+          </div>
+          <div class="chip-option" data-wizard-field="businessType" data-wizard-value="Enterprise" onclick="selectWizardChip(this)">
+            <i data-lucide="hotel" style="width: 1.5rem; color: var(--accent);"></i>
+            <span style="font-size: 0.85rem;">Enterprise</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 2: Budget -->
+      <div class="step-panel" id="step-panel-2">
+        <h3 style="margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">What is your budget tier?</h3>
+        <div class="chip-grid">
+          <div class="chip-option" data-wizard-field="budget" data-wizard-value="Low" onclick="selectWizardChip(this)">
+            <i data-lucide="dollar-sign" style="width: 1.5rem; color: var(--primary-green);"></i>
+            <span style="font-size: 0.85rem;">Under $100/mo</span>
+          </div>
+          <div class="chip-option" data-wizard-field="budget" data-wizard-value="Medium" onclick="selectWizardChip(this)">
+            <i data-lucide="wallet" style="width: 1.5rem; color: var(--primary-green);"></i>
+            <span style="font-size: 0.85rem;">$100-$1000/mo</span>
+          </div>
+          <div class="chip-option" data-wizard-field="budget" data-wizard-value="Enterprise" onclick="selectWizardChip(this)">
+            <i data-lucide="credit-card" style="width: 1.5rem; color: var(--primary-green);"></i>
+            <span style="font-size: 0.85rem;">Custom Enterprise</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 3: Problem -->
+      <div class="step-panel" id="step-panel-3">
+        <h3 style="margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">What problem do you want to solve?</h3>
+        <div class="chip-grid" style="grid-template-columns: repeat(2, 1fr);">
+          <div class="chip-option" data-wizard-field="problem" data-wizard-value="collaboration" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">Communication & Mail</span>
+          </div>
+          <div class="chip-option" data-wizard-field="problem" data-wizard-value="security" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">Network Security</span>
+          </div>
+          <div class="chip-option" data-wizard-field="problem" data-wizard-value="automation" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">Accounting & Ledger</span>
+          </div>
+          <div class="chip-option" data-wizard-field="problem" data-wizard-value="ai" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">AI Adoption</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 4: Deployment -->
+      <div class="step-panel" id="step-panel-4">
+        <h3 style="margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">What deployment do you need?</h3>
+        <div class="chip-grid">
+          <div class="chip-option" data-wizard-field="deployment" data-wizard-value="Cloud" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">Cloud / SaaS</span>
+          </div>
+          <div class="chip-option" data-wizard-field="deployment" data-wizard-value="On-Premise" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">On-Premise Hardware</span>
+          </div>
+          <div class="chip-option" data-wizard-field="deployment" data-wizard-value="Hybrid" onclick="selectWizardChip(this)">
+            <span style="font-size: 0.85rem;">Hybrid Setup</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Panel 5: Employees -->
+      <div class="step-panel" id="step-panel-5">
+        <h3 style="margin-bottom: 1rem; text-align: center; font-size: 1.1rem;">How many users/employees?</h3>
+        <div class="chip-grid">
+          <div class="chip-option" data-wizard-field="employees" data-wizard-value="Under-10" onclick="selectWizardChip(this)"><span>1 - 10 Users</span></div>
+          <div class="chip-option" data-wizard-field="employees" data-wizard-value="10-50" onclick="selectWizardChip(this)"><span>10 - 50 Users</span></div>
+          <div class="chip-option" data-wizard-field="employees" data-wizard-value="50-250" onclick="selectWizardChip(this)"><span>50 - 250 Users</span></div>
+          <div class="chip-option" data-wizard-field="employees" data-wizard-value="250+" onclick="selectWizardChip(this)"><span>250+ Users</span></div>
+        </div>
+      </div>
+
+      <!-- Controls -->
+      <div style="display: flex; justify-content: space-between; border-top: 1px solid var(--slate-100); padding-top: 1rem; margin-top: 1.5rem;">
+        <button type="button" class="btn btn-secondary btn-sm" id="ai-prev-btn" style="visibility: hidden;" onclick="prevWizardStep()">Previous</button>
+        <button type="button" class="btn btn-primary btn-sm" id="ai-next-btn" onclick="nextWizardStep()">Next Step</button>
+      </div>
+
+    </form>
+
+    <!-- Loading spinner -->
+    <div id="ai-loading-state" style="display: none; text-align: center; padding: 2rem;">
+      <div style="border: 3px solid var(--slate-200); border-top-color: var(--accent); border-radius: 50%; width: 2.5rem; height: 2.5rem; animation: spin 1s linear infinite; margin: 0 auto 1rem auto;"></div>
+      <p style="font-weight: 600; color: var(--slate-600); font-size: 0.85rem;">Formulating suggestions...</p>
+    </div>
+
+    <!-- Recommendations results -->
+    <div id="ai-recom-results" style="display: none; border-top: 1px solid var(--slate-100); margin-top: 1.5rem; padding-top: 1.5rem;">
+      <h3 style="margin-bottom: 0.75rem; font-size: 1.1rem; color: var(--slate-900);">Recommended Tech Stack For You</h3>
+      <div id="ai-results-cards" style="display: grid; grid-template-columns: 1fr; gap: 1rem;"></div>
+      <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem;">
+        <a href="demo_request.html" class="btn btn-primary btn-sm" style="flex: 1;">Request Consultation</a>
+        <button type="button" class="btn btn-secondary btn-sm" onclick="resetAiWizard()">Reset</button>
+      </div>
+    </div>
+
+  </div>
+</section>
+
+<!-- Success Stories Section -->
+<section class="success-stories-section" style="margin-top: 4rem; margin-bottom: 4rem;">
+  <span class="section-kicker">SUCCESS STORIES THAT INSPIRE</span>
+  <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">Real results from real businesses using the right technology.</h2>
+  
+  <div class="case-study-card">
+    <div>
+      <span class="case-study-badge">ERP Implementation</span>
+      <h3 style="font-size: 1.35rem; font-weight: 800; margin-bottom: 0.5rem; color: var(--navy);">MAVAR ERP Transformation</h3>
+      <p style="font-size: 0.82rem; color: var(--muted); line-height: 1.5; max-width: 480px;">MAVAR streamlined their operations, improved accuracy, and scaled effortlessly with the right ERP solution.</p>
+      
+      <div class="case-study-stats">
+        <div class="stat-item">
+          <span class="stat-number">40%</span>
+          <span class="stat-label">Process Efficiency</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">60%</span>
+          <span class="stat-label">Time Savings</span>
+        </div>
+        <div class="stat-item">
+          <span class="stat-number">99.9%</span>
+          <span class="stat-label">Data Accuracy</span>
+        </div>
+      </div>
+      
+      <a href="demo_request.html?quote=true" class="btn btn-outline btn-sm" style="border-color: var(--accent); color: var(--accent);">View Case Study</a>
+    </div>
+    <div class="case-study-image">
+      <img src="../static/assets/mavar_banner.png" alt="Case Study Mockup">
+    </div>
+  </div>
+</section>
+
+<!-- Comparison Table Section -->
+<section style="margin-top: 5rem; margin-bottom: 3rem;">
+  <div style="margin-bottom: 2rem;">
+    <span class="section-kicker" style="color: var(--accent); font-weight: 800; letter-spacing: 0.15em; font-size: 0.72rem;">WHY A RESELLER, WHY US</span>
+    <h2 style="font-size: 1.85rem; font-weight: 800; color: var(--navy); margin-top: 0.35rem; margin-bottom: 0.5rem;">Buying direct vs. buying through TechnoStore360.</h2>
+    <p style="font-size: 0.9rem; color: var(--muted); line-height: 1.5; max-width: 600px;">
+      A real comparison. The procurement reasons companies choose us over the brand's direct portal — and over generic IT shops.
+    </p>
+  </div>
+
+  <div class="card" style="padding: 0; overflow-x: auto; border-radius: 16px; border: 1px solid var(--slate-200); box-shadow: 0 10px 30px rgba(37, 52, 75, 0.03);">
+    <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; font-size: 0.82rem;">
+      <thead>
+        <tr style="border-bottom: 1px solid var(--slate-200); background-color: #fafbfc;">
+          <th style="padding: 1.15rem 1.25rem; font-weight: 800; color: var(--slate-500); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; width: 35%;">Capability</th>
+          <th style="padding: 1.15rem 1.25rem; font-weight: 800; color: var(--accent); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; background-color: rgba(226, 27, 90, 0.03); width: 22%;">TechnoStore360</th>
+          <th style="padding: 1.15rem 1.25rem; font-weight: 800; color: var(--slate-500); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; width: 21%;">Direct From Brand</th>
+          <th style="padding: 1.15rem 1.25rem; font-weight: 800; color: var(--slate-500); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; width: 22%;">Generic IT Reseller</th>
+        </tr>
+      </thead>
+      <tbody>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Local invoicing in OMR / AED / INR</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Net-30 / Net-60 terms</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">rare</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Single quote across software + hardware</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">On-site deployment & training</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Arabic + English support</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Volume tier discounts (5/25/100+ seats)</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+        </tr>
+        <tr style="border-bottom: 1px solid var(--slate-100);">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Renewal protection at original pricing</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+        </tr>
+        <tr style="border-bottom: none;">
+          <td style="padding: 1.1rem 1.25rem; font-weight: 600; color: var(--slate-800);">Dedicated specialist per account</td>
+          <td style="padding: 1.1rem 1.25rem; font-weight: 700; color: var(--accent); background-color: rgba(226, 27, 90, 0.03);">✓</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-400);">—</td>
+          <td style="padding: 1.1rem 1.25rem; color: var(--slate-600);">partial</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+</section>
+
+<!-- Reseller Band (Megaphone design) -->
+<section class="reseller-band" style="background: linear-gradient(135deg, rgba(255, 20, 100, 0.04) 0%, rgba(255, 20, 100, 0.09) 100%), var(--paper); margin-top: 4rem; margin-bottom: 4rem;">
+  <div class="reseller-band__metric">25%</div>
+  <div class="reseller-band__copy">
+    <span class="section-kicker">Become a Reseller</span>
+    <h2 style="font-size: 1.6rem; font-weight: 800; margin-bottom: 0.25rem;">Join as a Reseller and Earn Recurring Commission</h2>
+    <p>Partner with TechnoStore360 and grow your business with our reseller program. Access direct margins, deal registration support, and high recurring payouts.</p>
+    <div style="margin-top: 0.5rem;">
+      <a href="reseller_dashboard.html" class="btn btn-primary btn-sm">Become a Reseller</a>
+    </div>
+  </div>
+  <div class="reseller-band__right">
+    <div class="megaphone-illustration">
+      <i data-lucide="megaphone" style="width: 2.5rem; height: 2.5rem; color: var(--accent);"></i>
+    </div>
+  </div>
+</section>
+
+    </main>
+
+    <!-- Footer component -->
+    <!-- GLOBAL TECHNO FOOTER -->
+<footer class="techno-footer">
+  <div class="techno-footer__inner techno-footer__top">
+    
+    <div class="techno-footer__brand">
+      <div class="storemark storemark--footer">
+        <span class="storemark__title" style="color: white;">TECHNO<br/>STORE<span style="color: var(--accent);">360</span></span>
+        <span class="storemark__tag" style="color: rgba(255,255,255,0.65);">Empowering Diversity in Tech</span>
+      </div>
+      <p style="margin-top: 1rem; color: rgba(255,255,255,0.75);">sales@technostore360.com</p>
+      <p style="color: rgba(255,255,255,0.75);">Kinfra Tech Park, Kakkanchery, Kerala, India</p>
+      <p style="margin-top: 0.5rem; font-size: 0.75rem; color: rgba(255,255,255,0.45);">Instagram | Twitter | Facebook | LinkedIn</p>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">Categories <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="product_list.html?category=software-solutions" style="color: inherit; text-decoration: none;">Software Brands</a></p>
+        <p><a href="product_list.html?category=hardware-products" style="color: inherit; text-decoration: none;">Hardware Products</a></p>
+        <p><a href="product_list.html?category=cloud-security" style="color: inherit; text-decoration: none;">Cloud & Security</a></p>
+        <p><a href="product_list.html?category=ai-tools" style="color: inherit; text-decoration: none;">AI Automation</a></p>
+        <p><a href="product_list.html?category=it-services" style="color: inherit; text-decoration: none;">On-demand IT Services</a></p>
+      </div>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">Business <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="reseller_dashboard.html" style="color: inherit; text-decoration: none;">Become a Partner</a></p>
+        <p><a href="reseller_dashboard.html" style="color: inherit; text-decoration: none;">Affiliate Program</a></p>
+        <p><a href="admin_login.html" style="color: inherit; text-decoration: none;">Admin Workspace</a></p>
+        <p><a href="demo_request.html" style="color: inherit; text-decoration: none;">Schedule B2B Demo</a></p>
+      </div>
+    </div>
+
+    <div class="techno-footer__column">
+      <h4 onclick="toggleFooterSection(this)">About <i data-lucide="chevron-down" class="footer-chevron"></i></h4>
+      <div class="footer-content">
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">About TechnoStore360</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Blog & Case Studies</a></p>
+        <p><a href="demo_request.html" style="color: inherit; text-decoration: none;">Contact Support</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Return and Refund Policy</a></p>
+        <p><a href="home.html" style="color: inherit; text-decoration: none;">Privacy Policy</a></p>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- OFFICES SECTION -->
+  <div class="techno-footer__offices">
+    <div class="techno-footer__inner techno-footer__inner--offices">
+      
+      <div class="office-card">
+        <span class="office-card__index">1</span>
+        <div>
+          <h5>India Office</h5>
+          <p>+91 96337 06212</p>
+          <p>sales@technostore360.com</p>
+          <p>Kinfra Tech Park, Kakkanchery, Kerala</p>
+        </div>
+      </div>
+
+      <div class="office-card">
+        <span class="office-card__index">2</span>
+        <div>
+          <h5>UAE Office</h5>
+          <p>+971 4 2766 345</p>
+          <p>sales@technostore360.com</p>
+          <p>Latifa Tower, 17th Floor, Sheikh Zayed Road, Dubai</p>
+        </div>
+      </div>
+
+      <div class="office-card">
+        <span class="office-card__index">3</span>
+        <div>
+          <h5>Oman Office</h5>
+          <p>+968 7904 0022</p>
+          <p>sales@technostore360.com</p>
+          <p>2nd Floor, Tamimah Building, Al Wattayah, Muscat</p>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- TRUST & COPYRIGHT BASE -->
+  <div class="techno-footer__base">
+    <div class="techno-footer__inner techno-footer__inner--base">
+      <div class="trust-row">
+        <span>BBB Accredited</span>
+        <span>Norton Secured</span>
+        <span>Verified Business</span>
+        <span>Trusted Commerce</span>
+      </div>
+      <p style="margin-top: 1rem; color: rgba(255,255,255,0.45); font-size: 0.75rem;">&copy; 2026 TechnoStore360. Empowering Diversity in Tech. All rights reserved.</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+  function toggleFooterSection(element) {
+    if (window.innerWidth <= 768) {
+      const column = element.closest('.techno-footer__column');
+      column.classList.toggle('active');
+    }
+  }
+</script>
+
+
+  </div>
+
+  <!-- Back to Top Button -->
+  <button id="back-to-top-btn" aria-label="Back to top">
+    <i data-lucide="arrow-up" style="width: 1.25rem; height: 1.25rem;"></i>
+  </button>
+
+  <!-- Lucide Icons CDN -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Custom Static App JS interactions -->
+  <script src="../static/js/app.js"></script>
+
+  
+<script>
+  // Simple B2B Hero search redirect
+  function handleHeroSearch() {
+    const query = document.getElementById('hero-search-input').value.trim();
+    if (query) {
+      window.location.href = "product_list.html?search=" + encodeURIComponent(query);
+    } else {
+      window.location.href = "product_list.html";
+    }
+  }
+
+  // AI RECOMMENDATION STACK WIZARD SCRIPTS
+  let currentStep = 1;
+  const wizardAnswers = {
+    businessType: '',
+    budget: '',
+    problem: '',
+    deployment: '',
+    employees: ''
+  };
+
+  function selectWizardChip(element) {
+    const field = element.getAttribute('data-wizard-field');
+    const value = element.getAttribute('data-wizard-value');
+    
+    // Deactivate siblings
+    element.parentNode.querySelectorAll('.chip-option').forEach(el => el.classList.remove('active'));
+    element.classList.add('active');
+    
+    wizardAnswers[field] = value;
+  }
+
+  function prevWizardStep() {
+    if (currentStep > 1) {
+      document.getElementById(`step-panel-${currentStep}`).classList.remove('active');
+      document.getElementById(`step-indicator-${currentStep}`).classList.remove('active');
+      currentStep--;
+      document.getElementById(`step-panel-${currentStep}`).classList.add('active');
+      
+      const prevBtn = document.getElementById('ai-prev-btn');
+      if (currentStep === 1) {
+        prevBtn.style.visibility = 'hidden';
+      }
+      
+      const nextBtn = document.getElementById('ai-next-btn');
+      nextBtn.innerText = "Next Step";
+    }
+  }
+
+  function nextWizardStep() {
+    // Validate current step choice
+    const activePanel = document.getElementById(`step-panel-${currentStep}`);
+    const selected = activePanel.querySelector('.chip-option.active');
+    if (!selected) {
+      alert("Please select an option before moving to the next step.");
+      return;
+    }
+
+    if (currentStep < 5) {
+      document.getElementById(`step-panel-${currentStep}`).classList.remove('active');
+      currentStep++;
+      document.getElementById(`step-panel-${currentStep}`).classList.add('active');
+      document.getElementById(`step-indicator-${currentStep}`).classList.add('active');
+      
+      document.getElementById('ai-prev-btn').style.visibility = 'visible';
+      
+      if (currentStep === 5) {
+        document.getElementById('ai-next-btn').innerText = "Calculate Stack";
+      }
+    } else {
+      // Form submission triggers recommendation generator
+      calculateAiRecommendation();
+    }
+  }
+
+  function calculateAiRecommendation() {
+    document.getElementById('ai-recom-form').style.display = 'none';
+    document.getElementById('ai-loading-state').style.display = 'block';
+    
+    setTimeout(() => {
+      document.getElementById('ai-loading-state').style.display = 'none';
+      const resultsDiv = document.getElementById('ai-recom-results');
+      const cardsDiv = document.getElementById('ai-results-cards');
+      
+      // Select mock stack options based on budget/businessType
+      let title = "Startup Tech Accelerator Pack";
+      let desc = "Optimized for early stage scaling with QuickBooks, Zoho CRM and Sophos Essentials security.";
+      let savings = "Save 15% on bundle billing";
+      
+      if (wizardAnswers.budget === 'Enterprise' || wizardAnswers.businessType === 'Enterprise') {
+        title = "Zero-Trust Enterprise Stack";
+        desc = "High compliance secure environment package featuring AWS KMS encryption, Palo Alto intrusion protection and ChatGPT Business Enterprise.";
+        savings = "Save 25% on annual billing";
+      } else if (wizardAnswers.problem === 'security') {
+        title = "Secure Network Guard Pack";
+        desc = "Focuses heavily on endpoint ransomware vaccines and threat logs with Cisco Firewall and Sophos XDR configurations.";
+        savings = "Save 20% on bundle billing";
+      }
+      
+      cardsDiv.innerHTML = `
+        <div class="card" style="padding: 1.25rem; border-left: 4px solid var(--accent); background-color: var(--slate-50);">
+          <div style="font-weight: 800; font-size: 1rem; color: var(--slate-900);">${title}</div>
+          <p style="font-size: 0.8rem; color: var(--slate-600); margin-top: 0.25rem;">${desc}</p>
+          <div style="font-size: 0.7rem; font-weight: 700; color: var(--accent); margin-top: 0.5rem; text-transform: uppercase;">${savings}</div>
+        </div>
+      `;
+      
+      resultsDiv.style.display = 'block';
+    }, 1200);
+  }
+
+  function resetAiWizard() {
+    currentStep = 1;
+    // Reset inputs
+    Object.keys(wizardAnswers).forEach(k => wizardAnswers[k] = '');
+    document.querySelectorAll('.chip-option').forEach(el => el.classList.remove('active'));
+    
+    // Hide results, show form step 1
+    document.getElementById('ai-recom-results').style.display = 'none';
+    document.getElementById('ai-recom-form').style.display = 'block';
+    
+    // Reset step panels
+    for (let i = 1; i <= 5; i++) {
+      const panel = document.getElementById(`step-panel-${i}`);
+      const indicator = document.getElementById(`step-indicator-${i}`);
+      if (i === 1) {
+        panel.classList.add('active');
+        indicator.classList.add('active');
+      } else {
+        panel.classList.remove('active');
+        indicator.classList.remove('active');
+      }
+    }
+    
+    document.getElementById('ai-prev-btn').style.visibility = 'hidden';
+    document.getElementById('ai-next-btn').innerText = "Next Step";
+  }
+</script>
+
+
+  <script>
+    // Initialize icons
+    if (window.lucide) {
+      window.lucide.createIcons();
+    }
+  </script>
+<script src="/static/js/prototype.js"></script>
+</body>
+</html>

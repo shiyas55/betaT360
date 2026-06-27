@@ -3,436 +3,1275 @@
 
 {% block title %}{{ product.name }} - TechnoStore360{% endblock %}
 
-{% block content %}
-<div style="padding-top: 0.5rem; padding-bottom: 4rem;">
-  
-  <!-- Breadcrumb -->
-  <div style="margin-bottom: 1rem; font-size: 0.75rem; color: var(--slate-500);">
-    <a href="{% url 'home' %}" style="color: inherit; text-decoration: none;">Home</a> &gt; 
-    <a href="{% url 'product_list' %}" style="color: inherit; text-decoration: none;">Catalog</a> &gt; 
-    <a href="{% url 'product_list' %}?brand={{ product.brand.slug }}" style="color: inherit; text-decoration: none;">{{ product.brand.name }}</a> &gt; 
-    <span>{{ product.name }}</span>
-  </div>
+{% block extra_css %}
+<style>
+  /* ── ULTRA-PREMIUM DYNAMIC PREVIEW DESIGN ── */
+  :root {
+    --pink-primary: #e21b5a;
+    --text-dark: #111827;
+    --text-muted: #6b7280;
+    --border-color: #e5e7eb;
+    --bg-light: #f9fafb;
+    --primary-blue: #0052ff;
+    --primary-green: #10b981;
+    --green-light: #ecfdf5;
+  }
 
-  <!-- Main Columns Grid -->
-  <div class="detail-layout">
-    
-    <!-- Left details pane -->
-    <div>
-      
-      <!-- Product Title Banner -->
-      <div style="display: flex; align-items: start; gap: 1.25rem; margin-bottom: 1.5rem; padding-bottom: 1.5rem; border-bottom: 1px solid var(--slate-200);">
-        <div style="width: 4.5rem; height: 4.5rem; border-radius: var(--radius-md); border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center; background-color: var(--white); flex-shrink: 0; box-shadow: var(--shadow-sm); overflow: hidden; padding: 0.25rem;">
-          {% if product.image_file %}
-            <img src="{{ product.image_file.url }}" style="width: 100%; height: 100%; object-fit: contain;" alt="{{ product.brand.name }}">
-          {% elif product.image %}
-            {% if 'http' in product.image %}
-              <img src="{{ product.image }}" style="width: 100%; height: 100%; object-fit: contain;" alt="{{ product.brand.name }}">
-            {% else %}
-              <img src="{% static product.image %}" style="width: 100%; height: 100%; object-fit: contain;" alt="{{ product.brand.name }}">
-            {% endif %}
-          {% else %}
-            <img src="{% static 'assets/zoho.png' %}" style="width: 100%; height: 100%; object-fit: contain;" alt="{{ product.brand.name }}">
-          {% endif %}
-        </div>
-        <div>
-          <div style="display: flex; gap: 0.35rem; align-items: center; margin-bottom: 0.35rem; flex-wrap: wrap;">
-            <span class="badge" style="background-color: rgba(255, 20, 100, 0.08); color: var(--accent); border: none; font-size: 0.65rem; padding: 0.2rem 0.6rem; letter-spacing: 0.5px; margin: 0; font-weight: 700;">{{ product.brand.name|upper }} VERIFIED PARTNER</span>
-            {% if product.demo_available %}
-              <span class="badge" style="background-color: rgba(0, 82, 255, 0.08); color: var(--primary-blue); font-size: 0.65rem; font-weight: 700; border: none; border-radius: 4px; padding: 0.2rem 0.6rem;"><i data-lucide="video" style="width: 0.75rem; display: inline-block; vertical-align: text-top; margin-right: 2px;"></i> Sandbox Enabled</span>
-            {% endif %}
-          </div>
-          <h1 style="font-size: 1.85rem; line-height: 1.2; font-weight: 800; color: var(--slate-900); margin: 0;">{{ product.name }}</h1>
-          
-          <!-- Review Row -->
-          <div style="display: flex; align-items: center; gap: 0.5rem; margin-top: 0.5rem; font-size: 0.82rem; flex-wrap: wrap; color: var(--slate-500); font-weight: 500;">
-            <div style="display: flex; align-items: center; gap: 0.15rem; color: #f59e0b;">
-              <i data-lucide="star" style="width: 0.9rem; height: 0.9rem; fill: currentColor;"></i>
-            </div>
-            <strong style="color: var(--slate-900); font-weight: 700;">{{ avg_rating|floatformat:1 }}</strong>
-            <span>({{ reviews_count }} Reviews)</span>
-            <span style="color: var(--slate-300);">|</span>
-            <span>10K+ Businesses Trust {{ product.brand.name }}</span>
-          </div>
-        </div>
-      </div>
+  .detail-container {
+    max-width: 1320px;
+    margin: 0 auto;
+    padding: 32px 24px 64px;
+    font-family: var(--font-body);
+  }
 
-      <!-- 4-Column Trust checklist strip -->
-      <div class="trust-checklist-strip">
-        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
-          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="shield-check" style="width: 1.25rem; height: 1.25rem;"></i></div>
-          <div class="trust-strip-text">
-            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Official License</h4>
-            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">100% Genuine</p>
-          </div>
-        </div>
-        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
-          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="zap" style="width: 1.25rem; height: 1.25rem;"></i></div>
-          <div class="trust-strip-text">
-            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Instant Delivery</h4>
-            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">Digital Access</p>
-          </div>
-        </div>
-        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
-          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="headset" style="width: 1.25rem; height: 1.25rem;"></i></div>
-          <div class="trust-strip-text">
-            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">24/7 Support</h4>
-            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">Expert Assistance</p>
-          </div>
-        </div>
-        <div class="trust-strip-item" style="display: flex; gap: 0.5rem; align-items: center;">
-          <div class="trust-strip-icon" style="color: var(--primary-blue);"><i data-lucide="lock" style="width: 1.25rem; height: 1.25rem;"></i></div>
-          <div class="trust-strip-text">
-            <h4 style="font-size: 0.75rem; font-weight: 700; margin: 0; color: var(--slate-900);">Secure Payment</h4>
-            <p style="font-size: 0.65rem; color: var(--slate-500); margin: 0;">SSL Encrypted</p>
-          </div>
-        </div>
-      </div>
+  /* Development Mode Switcher Panel */
+  .dev-switcher-panel {
+    background: #ffffff;
+    border: 1px dashed var(--pink-primary);
+    border-radius: 16px;
+    padding: 16px 24px;
+    margin-bottom: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    flex-wrap: wrap;
+    box-shadow: 0 4px 12px rgba(226, 27, 90, 0.03);
+  }
+  .dev-switcher-label {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--pink-primary);
+    display: flex;
+    align-items: center;
+    gap: 6px;
+  }
+  .dev-switcher-btns {
+    display: flex;
+    gap: 10px;
+  }
+  .dev-btn {
+    background: transparent;
+    border: 1px solid var(--border-color);
+    color: var(--text-dark);
+    font-weight: 700;
+    font-size: 12.5px;
+    padding: 8px 16px;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .dev-btn.active {
+    background: var(--pink-primary);
+    color: white;
+    border-color: var(--pink-primary);
+  }
+  .dev-btn:hover:not(.active) {
+    border-color: var(--pink-primary);
+    color: var(--pink-primary);
+  }
 
-      <!-- Left Media showcase container -->
-      <div class="showcase-media-container" style="position: relative; border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem; aspect-ratio: 16/9; background-color: var(--slate-50); border: 1px solid var(--slate-200); display: flex; align-items: center; justify-content: center;">
-        {% if product.image_file %}
-          <img src="{{ product.image_file.url }}" alt="{{ product.name }}" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
-        {% elif product.image %}
-          {% if 'http' in product.image %}
-            <img src="{{ product.image }}" alt="{{ product.name }}" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
-          {% else %}
-            <img src="{% static product.image %}" alt="{{ product.name }}" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
-          {% endif %}
-        {% else %}
-          <img src="{% static 'assets/zoho.png' %}" alt="{{ product.name }}" class="showcase-media-img" id="detail-primary-image" style="max-height: 80%; object-fit: contain;">
-        {% endif %}
-      </div>
+  /* Breadcrumbs */
+  .detail-top-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-bottom: 32px;
+  }
+  .detail-top-nav a {
+    color: inherit;
+    text-decoration: none;
+    transition: color 0.2s;
+  }
+  .detail-top-nav a:hover {
+    color: var(--pink-primary);
+  }
+  .back-link {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-weight: 600;
+  }
 
-      <!-- Tabs Nav -->
-      <div class="tabs-nav" style="display: flex; border-bottom: 2px solid var(--slate-200); margin-bottom: 1.5rem; gap: 1rem;">
-        <button type="button" class="tab-btn active" onclick="switchDetailTab('overview', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Overview</button>
-        <button type="button" class="tab-btn" onclick="switchDetailTab('features', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Key Features</button>
-        <button type="button" class="tab-btn" onclick="switchDetailTab('pricing', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Specs & Info</button>
-        <button type="button" class="tab-btn" onclick="switchDetailTab('reviews', this)" style="background: none; border: none; padding: 0.75rem 0.5rem; font-size: 0.85rem; font-weight: 700; color: var(--slate-700); cursor: pointer; border-bottom: 3px solid transparent;">Reviews ({{ reviews_count }})</button>
-      </div>
+  /* Main Grid */
+  .detail-layout-grid {
+    display: grid;
+    grid-template-columns: 1.1fr 1fr;
+    gap: 48px;
+    align-items: start;
+    margin-bottom: 48px;
+  }
 
-      <!-- Tab Content Panels -->
-      <div class="tab-panels-wrapper">
-        
-        <!-- Tab 1: Overview -->
-        <div class="tab-content-panel active" id="detail-tab-overview">
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Product Summary</h3>
-          <p style="color: var(--slate-600); line-height: 1.6; margin-bottom: 1.5rem; font-size: 0.85rem;">{{ product.full_desc|default:product.short_desc }}</p>
-          
-          <!-- Pros & Cons -->
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Vendor Assessment</h3>
-          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-bottom: 1.5rem;">
-            <div style="background-color: rgba(16, 185, 129, 0.04); border: 1px solid rgba(16, 185, 129, 0.1); border-radius: var(--radius-md); padding: 1rem;">
-              <h4 style="color: var(--primary-green); font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-up" style="width: 0.95rem;"></i> Highlighted Pros</h4>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
-                {% for feat in product.features.all|slice:":2" %}
-                  <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> {{ feat.feature }}</li>
-                {% empty %}
-                  <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="check" style="color: var(--primary-green); width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> Industry leader performance standards</li>
-                {% endfor %}
-              </ul>
-            </div>
-            <div style="background-color: rgba(239, 68, 68, 0.04); border: 1px solid rgba(239, 68, 68, 0.1); border-radius: var(--radius-md); padding: 1rem;">
-              <h4 style="color: #ef4444; font-size: 0.85rem; display: flex; align-items: center; gap: 0.35rem; margin-bottom: 0.5rem; font-weight: 700;"><i data-lucide="thumbs-down" style="width: 0.95rem;"></i> Considerations</h4>
-              <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.35rem; padding-left: 0; margin: 0;">
-                <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="alert-circle" style="color: #ef4444; width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> Enterprise configuration pathway required</li>
-                <li style="font-size: 0.75rem; color: var(--slate-700); display: flex; align-items: start; gap: 0.35rem;"><i data-lucide="alert-circle" style="color: #ef4444; width: 0.8rem; flex-shrink: 0; margin-top: 0.15rem;"></i> B2B domain verification required for registration</li>
-              </ul>
-            </div>
-          </div>
-        </div>
-
-        <!-- Tab 2: Features -->
-        <div class="tab-content-panel" id="detail-tab-features" style="display:none;">
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Core Capabilities</h3>
-          <ul style="list-style: none; display: flex; flex-direction: column; gap: 0.75rem; padding-left: 0; margin-bottom: 1.5rem;">
-            {% for feat in product.features.all %}
-              <li style="display: flex; gap: 0.75rem; align-items: start; padding: 0.75rem; background-color: var(--slate-50); border-radius: var(--radius-md); border-left: 3px solid var(--accent);">
-                <span style="font-weight: 700; color: var(--accent); font-size: 0.95rem;">0{{ forloop.counter }}</span>
-                <div>
-                  <h4 style="font-size: 0.85rem; margin: 0 0 0.15rem 0; color: var(--slate-900); font-weight: 700;">{{ feat.feature }}</h4>
-                </div>
-              </li>
-            {% empty %}
-              <li style="font-size: 0.8rem; color: var(--slate-500);">No specific features listed. Contact sales for details.</li>
-            {% endfor %}
-          </ul>
-        </div>
-
-        <!-- Tab 3: Specs -->
-        <div class="tab-content-panel" id="detail-tab-pricing" style="display:none;">
-          <h3 style="font-size: 1.15rem; margin-bottom: 0.75rem; font-weight: 800;">Technical Specifications</h3>
-          <div style="border: 1px solid var(--slate-200); border-radius: var(--radius-lg); overflow: hidden; margin-bottom: 1.5rem;">
-            <table style="width: 100%; border-collapse: collapse; text-align: left; font-size: 0.8rem;">
-              <tbody>
-                <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
-                  <td style="padding: 0.75rem; font-weight: 700; width: 180px; color: var(--slate-600);">Deployment Model</td>
-                  <td style="padding: 0.75rem; color: var(--slate-800);">{{ product.deployment }}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--slate-200);">
-                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">Business Size Class</td>
-                  <td style="padding: 0.75rem; color: var(--slate-800);">{{ product.business_type }}</td>
-                </tr>
-                <tr style="border-bottom: 1px solid var(--slate-200); background-color: var(--slate-50);">
-                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SLA Technical Support</td>
-                  <td style="padding: 0.75rem; color: var(--slate-800);">{{ product.support }}</td>
-                </tr>
-                <tr style="border-bottom: none;">
-                  <td style="padding: 0.75rem; font-weight: 700; color: var(--slate-600);">SKU Code</td>
-                  <td style="padding: 0.75rem; color: var(--slate-800); font-family: monospace;">{{ product.sku }}</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-
-        <!-- Tab 4: Reviews -->
-        <div class="tab-content-panel" id="detail-tab-reviews" style="display:none;">
-          <h3 style="font-size: 1.15rem; margin-bottom: 1rem; font-weight: 800;">Customer Reviews</h3>
-          
-          <div style="display: grid; grid-template-columns: 1fr 1.5fr; gap: 2rem; margin-bottom: 2rem; align-items: center;">
-            <div style="text-align: center; border-right: 1px solid var(--slate-100); padding-right: 2rem;">
-              <div style="font-size: 3rem; font-weight: 800; color: var(--slate-900); line-height: 1;">{{ avg_rating|floatformat:1 }}</div>
-              <div style="display: flex; justify-content: center; gap: 0.15rem; color: #f59e0b; margin-top: 0.5rem; margin-bottom: 0.25rem;">
-                <i data-lucide="star" style="width: 1.25rem; height: 1.25rem; fill: currentColor;"></i>
-              </div>
-              <div style="font-size: 0.75rem; color: var(--slate-500); font-weight: 600;">Based on {{ reviews_count }} reviews</div>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 0.35rem;">
-              {% for star, pct in stars_pct.items %}
-                <div style="display: flex; align-items: center; gap: 0.5rem; font-size: 0.75rem;">
-                  <span style="width: 50px; text-align: right; color: var(--slate-600); font-weight: 600;">{{ star }} stars</span>
-                  <div style="flex: 1; background-color: var(--slate-100); height: 8px; border-radius: 4px; overflow: hidden;">
-                    <div style="background-color: #f59e0b; width: {{ pct }}%; height: 100%;"></div>
-                  </div>
-                  <span style="width: 35px; color: var(--slate-400);">{{ pct }}%</span>
-                </div>
-              {% endfor %}
-            </div>
-          </div>
-
-          <!-- Add Review Form -->
-          {% if user.is_authenticated and not user_has_reviewed %}
-            <div class="card" style="padding: 1.25rem; border-radius: var(--radius-md); border: 1px dashed var(--slate-300); margin-bottom: 2rem; background-color: var(--slate-50);">
-              <h4 style="font-size: 0.95rem; font-weight: 800; margin-bottom: 0.75rem;">Write a Corporate Review</h4>
-              <form method="POST" action="{% url 'submit_review' product.slug %}">
-                {% csrf_token %}
-                <div class="form-group" style="margin-bottom: 0.75rem; display: flex; align-items: center; gap: 0.75rem;">
-                  <label style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700);">Rating Score:</label>
-                  <select name="rating" style="padding: 0.25rem 0.5rem; font-size: 0.75rem; border: 1px solid var(--slate-200); border-radius: 4px;">
-                    <option value="5">5 Stars (Excellent)</option>
-                    <option value="4">4 Stars (Good)</option>
-                    <option value="3">3 Stars (Average)</option>
-                    <option value="2">2 Stars (Poor)</option>
-                    <option value="1">1 Star (Very Poor)</option>
-                  </select>
-                </div>
-                <div class="form-group" style="margin-bottom: 1rem;">
-                  <textarea name="comment" rows="3" required placeholder="Write your verified procurement experience, deployment speeds, or SLA comments..." style="width:100%; padding: 0.5rem; font-size: 0.75rem; border: 1px solid var(--slate-200); border-radius: 4px; resize: vertical;"></textarea>
-                </div>
-                <button type="submit" class="btn btn-primary btn-sm" style="font-size: 0.75rem; padding: 0.4rem 0.8rem;">Submit Review</button>
-              </form>
-            </div>
-          {% endif %}
-
-          <!-- Review List -->
-          <div style="display: flex; flex-direction: column; gap: 1rem;">
-            {% for r in reviews %}
-              <div style="border-bottom: 1px solid var(--slate-100); padding-bottom: 1rem;">
-                <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 0.35rem;">
-                  <div>
-                    <h5 style="font-size: 0.85rem; font-weight: 700; margin: 0; color: var(--slate-900);">{{ r.user.first_name|default:r.user.username }}</h5>
-                    <span style="font-size: 0.7rem; color: var(--slate-400);">{{ r.created_at|date:"Y-m-d" }}</span>
-                  </div>
-                  <div style="display: flex; gap: 0.25rem; align-items: center;">
-                    <div style="display: flex; color: #f59e0b;">
-                      <i data-lucide="star" style="width: 0.8rem; height: 0.8rem; fill: currentColor;"></i>
-                    </div>
-                    <span style="font-size: 0.75rem; font-weight: 700; color: #d97706;">{{ r.rating }}.0</span>
-                  </div>
-                </div>
-                <p style="font-size: 0.8rem; color: var(--slate-600); margin: 0.25rem 0; line-height: 1.4;">{{ r.comment }}</p>
-                {% if r.is_verified_purchase %}
-                  <span class="badge" style="font-size: 0.6rem; background-color: rgba(16, 185, 129, 0.08); color: var(--primary-green); border-radius: 4px; padding: 0.1rem 0.35rem; font-weight: bold;"><i data-lucide="check-circle" style="width:0.6rem; height:0.6rem; display:inline-block; vertical-align:text-top;"></i> Verified Purchase</span>
-                {% endif %}
-              </div>
-            {% empty %}
-              <div style="font-size: 0.8rem; color: var(--slate-400); text-align: center; padding: 1.5rem 0;">No reviews yet. Be the first to review!</div>
-            {% endfor %}
-          </div>
-        </div>
-
-      </div>
-
-    </div>
-
-    <!-- Right Column: Sidebar (Pricing, Actions, and Alternatives) -->
-    <aside style="display: flex; flex-direction: column; gap: 1.5rem;">
-      
-      <!-- Procurement Action Card -->
-      <div class="card" style="padding: 1.5rem; border-radius: var(--radius-lg); background-color: var(--white); border-color: var(--slate-200);">
-        
-        <div style="margin-bottom: 1.25rem;">
-          <span style="font-size: 0.65rem; font-weight: 700; color: var(--slate-400); text-transform: uppercase;">Procurement Starting at</span>
-          <div style="display: flex; align-items: baseline; gap: 0.35rem; margin-top: 0.15rem;">
-            <span id="detail-price-value" style="font-size: 1.75rem; font-weight: 800; color: var(--slate-900);">
-              {% if product.price > 0 %}
-                INR {{ product.current_price_in_inr|floatformat:"2" }}
-              {% else %}
-                Get Quote
-              {% endif %}
-            </span>
-            <span id="detail-price-period" style="font-size: 0.75rem; color: var(--slate-400);">/ month</span>
-          </div>
-          {% if product.sale_price %}
-            <div style="font-size: 0.75rem; color: var(--error-red); font-weight: 600; margin-top: 0.15rem;">
-              Regular price: <span style="text-decoration: line-through;">INR {{ product.price_in_inr|floatformat:"0" }}</span> (Save {{ product.discount_percent }}%)
-            </div>
-          {% endif %}
-        </div>
-
-        <hr style="border: none; border-top: 1px solid var(--slate-100); margin: 0 0 1.25rem 0;">
-
-        <!-- Stock Status -->
-        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1.25rem;">
-          <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-500);">Inventory Level:</span>
-          {% if product.stock_status == 'in_stock' %}
-            <span style="font-size: 0.75rem; color: var(--primary-green); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--primary-green); display: inline-block;"></span> In Stock ({{ product.stock_qty }} left)
-            </span>
-          {% elif product.stock_status == 'low_stock' %}
-            <span style="font-size: 0.75rem; color: #d97706; font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: #f59e0b; display: inline-block;"></span> Low Stock ({{ product.stock_qty }} left)
-            </span>
-          {% else %}
-            <span style="font-size: 0.75rem; color: var(--error-red); font-weight: bold; display: flex; align-items: center; gap: 0.25rem;">
-              <span style="width: 6px; height: 6px; border-radius: 50%; background-color: var(--error-red); display: inline-block;"></span> Out of Stock
-            </span>
-          {% endif %}
-        </div>
-
-        <!-- Forms for Add to Cart -->
-        {% if product.stock_qty > 0 %}
-          <form method="POST" action="{% url 'cart_add' product.id %}" style="display: flex; flex-direction: column; gap: 0.75rem;">
-            {% csrf_token %}
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
-              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">Billing Cycle:</span>
-              <select name="plan" id="detail-plan-select" style="border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none; direction: rtl; cursor: pointer; color: var(--slate-900);">
-                <option value="monthly">Monthly Plan</option>
-                <option value="yearly">Yearly Plan (Save 10%)</option>
-              </select>
-            </div>
-            <div style="display: flex; align-items: center; justify-content: space-between; gap: 0.5rem; background-color: var(--slate-50); border: 1px solid var(--slate-200); padding: 0.35rem 0.75rem; border-radius: var(--radius-md);">
-              <span style="font-size: 0.75rem; font-weight: 600; color: var(--slate-600);">User Licenses:</span>
-              <input type="number" name="quantity" value="1" min="1" max="{{ product.stock_qty }}" style="width: 60px; border: none; background: none; font-size: 0.85rem; font-weight: 700; text-align: right; outline: none;">
-            </div>
-            
-            <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem;">
-              Add to Procurement Cart
-            </button>
-            <button type="submit" name="buy_now" value="true" class="btn btn-secondary btn-sm" style="width: 100%; padding: 0.65rem; font-weight: 700; font-size: 0.85rem; background-color: var(--slate-900); color: white; border-color: var(--slate-900);">
-              Buy Now
-            </button>
-          </form>
-        {% else %}
-          <button class="btn btn-primary btn-sm" disabled style="width: 100%; padding: 0.65rem;">Out of Stock</button>
-        {% endif %}
-
-        <!-- Compare and Wishlist actions stacked -->
-        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 0.5rem; margin-top: 1rem;">
-          <!-- Compare Matrix Button -->
-          {% if product.sku in compared_ids %}
-            <a href="{% url 'product_compare' %}?action=remove&sku={{ product.sku }}" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
-              <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i> Compared
-            </a>
-          {% else %}
-            <a href="{% url 'product_compare' %}?action=add&sku={{ product.sku }}" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
-              <i data-lucide="columns" style="width: 0.8rem; height: 0.8rem;"></i> Compare Spec
-            </a>
-          {% endif %}
-
-          <!-- Wishlist Button -->
-          {% if user.is_authenticated %}
-            {% if is_wishlisted %}
-              <a href="{% url 'wishlist_remove' product.id %}" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem; color: var(--error-red); border-color: var(--error-red);">
-                <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem; fill: currentColor;"></i> Saved
-              </a>
-            {% else %}
-              <a href="{% url 'wishlist_add' product.id %}" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
-                <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack
-              </a>
-            {% endif %}
-          {% else %}
-            <a href="{% url 'login' %}?next={{ request.path }}" class="btn btn-outline btn-xs" style="text-align: center; text-decoration: none; padding: 0.4rem; font-size: 0.7rem; display: flex; align-items: center; justify-content: center; gap: 0.25rem;">
-              <i data-lucide="heart" style="width: 0.8rem; height: 0.8rem;"></i> Save Stack
-            </a>
-          {% endif %}
-        </div>
-
-      </div>
-
-    </aside>
-
-  </div>
-
-  <!-- Related Alternatives Section -->
-  <div style="margin-top: 2rem; border-top: 1px solid var(--slate-200); padding-top: 1.5rem;">
-    <h3 style="font-size: 1.25rem; font-weight: 800; margin-bottom: 1rem; color: var(--slate-900);">Alternatives & Solutions</h3>
-    <div style="display: flex; flex-wrap: nowrap; overflow-x: auto; gap: 1.5rem; padding: 0.5rem 0.25rem 1.5rem; scroll-snap-type: x mandatory; -webkit-overflow-scrolling: touch; scrollbar-width: thin; -ms-overflow-style: -ms-autohiding-scrollbar;">
-      {% for alt in related_products %}
-        <div style="flex: 0 0 280px; scroll-snap-align: start; display: flex; flex-direction: column;">
-          {% include 'includes/product_card.html' with product=alt %}
-        </div>
-      {% empty %}
-        <div style="font-size: 0.85rem; color: var(--slate-400); text-align: center; width: 100%; padding: 2rem 0;">No related alternatives found.</div>
-      {% endfor %}
-    </div>
-  </div>
-</div>
-{% endblock %}
-
-{% block extra_js %}
-<script>
-  function switchDetailTab(tabName, btn) {
-    // Reset active buttons
-    btn.parentNode.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
-    
-    // Hide all panels
-    const wrapper = btn.parentNode.parentNode;
-    wrapper.querySelectorAll('.tab-content-panel').forEach(panel => {
-      panel.style.display = 'none';
-      panel.classList.remove('active');
-    });
-    
-    // Show active panel
-    const activePanel = wrapper.querySelector(`#detail-tab-${tabName}`);
-    if (activePanel) {
-      activePanel.style.display = 'block';
-      activePanel.classList.add('active');
+  @media (max-width: 991px) {
+    .detail-layout-grid {
+      grid-template-columns: 1fr;
+      gap: 32px;
     }
   }
 
-  document.addEventListener('DOMContentLoaded', function() {
-    const basePrice = parseFloat("{{ product.current_price_in_inr|default:0 }}");
-    const planSelect = document.getElementById('detail-plan-select');
-    const priceValue = document.getElementById('detail-price-value');
-    const pricePeriod = document.getElementById('detail-price-period');
+  /* LEFT GALLERY */
+  .gallery-wrapper {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+  }
 
-    if (planSelect && priceValue && pricePeriod && basePrice > 0) {
-      planSelect.addEventListener('change', function() {
-        if (this.value === 'yearly') {
-          const yearlyPrice = basePrice * 12 * 0.90;
-          priceValue.textContent = 'INR ' + yearlyPrice.toFixed(2);
-          pricePeriod.textContent = '/ year';
-        } else {
-          priceValue.textContent = 'INR ' + basePrice.toFixed(2);
-          pricePeriod.textContent = '/ month';
-        }
-      });
+  .main-image-viewport-wrapper {
+    position: relative;
+    width: 100%;
+  }
+
+  .main-image-viewport {
+    width: 100%;
+    height: 400px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: #ffffff;
+    border-radius: 24px;
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+  }
+
+  @media (max-width: 600px) {
+    .main-image-viewport { height: 260px; }
+  }
+
+  .main-image-viewport img {
+    max-height: 95%;
+    max-width: 95%;
+    object-fit: contain;
+  }
+
+  .viewport-actions {
+    position: absolute;
+    top: 20px;
+    right: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+    z-index: 10;
+  }
+
+  .viewport-action-btn {
+    width: 44px;
+    height: 44px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    color: var(--text-dark);
+    transition: all 0.2s;
+  }
+  .viewport-action-btn:hover {
+    color: var(--pink-primary);
+    border-color: rgba(226,26,97,0.2);
+    transform: scale(1.05);
+  }
+  .viewport-action-btn.active {
+    color: var(--pink-primary);
+    background: rgba(226, 26, 97, 0.05);
+    border-color: var(--pink-primary);
+  }
+
+  .thumbnail-list {
+    display: flex;
+    gap: 10px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .thumbnail-list::-webkit-scrollbar { display: none; }
+
+  .thumb-card {
+    width: 72px;
+    height: 72px;
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    background: #fff;
+    flex-shrink: 0;
+    padding: 6px;
+    transition: all 0.2s;
+  }
+  .thumb-card.active, .thumb-card:hover {
+    border-color: var(--pink-primary);
+    box-shadow: 0 0 0 2px rgba(226, 26, 97, 0.1);
+  }
+  .thumb-card img {
+    max-height: 100%;
+    max-width: 100%;
+    object-fit: contain;
+  }
+
+  /* RIGHT SPEC & PURCHASE COLUMN */
+  .product-details-content {
+    display: flex;
+    flex-direction: column;
+  }
+
+  .product-brand {
+    font-size: 13px;
+    font-weight: 700;
+    color: var(--text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .product-title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    font-weight: 800;
+    color: var(--text-dark);
+    line-height: 1.2;
+    margin: 0 0 16px 0;
+  }
+
+  .price-row-wrap {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-bottom: 20px;
+  }
+
+  .price-old {
+    font-size: 15px;
+    color: var(--text-muted);
+    text-decoration: line-through;
+  }
+
+  .price-current {
+    font-size: 24px;
+    font-weight: 800;
+    color: var(--text-dark);
+  }
+
+  .discount-tag {
+    background: var(--green-light);
+    color: var(--primary-green);
+    font-size: 11px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 20px;
+  }
+
+  .rating-badge-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-size: 13px;
+    color: var(--text-muted);
+    margin-left: auto;
+  }
+
+  @media (max-width: 600px) {
+    .rating-badge-row { width: 100%; margin-left: 0; margin-top: 10px; }
+  }
+
+  .star-count {
+    color: #f59e0b;
+    font-weight: 700;
+    display: flex;
+    align-items: center;
+    gap: 3px;
+  }
+
+  .reviews-count-link {
+    color: var(--pink-primary);
+    text-decoration: none;
+    font-weight: 600;
+  }
+
+  .short-desc-text {
+    font-size: 14.5px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    margin-bottom: 24px;
+  }
+
+  .see-more-link {
+    color: var(--pink-primary);
+    font-weight: 700;
+    text-decoration: none;
+  }
+
+  .variant-selector-section {
+    margin-bottom: 28px;
+  }
+
+  .variant-label {
+    font-size: 13.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 12px;
+    display: block;
+  }
+
+  .variant-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+  }
+
+  @media (max-width: 480px) {
+    .variant-grid { grid-template-columns: 1fr; }
+  }
+
+  .variant-btn {
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 14px 16px;
+    font-size: 13px;
+    font-weight: 700;
+    background: #ffffff;
+    color: var(--text-dark);
+    cursor: pointer;
+    text-align: left;
+    transition: all 0.2s;
+    outline: none;
+  }
+
+  .variant-btn.active {
+    border-color: var(--pink-primary);
+    color: var(--pink-primary);
+    background: rgba(226, 26, 97, 0.02);
+    box-shadow: 0 0 0 2px rgba(226, 26, 97, 0.1);
+  }
+
+  /* Checklist Icons Block */
+  .checklist-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    background: var(--bg-light);
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 28px;
+    border: 1px solid var(--border-color);
+  }
+
+  @media (max-width: 600px) {
+    .checklist-grid { grid-template-columns: 1fr; }
+  }
+
+  .checklist-item {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+  }
+
+  .checklist-icon {
+    color: var(--pink-primary);
+    flex-shrink: 0;
+  }
+
+  .checklist-text h5 {
+    margin: 0 0 2px 0;
+    font-size: 12.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+
+  .checklist-text p {
+    margin: 0;
+    font-size: 11px;
+    color: var(--text-muted);
+  }
+
+  /* CTA Buttons */
+  .cta-row {
+    display: grid;
+    grid-template-columns: 1.2fr 1fr;
+    gap: 16px;
+    margin-bottom: 16px;
+  }
+
+  @media (max-width: 480px) {
+    .cta-row { grid-template-columns: 1fr; }
+  }
+
+  .btn-solid-pink {
+    background: var(--pink-primary);
+    color: #ffffff;
+    border: none;
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: background 0.2s;
+  }
+  .btn-solid-pink:hover { background: #c2154d; }
+
+  .btn-outline-pink {
+    background: #ffffff;
+    border: 1.5px solid var(--pink-primary);
+    color: var(--pink-primary);
+    border-radius: 12px;
+    padding: 16px;
+    font-size: 14.5px;
+    font-weight: 700;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+  }
+  .btn-outline-pink:hover { background: rgba(226, 26, 97, 0.05); }
+
+  .delivery-tc-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 12px;
+    color: var(--text-muted);
+    text-decoration: none;
+    font-weight: 600;
+  }
+  .delivery-tc-link:hover { color: var(--pink-primary); }
+
+  /* Tabbed Area */
+  .tab-section-wrap {
+    margin-top: 48px;
+  }
+
+  .tab-header-strip {
+    display: flex;
+    gap: 8px;
+    border-bottom: 2px solid var(--border-color);
+    margin-bottom: 24px;
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .tab-header-strip::-webkit-scrollbar { display: none; }
+
+  .tab-trigger {
+    background: transparent;
+    border: none;
+    padding: 14px 20px;
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--text-muted);
+    cursor: pointer;
+    border-bottom: 3px solid transparent;
+    white-space: nowrap;
+    transition: all 0.2s;
+  }
+  .tab-trigger.active {
+    color: var(--pink-primary);
+    border-bottom-color: var(--pink-primary);
+  }
+
+  .tab-pane {
+    display: none;
+    animation: tabFadeIn 0.2s ease-in-out;
+  }
+  .tab-pane.active {
+    display: block;
+  }
+
+  @keyframes tabFadeIn {
+    from { opacity: 0; transform: translateY(4px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* Specification & Details grid */
+  .spec-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 16px 32px;
+  }
+  @media (max-width: 768px) {
+    .spec-grid { grid-template-columns: 1fr; }
+  }
+
+  .spec-entry {
+    display: flex;
+    justify-content: space-between;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 12px;
+    font-size: 13.5px;
+  }
+  .spec-entry-label { font-weight: 700; color: var(--text-muted); }
+  .spec-entry-value { color: var(--text-dark); }
+
+  /* Feature Grid Cards */
+  .feature-grid-cards {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  @media (max-width: 768px) {
+    .feature-grid-cards { grid-template-columns: 1fr; }
+  }
+
+  .feature-card-item {
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    background: #ffffff;
+    box-shadow: 0 4px 16px rgba(0,0,0,0.01);
+  }
+  .feature-card-item h4 {
+    margin: 0 0 8px 0;
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .feature-card-item p {
+    margin: 0;
+    font-size: 13px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+
+  /* FAQ Accordion */
+  .faq-section-wrap {
+    margin-top: 40px;
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 20px;
+    padding: 32px;
+  }
+  .faq-section-wrap h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+    margin: 0 0 20px 0;
+  }
+  .faq-item {
+    border-bottom: 1px solid var(--border-color);
+  }
+  .faq-item:last-child { border-bottom: none; }
+
+  .faq-question-btn {
+    width: 100%;
+    background: none;
+    border: none;
+    padding: 18px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+    font-weight: 700;
+    font-size: 15px;
+    color: var(--text-dark);
+    text-align: left;
+  }
+  .faq-answer-pane {
+    max-height: 0;
+    overflow: hidden;
+    transition: max-height 0.3s ease-out;
+    font-size: 14px;
+    color: var(--text-muted);
+    line-height: 1.6;
+  }
+  .faq-answer-pane-inner {
+    padding-bottom: 18px;
+  }
+  .faq-item.active .faq-answer-pane {
+    max-height: 250px;
+  }
+
+  /* ── ALTERNATIVE CARD STYLINGS ── */
+  .alternatives-section {
+    margin-top: 48px;
+  }
+  .alternatives-section h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    font-weight: 800;
+    margin-bottom: 24px;
+    color: var(--text-dark);
+  }
+  .alternatives-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+  }
+  @media (max-width: 991px) {
+    .alternatives-grid {
+      grid-template-columns: repeat(2, 1fr);
+      gap: 16px;
     }
+  }
+  @media (max-width: 480px) {
+    .alternatives-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+
+  .alternative-card {
+    background: #ffffff;
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s;
+    cursor: pointer;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02);
+    text-align: left !important;
+  }
+  .alternative-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px rgba(226, 27, 90, 0.05);
+    border-color: rgba(226, 27, 90, 0.15);
+  }
+  .alternative-card-img-box {
+    height: 100px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--bg-light);
+    border-radius: 12px;
+    margin-bottom: 12px;
+    border: 1px solid var(--border-color);
+  }
+  .alternative-card-img-box img {
+    max-height: 70%;
+    max-width: 70%;
+    object-fit: contain;
+  }
+  .alternative-card h4 {
+    margin: 0 0 4px 0;
+    font-size: 14.5px;
+    font-weight: 700;
+    color: var(--text-dark);
+  }
+  .alternative-card span {
+    font-size: 12px;
+    color: var(--text-muted);
+    margin-bottom: 12px;
+    display: block;
+  }
+  .alternative-card .price {
+    font-family: var(--font-heading);
+    font-size: 15px;
+    font-weight: 800;
+    color: var(--pink-primary);
+    margin-top: auto;
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="detail-container">
+
+  <!-- DEVELOPMENT ONLY DEMO SELECTOR -->
+  <div class="dev-switcher-panel">
+    <div class="dev-switcher-label">
+      <i data-lucide="sliders" style="width:18px; height:18px;"></i>
+      Product-Type Switching Preview:
+    </div>
+    <div class="dev-switcher-btns">
+      <button type="button" id="dev-btn-software" class="dev-btn active" onclick="loadDemoLayout('software')">Software Demo</button>
+      <button type="button" id="dev-btn-hardware" class="dev-btn" onclick="loadDemoLayout('hardware')">Hardware Demo</button>
+      <button type="button" id="dev-btn-service" class="dev-btn" onclick="loadDemoLayout('service')">IT Service Demo</button>
+    </div>
+  </div>
+
+  <!-- TOP NAV & BREADCRUMBS -->
+  <div class="detail-top-nav">
+    <div class="breadcrumbs-list" id="demo-breadcrumbs">
+      <a href="{% url 'home' %}">Homepage</a> &rsaquo; 
+      <a href="{% url 'product_list' %}" id="demo-nav-cat-parent">Odoo</a> &rsaquo; 
+      <span id="demo-nav-current-title">{{ product.name }}</span>
+    </div>
+    <a href="{% url 'demo_selection' %}" class="back-link">
+      <i data-lucide="grid" style="width:14px;height:14px;"></i> View Demo Selection
+    </a>
+  </div>
+
+  <!-- MAIN ROW -->
+  <div class="detail-layout-grid">
+
+    <!-- LEFT GALLERY -->
+    <div class="gallery-wrapper">
+      <div class="main-image-viewport-wrapper">
+        <div class="main-image-viewport">
+          <img src="" alt="Main Preview" id="primary-view-img">
+        </div>
+
+        <!-- Float Actions -->
+        <div class="viewport-actions">
+          <button type="button" class="viewport-action-btn" onclick="alert('Product shared!')" title="Share Product">
+            <i data-lucide="share-2" style="width:16px;height:16px;"></i>
+          </button>
+          <button type="button" class="viewport-action-btn" id="demo-wishlist-btn" onclick="this.classList.toggle('active')" title="Save Product">
+            <i data-lucide="heart" style="width:16px;height:16px;"></i>
+          </button>
+        </div>
+      </div>
+
+      <!-- Thumbnail strip -->
+      <div class="thumbnail-list" id="demo-thumbnail-strip">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+
+    <!-- RIGHT CONTENT & ACTIONS -->
+    <div class="product-details-content">
+      <span class="product-brand" id="demo-brand-label">Figma</span>
+      <h1 class="product-title" id="demo-product-title">Figma Collaborative Design</h1>
+
+      <!-- Pricing Row -->
+      <div class="price-row-wrap" id="demo-price-block">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Description -->
+      <p class="short-desc-text" id="demo-short-desc">
+        A cloud-based collaborative design platform for UI design, wireframing, prototyping, developer handoff and team feedback.
+      </p>
+
+      <!-- Dynamic Variants selector -->
+      <div class="variant-selector-section">
+        <span class="variant-label" id="demo-variant-label">Billing Cycle</span>
+        <div class="variant-grid" id="demo-variant-grid">
+          <!-- Injected via JavaScript -->
+        </div>
+      </div>
+
+      <!-- Quick Feature Checklist Icons Grid -->
+      <div class="checklist-grid" id="demo-checklist-grid">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <!-- Action Buttons form -->
+      <div id="demo-action-buttons-wrap">
+        <!-- Injected via JavaScript -->
+      </div>
+
+      <div style="margin-top:12px;">
+        <a href="#" class="delivery-tc-link">
+          <i data-lucide="file-text" style="width:14px;height:14px;"></i> Delivery T&amp;C
+        </a>
+      </div>
+    </div>
+  </div>
+
+  <!-- TABS CONTAINER -->
+  <div class="tab-section-wrap" id="tab-section">
+    <div class="tab-header-strip" id="demo-tabs-headers">
+      <!-- Injected via JavaScript -->
+    </div>
+
+    <div class="tab-panes-box" style="background:#fff; border:1px solid var(--border-color); border-radius:20px; padding:32px;">
+      <!-- Dynamic tab pane contents injected via JS -->
+      <div id="demo-tabs-content-body">
+        <!-- Injected via JavaScript -->
+      </div>
+    </div>
+  </div>
+
+  <!-- FAQS WRAPPER -->
+  <div class="faq-section-wrap" id="demo-faq-container">
+    <!-- Injected via JavaScript -->
+  </div>
+
+  <!-- RELATED SOLUTIONS -->
+  <div class="alternatives-section">
+    <h3 id="demo-related-title">Related Solutions &amp; Alternatives</h3>
+    <div class="alternatives-grid" id="demo-related-grid">
+      <!-- Injected via JavaScript -->
+    </div>
+  </div>
+
+</div>
+
+<!-- JavaScript data objects mapping each product type demo -->
+<script>
+  const demoData = {
+    software: {
+      name: "Figma Collaborative Design",
+      brand: "Figma",
+      category: "Design & Collaboration Software",
+      badges: ["Cloud-Based", "Verified Partner", "Instant Activation", "Free Trial Available"],
+      summary: "A cloud-based collaborative design platform for UI design, wireframing, prototyping, developer handoff and team feedback.",
+      images: [
+        "{% static 'assets/wrike.png' %}",
+        "{% static 'assets/trello.png' %}",
+        "{% static 'assets/zoho.png' %}"
+      ],
+      priceHtml: `
+        <span class="price-old">INR 1,237.50</span>
+        <span class="price-current">INR 990.00</span>
+        <span class="discount-tag">20% OFF</span>
+        <div class="rating-badge-row">
+          <span class="star-count"><i data-lucide="star" style="width:14px;height:14px;fill:currentColor;"></i> 4.5</span>
+          <span class="reviews-count-link">(128 reviews)</span>
+        </div>
+      `,
+      variantLabel: "Billing Cycle Options",
+      variantButtons: [
+        { label: "Monthly Subscription", active: true },
+        { label: "Annual Tier (Save 20%)", active: false }
+      ],
+      checklist: [
+        { icon: "cloud", title: "Deployment", desc: "Cloud SaaS Access" },
+        { icon: "zap", title: "Activation", desc: "Instant Delivery" },
+        { icon: "shield-check", title: "Free Trial", desc: "Sandbox Active" }
+      ],
+      ctasHtml: `
+        <div class="cta-row">
+          <button type="button" class="btn-solid-pink" onclick="alert('Figma added to procurement cart!')">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Add to Cart
+          </button>
+          <button type="button" class="btn-outline-pink" onclick="alert('Direct Checkout checkout initiated.')">Checkout Now</button>
+        </div>
+      `,
+      specs: [
+        { label: "Deployment", value: "Cloud" },
+        { label: "Licence type", value: "Subscription" },
+        { label: "Supported platforms", value: "Web, Windows, macOS" },
+        { label: "User access", value: "Multi-user" },
+        { label: "Integrations", value: "Slack, Jira, Microsoft Teams" },
+        { label: "Support", value: "24/7" },
+        { label: "Delivery type", value: "Digital" }
+      ],
+      features: [
+        { title: "Real-time team collaboration", desc: "Multiple editors can modify design structures concurrently." },
+        { title: "Interactive prototyping", desc: "Connect frames with simple transitions to test layouts." },
+        { title: "Developer handoff", desc: "Export specs, codes, and vectors directly in one click." },
+        { title: "Design systems", desc: "Centralize corporate components and sync instantly." }
+      ],
+      benefits: [
+        { title: "Improve design-team productivity", desc: "Co-edit side-by-side to avoid duplicate design boards." },
+        { title: "Reduce handoff delays", desc: "Direct code generation allows engineers to build components faster." },
+        { title: "Centralise design feedback", desc: "Leave comments directly on layouts to maintain clear history." }
+      ],
+      faqs: [
+        { q: "Is a free trial available?", a: "Yes, you can initiate a standard 14-day premium sandbox trial sandbox instantly." },
+        { q: "How many users can be added?", a: "Figma supports anywhere from a single seat up to 100+ seats per corporate subscription group." },
+        { q: "Can I upgrade the subscription later?", a: "Absolutely. You can request license seat upgrades anytime at checkout." }
+      ],
+      alternatives: [
+        { name: "Adobe Creative Cloud", price: "INR 4,230.00", img: "{% static 'assets/wrike.png' %}", brand: "Adobe" },
+        { name: "Miro Collaborative Platform", price: "INR 820.00", img: "{% static 'assets/trello.png' %}", brand: "Miro" },
+        { name: "Canva for Teams", price: "INR 650.00", img: "{% static 'assets/zoho.png' %}", brand: "Canva" },
+        { name: "Wrike Project Manager", price: "INR 808.50", img: "{% static 'assets/wrike.png' %}", brand: "Wrike" }
+      ]
+    },
+    hardware: {
+      name: "Dell Latitude 5450 Business Laptop",
+      brand: "Dell",
+      category: "Business Laptops",
+      badges: ["In Stock", "Business Grade", "3-Year Warranty", "Bulk Order Available"],
+      summary: "A professional business laptop designed for office productivity, enterprise security, remote work and reliable daily performance.",
+      images: [
+        "{% static 'assets/sophos.png' %}",
+        "{% static 'assets/zoho.png' %}",
+        "{% static 'assets/trello.png' %}"
+      ],
+      priceHtml: `
+        <span class="price-old">INR 94,999.00</span>
+        <span class="price-current">INR 84,999.00</span>
+        <span class="discount-tag">11% OFF</span>
+        <div class="rating-badge-row">
+          <span class="star-count"><i data-lucide="star" style="width:14px;height:14px;fill:currentColor;"></i> 4.7</span>
+          <span class="reviews-count-link">(42 reviews)</span>
+        </div>
+      `,
+      variantLabel: "Hardware Specifications Options",
+      variantButtons: [
+        { label: "Intel Core Ultra 5 / 16GB / 512GB", active: true },
+        { label: "Intel Core Ultra 7 / 32GB / 1TB", active: false }
+      ],
+      checklist: [
+        { icon: "package", title: "Stock Availability", desc: "24 Units in Warehouse" },
+        { icon: "truck", title: "Shipping Time", desc: "3-5 Business Days" },
+        { icon: "shield", title: "Warranty SLA", desc: "3-Year Dell Cover" }
+      ],
+      ctasHtml: `
+        <div class="cta-row">
+          <button type="button" class="btn-solid-pink" onclick="alert('Dell Laptop added to cart!')">
+            <i data-lucide="shopping-cart" style="width:18px;height:18px;"></i> Add to Cart
+          </button>
+          <button type="button" class="btn-outline-pink" onclick="alert('Requesting Bulk Quotation...')">Request Bulk Quote</button>
+        </div>
+      `,
+      specs: [
+        { label: "Processor", value: "Intel Core Ultra 5" },
+        { label: "RAM Memory", value: "16GB LPDDR5" },
+        { label: "Storage Capacity", value: "512GB NVMe SSD" },
+        { label: "Display Size", value: "14-inch Full HD" },
+        { label: "Operating system", value: "Windows 11 Pro" },
+        { label: "Connectivity", value: "Wi-Fi 6E and Bluetooth 5.3" },
+        { label: "Durable chassis", value: "Business Grade" }
+      ],
+      features: [
+        { title: "Intel Core Ultra processor", desc: "Enables smart AI assistance and multi-threaded calculations." },
+        { title: "14-inch Full HD display", desc: "Antiglare pane with narrow borders suitable for office productivity." },
+        { title: "Thunderbolt connectivity", desc: "High-speed external dock interfaces for external displays." },
+        { title: "Enterprise security", desc: "Equipped with TPM 2.0 and camera privacy shutters." }
+      ],
+      benefits: [
+        { title: "Reliable business performance", desc: "Ensures delay-free daily processing for office activities." },
+        { title: "Easy remote working", desc: "Wi-Fi 6E signals allow zero lag video conference meetings." },
+        { title: "Long-term durability", desc: "Meets premium military drop-test specifications." }
+      ],
+      faqs: [
+        { q: "What is the warranty period?", a: "TechnoStore360 provides a standard 3-year Dell corporate replacement warranty." },
+        { q: "Can I upgrade the RAM and storage?", a: "Yes, the Latitude chassis includes upgradable dual channel SO-DIMM slots." },
+        { q: "Can I request a bulk quotation?", a: "Certainly. Bulk pricing begins at 5 units or more." }
+      ],
+      alternatives: [
+        { name: "Dell 24 Ultra-Thin Monitor", price: "INR 14,500.00", img: "{% static 'assets/sophos.png' %}", brand: "Dell" },
+        { name: "USB-C Docking Station", price: "INR 6,200.00", img: "{% static 'assets/trello.png' %}", brand: "Universal" },
+        { name: "Wireless Keyboard & Mouse", price: "INR 2,800.00", img: "{% static 'assets/zoho.png' %}", brand: "Logitech" },
+        { name: "Laptop Carry Bag Standard", price: "INR 1,200.00", img: "{% static 'assets/sophos.png' %}", brand: "Dell" }
+      ]
+    },
+    service: {
+      name: "Business Cloud Migration Service",
+      brand: "TechnoStore360 Cloud Services",
+      category: "Cloud Consulting & Migration",
+      badges: ["Certified Cloud Experts", "Free Consultation", "SLA Support", "Remote and On-site"],
+      summary: "A complete cloud migration service for businesses moving applications, databases and infrastructure to a secure cloud environment.",
+      images: [
+        "{% static 'assets/trello.png' %}",
+        "{% static 'assets/zoho.png' %}",
+        "{% static 'assets/wrike.png' %}"
+      ],
+      priceHtml: `
+        <span class="price-current">Starting at INR 49,999</span>
+        <div class="rating-badge-row">
+          <span class="star-count"><i data-lucide="star" style="width:14px;height:14px;fill:currentColor;"></i> 4.9</span>
+          <span class="reviews-count-link">(96 reviews)</span>
+        </div>
+      `,
+      variantLabel: "Service Tier Package",
+      variantButtons: [
+        { label: "Starter Cloud Migration", active: true },
+        { label: "Enterprise Custom SLA", active: false }
+      ],
+      checklist: [
+        { icon: "user-check", title: "Assigned Project Lead", desc: "Expert Project Manager" },
+        { icon: "clock", title: "Project Duration", desc: "2-6 Weeks SLA" },
+        { icon: "map-pin", title: "Implementation Type", desc: "Remote / On-site" }
+      ],
+      ctasHtml: `
+        <div class="cta-row">
+          <button type="button" class="btn-solid-pink" onclick="alert('Booking Free Cloud Consultation!')">Book Free Consultation</button>
+          <button type="button" class="btn-outline-pink" onclick="alert('Sending Consultation Request to Sales...')">Contact Sales</button>
+        </div>
+      `,
+      specs: [
+        { label: "Delivery mode", value: "Remote, on-site or hybrid" },
+        { label: "Service Coverage Area", value: "India, UAE and Oman" },
+        { label: "Project duration", value: "2-6 weeks" },
+        { label: "Initial Consultation", value: "Free" },
+        { label: "Support availability", value: "24/7 Optional SLA" },
+        { label: "Cloud Platforms", value: "Microsoft Azure, AWS, GCP" }
+      ],
+      features: [
+        { title: "Cloud-readiness assessment", desc: "Comprehensive assessment of local server architecture." },
+        { title: "Migration planning", desc: "Step-by-step risk-mitigated strategy." },
+        { title: "Security configuration", desc: "Implementing firewalls, access controls and VPC structures." },
+        { title: "Post-migration support", desc: "Testing and team onboarding packages." }
+      ],
+      benefits: [
+        { title: "Reduce infrastructure costs", desc: "Remove hardware maintenance fees and swap to pay-as-you-go." },
+        { title: "Strengthen data security", desc: "Store corporate records in multi-regional encrypted cloud zones." },
+        { title: "Expert guidance", desc: "Direct handoff support managed by certified AWS/Azure leads." }
+      ],
+      faqs: [
+        { q: "How long does the migration take?", a: "Standard setups require 2-6 weeks to evaluate, dry-run, and execute." },
+        { q: "Is remote support available?", a: "Yes, our certified cloud managers support both hybrid and remote projects." },
+        { q: "Which platforms are supported?", a: "We migrate to Microsoft Azure, AWS, and Google Cloud." }
+      ],
+      alternatives: [
+        { name: "Cloud Security Assessment", price: "INR 24,999.00", img: "{% static 'assets/trello.png' %}", brand: "TS360" },
+        { name: "Microsoft 365 Migration Service", price: "INR 19,999.00", img: "{% static 'assets/zoho.png' %}", brand: "TS360" },
+        { name: "Managed Cloud Support standard", price: "INR 8,990.00", img: "{% static 'assets/wrike.png' %}", brand: "TS360" },
+        { name: "Data Backup & Disaster Recovery", price: "INR 14,999.00", img: "{% static 'assets/trello.png' %}", brand: "TS360" }
+      ]
+    }
+  };
+
+  let activeDemoType = "software";
+
+  function loadDemoLayout(type) {
+    activeDemoType = type;
+    const data = demoData[type];
+    if (!data) return;
+
+    // Update active tab switcher btn style
+    document.querySelectorAll('.dev-btn').forEach(btn => btn.classList.remove('active'));
+    const targetBtn = document.getElementById('dev-btn-' + type);
+    if (targetBtn) targetBtn.classList.add('active');
+
+    // Breadcrumbs
+    document.getElementById('demo-nav-current-title').textContent = data.name;
+    document.getElementById('demo-nav-cat-parent').textContent = data.category;
+
+    // Badges & title
+    document.getElementById('demo-brand-label').textContent = data.brand;
+    document.getElementById('demo-product-title').textContent = data.name;
+
+    // Badges inside header (software/hardware/service badge styles)
+    const headerBlock = document.querySelector('.product-header-block .header-badges');
+    if (headerBlock) {
+      const typeLabel = type === 'software' ? 'Software' : (type === 'hardware' ? 'Hardware' : 'IT Service');
+      const badgeClass = type === 'software' ? 'cat-badge software' : (type === 'hardware' ? 'cat-badge hardware' : 'cat-badge service');
+      headerBlock.innerHTML = `
+        <span class="${badgeClass}">${typeLabel}</span>
+        <span class="partner-badge">${data.brand} Verified Partner</span>
+      `;
+    }
+
+    // Price
+    document.getElementById('demo-price-block').innerHTML = data.priceHtml;
+
+    // Short description
+    document.getElementById('demo-short-desc').textContent = data.summary;
+
+    // Variants Label
+    document.getElementById('demo-variant-label').textContent = data.variantLabel;
+
+    // Variants Grid
+    const variantGrid = document.getElementById('demo-variant-grid');
+    variantGrid.innerHTML = "";
+    data.variantButtons.forEach(btn => {
+      const activeClass = btn.active ? 'active' : '';
+      variantGrid.innerHTML += `<button type="button" class="variant-btn ${activeClass}" onclick="toggleVariantActive(this)">${btn.label}</button>`;
+    });
+
+    // Gallery main image
+    const mainImg = document.getElementById('primary-view-img');
+    if (mainImg) mainImg.src = data.images[0];
+
+    // Thumbnail strip
+    const thumbStrip = document.getElementById('demo-thumbnail-strip');
+    thumbStrip.innerHTML = "";
+    data.images.forEach((imgUrl, index) => {
+      const activeClass = index === 0 ? 'active' : '';
+      thumbStrip.innerHTML += `
+        <div class="thumb-card ${activeClass}" onclick="updateMainViewport(this)">
+          <img src="${imgUrl}" alt="Thumbnail">
+        </div>
+      `;
+    });
+
+    // Checklist Grid
+    const checklistGrid = document.getElementById('demo-checklist-grid');
+    checklistGrid.innerHTML = "";
+    data.checklist.forEach(item => {
+      checklistGrid.innerHTML += `
+        <div class="checklist-item">
+          <i data-lucide="${item.icon}" class="checklist-icon" style="width:20px;height:20px;"></i>
+          <div class="checklist-text">
+            <h5>${item.title}</h5>
+            <p>${item.desc}</p>
+          </div>
+        </div>
+      `;
+    });
+
+    // Action Buttons
+    document.getElementById('demo-action-buttons-wrap').innerHTML = data.ctasHtml;
+
+    // Universal Tabs Header
+    const customTabLabel = type === 'software' ? 'Requirements' : (type === 'hardware' ? 'Shipping' : 'Process');
+    const customTabPaneId = type === 'software' ? 'requirements' : (type === 'hardware' ? 'shipping' : 'process');
+    
+    document.getElementById('demo-tabs-headers').innerHTML = `
+      <button class="tab-trigger active" onclick="switchDetailTrigger('overview', this)">Overview</button>
+      <button class="tab-trigger" onclick="switchDetailTrigger('features', this)">Features</button>
+      <button class="tab-trigger" onclick="switchDetailTrigger('specs', this)">Specifications</button>
+      <button class="tab-trigger" onclick="switchDetailTrigger('benefits', this)">Benefits</button>
+      <button class="tab-trigger" onclick="switchDetailTrigger('${customTabPaneId}', this)">${customTabLabel}</button>
+      <button class="tab-trigger" onclick="switchDetailTrigger('reviews', this)">Reviews (${type === 'software' ? '128' : (type === 'hardware' ? '42' : '96')})</button>
+    `;
+
+    // Universal Tabs Content Body
+    let specsHtml = "";
+    data.specs.forEach(spec => {
+      specsHtml += `
+        <div class="spec-entry">
+          <span class="spec-entry-label">${spec.label}</span>
+          <span class="spec-entry-value">${spec.value}</span>
+        </div>
+      `;
+    });
+
+    let featuresHtml = "";
+    data.features.forEach(feat => {
+      featuresHtml += `
+        <div class="feature-card-item">
+          <h4>${feat.title}</h4>
+          <p>${feat.desc}</p>
+        </div>
+      `;
+    });
+
+    let benefitsHtml = "";
+    data.benefits.forEach(ben => {
+      benefitsHtml += `
+        <div class="feature-card-item">
+          <h4>${ben.title}</h4>
+          <p>${ben.desc}</p>
+        </div>
+      `;
+    });
+
+    // Custom tab text
+    let customTabPaneContent = "";
+    if (type === 'software') {
+      customTabPaneContent = `
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:12px; font-weight:800;">System Requirements</h3>
+        <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+          Requires a modern web browser (Chrome 90+, Safari 14+), active Internet connection, and standard Single Sign-On mapping directory configurations.
+        </p>
+      `;
+    } else if (type === 'hardware') {
+      customTabPaneContent = `
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:12px; font-weight:800;">Shipping &amp; Delivery</h3>
+        <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+          Physical laptop shipping units are dispatched from our regional warehouse within 24-48 business hours. Basic cargo shipping protection is fully covered.
+        </p>
+      `;
+    } else {
+      customTabPaneContent = `
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:12px; font-weight:800;">Migration Steps</h3>
+        <p style="font-size:13.5px; color:var(--text-muted); line-height:1.6;">
+          1. Business Cloud Readiness Assessment. <br>
+          2. Network Topology &amp; Database Architecture Strategy planning. <br>
+          3. Live migration trials and final deployment SLA checks.
+        </p>
+      `;
+    }
+
+    document.getElementById('demo-tabs-content-body').innerHTML = `
+      <div class="tab-pane active" id="pane-overview">
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:12px; font-weight:800;">Product Summary</h3>
+        <p style="line-height:1.7; color:var(--text-muted); font-size:14px; margin-bottom:24px;">
+          ${data.summary}
+        </p>
+        <div style="display:grid; grid-template-columns:repeat(2, 1fr); gap:16px; border-top:1px solid var(--border-color); padding-top:20px; font-size:13.5px;">
+          <div><strong>Category Tier:</strong> ${data.category}</div>
+          <div><strong>Publisher Target:</strong> Verified Corporate Segment</div>
+          <div><strong>Regional Limits:</strong> Global Coverage</div>
+          <div><strong>License Type:</strong> ${type === 'software' ? 'Subscription' : (type === 'hardware' ? 'Standard Box Sale' : 'Cloud Consulting Services')}</div>
+        </div>
+      </div>
+      <div class="tab-pane" id="pane-features">
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:16px; font-weight:800;">Capabilities</h3>
+        <div class="feature-grid-cards">${featuresHtml}</div>
+      </div>
+      <div class="tab-pane" id="pane-specs">
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:16px; font-weight:800;">Specifications</h3>
+        <div class="spec-grid">${specsHtml}</div>
+      </div>
+      <div class="tab-pane" id="pane-benefits">
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:16px; font-weight:800;">Key Benefits</h3>
+        <div class="feature-grid-cards">${benefitsHtml}</div>
+      </div>
+      <div class="tab-pane" id="pane-${customTabPaneId}">
+        ${customTabPaneContent}
+      </div>
+      <div class="tab-pane" id="pane-reviews">
+        <h3 style="font-family:var(--font-heading); font-size:18px; margin-bottom:16px; font-weight:800;">Corporate Reviews</h3>
+        <div style="border-bottom:1px solid var(--border-color); padding-bottom:16px; margin-bottom:16px;">
+          <div style="display:flex; justify-content:space-between; margin-bottom:8px;">
+            <strong>Figma Design Director</strong>
+            <span style="color:#f59e0b;font-weight:bold;">5.0 <i data-lucide="star" style="width:12px;height:12px;fill:currentColor;display:inline-block;vertical-align:middle;"></i></span>
+          </div>
+          <p style="margin:0; font-size:13.5px; color:var(--text-muted);">Exceptional SLA performance. Migration and onboarding support was zero hassle.</p>
+        </div>
+      </div>
+    `;
+
+    // FAQs Accordion
+    let faqsHtml = "";
+    data.faqs.forEach(faq => {
+      faqsHtml += `
+        <div class="faq-item">
+          <button class="faq-question-btn" onclick="toggleFaqTrigger(this)">
+            ${faq.q}
+            <i data-lucide="chevron-down" style="width:16px;height:16px;"></i>
+          </button>
+          <div class="faq-answer-pane">
+            <div class="faq-answer-pane-inner">${faq.a}</div>
+          </div>
+        </div>
+      `;
+    });
+
+    document.getElementById('demo-faq-container').innerHTML = `
+      <h3>Frequently Asked Questions</h3>
+      <div class="faq-accordion-container">${faqsHtml}</div>
+    `;
+
+    // Related Products Grid
+    document.getElementById('demo-related-title').textContent = type === 'software' ? 'Software Alternatives' : (type === 'hardware' ? 'Compatible Hardware & Upgrades' : 'Related Cloud Services');
+    const relatedGrid = document.getElementById('demo-related-grid');
+    relatedGrid.innerHTML = "";
+    data.alternatives.forEach(alt => {
+      relatedGrid.innerHTML += `
+        <div class="alternative-card">
+          <div class="alternative-card-img-box">
+            <img src="${alt.img}" alt="${alt.name}">
+          </div>
+          <h4>${alt.name}</h4>
+          <span>By ${alt.brand}</span>
+          <div class="price">${alt.price}</div>
+        </div>
+      `;
+    });
+
+    // Re-init lucide icons
+    if (typeof lucide !== 'undefined') {
+      lucide.createIcons();
+    }
+  }
+
+  function toggleVariantActive(btn) {
+    btn.parentNode.querySelectorAll('.variant-btn').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
+  }
+
+  function toggleFaqTrigger(btn) {
+    const parent = btn.parentNode;
+    parent.classList.toggle('active');
+  }
+
+  function switchDetailTrigger(paneId, btn) {
+    document.querySelectorAll('#demo-tabs-headers .tab-trigger').forEach(t => t.classList.remove('active'));
+    btn.classList.add('active');
+    
+    document.querySelectorAll('#demo-tabs-content-body .tab-pane').forEach(p => p.classList.remove('active'));
+    const targetPane = document.getElementById('pane-' + paneId);
+    if (targetPane) targetPane.classList.add('active');
+  }
+
+  function updateMainViewport(thumbCard) {
+    document.querySelectorAll('#demo-thumbnail-strip .thumb-card').forEach(t => t.classList.remove('active'));
+    thumbCard.classList.add('active');
+    const imgUrl = thumbCard.querySelector('img').src;
+    document.getElementById('primary-view-img').src = imgUrl;
+  }
+
+  document.addEventListener('DOMContentLoaded', function () {
+    const urlParams = new URLSearchParams(window.location.search);
+    const demoParam = urlParams.get('demo') || 'software';
+    loadDemoLayout(demoParam);
   });
 </script>
 {% endblock %}

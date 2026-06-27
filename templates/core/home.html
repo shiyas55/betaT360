@@ -206,11 +206,14 @@
   <div style="display: flex; align-items: flex-end; justify-content: space-between; margin-bottom: 1.5rem;">
     <div>
       <span class="section-kicker">TOP TRENDING PRODUCTS</span>
-      <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">See what's popular and loved by businesses like yours.</h2>
+      <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">
+        <span class="hide-on-mobile">See what's popular and loved by businesses like yours.</span>
+        <span class="show-on-mobile">Popular with businesses.</span>
+      </h2>
     </div>
     <a href="{% url 'product_list' %}" class="btn btn-outline btn-sm" style="font-size: 0.75rem;">View All <i data-lucide="arrow-right" style="width: 0.8rem; margin-left: 0.25rem;"></i></a>
   </div>
-  <div class="product-grid" style="display: grid; grid-template-columns: repeat(4, 1fr); gap: var(--card-gap);">
+  <div class="product-grid product-grid-4">
     {% for product in trending_products %}
       {% include 'includes/product_card.html' with product=product %}
     {% endfor %}
@@ -243,7 +246,7 @@
     <span class="section-kicker">SOLUTION BUNDLES</span>
     <h2 style="font-size: 1.5rem; font-weight: 800; margin-top: 0.25rem;">Pre-Configured Business Solution Kits</h2>
   </div>
-  <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: var(--card-gap);">
+  <div class="product-grid product-grid-3">
     {% for pkg in solution_packages %}
       <div class="card" style="padding: 1.5rem; display: flex; flex-direction: column; justify-content: space-between; border-top: 4px solid var(--primary-blue); border-radius: var(--radius-lg);">
         <div>
@@ -449,7 +452,7 @@
   </div>
 
   <div class="card" style="padding: 0; overflow-x: auto; border-radius: 16px; border: 1px solid var(--slate-200); box-shadow: 0 10px 30px rgba(37, 52, 75, 0.03);">
-    <table style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; font-size: 0.82rem;">
+    <table class="comparison-table" style="width: 100%; border-collapse: collapse; text-align: left; min-width: 700px; font-size: 0.82rem;">
       <thead>
         <tr style="border-bottom: 1px solid var(--slate-200); background-color: #fafbfc;">
           <th style="padding: 1.15rem 1.25rem; font-weight: 800; color: var(--slate-500); text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.05em; width: 35%;">Capability</th>

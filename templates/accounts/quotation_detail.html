@@ -1,0 +1,344 @@
+{% extends 'accounts/base_dashboard.html' %}
+
+{% block title %}Quotation Details - #{{ quote.quotation_number }} - TechnoStore360{% endblock %}
+
+{% block extra_css %}
+<style>
+  .split-layout {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+
+  .status-notice-card {
+    display: flex;
+    gap: 16px;
+    padding: 20px;
+    border-radius: var(--radius-md);
+    border: 1px solid transparent;
+    font-size: 13.5px;
+    line-height: 1.5;
+  }
+
+  .status-notice-card.accepted, .status-notice-card.converted {
+    background-color: rgba(16, 185, 129, 0.08);
+    color: var(--color-success);
+    border-color: rgba(16, 185, 129, 0.2);
+  }
+
+  .status-notice-card.rejected {
+    background-color: rgba(239, 68, 68, 0.08);
+    color: var(--color-danger);
+    border-color: rgba(239, 68, 68, 0.2);
+  }
+
+  .status-notice-card.pending {
+    background-color: rgba(37, 99, 235, 0.08);
+    color: #2563eb;
+    border-color: rgba(37, 99, 235, 0.2);
+  }
+
+  .status-notice-card.draft {
+    background-color: var(--color-bg-main);
+    color: var(--color-text-muted);
+    border-color: var(--color-border);
+  }
+
+  .financial-row {
+    display: flex;
+    justify-content: space-between;
+    font-size: 13px;
+    color: var(--color-text-muted);
+    padding: 8px 0;
+  }
+
+  .detail-card-section {
+    border-bottom: 1px solid var(--color-border);
+    padding-bottom: 16px;
+    margin-bottom: 16px;
+  }
+
+  .detail-card-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+    margin-bottom: 0;
+  }
+
+  .detail-title {
+    font-size: 11px;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--color-text-muted);
+    letter-spacing: 0.8px;
+    margin-bottom: 8px;
+  }
+
+  .address-badge {
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 14px;
+    margin-top: 4px;
+  }
+
+  .item-thumb-placeholder {
+    width: 44px;
+    height: 44px;
+    border-radius: var(--radius-sm);
+    background-color: var(--color-bg-main);
+    border: 1px solid var(--color-border);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--color-pink-primary);
+    font-weight: 700;
+    font-family: var(--font-display);
+    font-size: 14px;
+    flex-shrink: 0;
+  }
+
+  .executive-badge {
+    background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
+    color: #ffffff;
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  @media (max-width: 991px) {
+    .split-layout {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div>
+    <a href="{% url 'customer_quotations' %}" class="inline-flex items-center text-xs font-semibold text-slate-500 hover:text-slate-700 mb-2" style="text-decoration: none;">
+      <span class="material-symbols-outlined text-xs mr-1" style="font-size: 16px; vertical-align: middle;">arrow_back</span> Back to Quotations
+    </a>
+    <h1 class="page-title">Quotation #{{ quote.quotation_number }}</h1>
+    <p class="subtitle">Requested on {{ quote.created_at|date:"M d, Y" }}</p>
+  </div>
+  
+  <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+    <!-- Download PDF -->
+    <a href="{% url 'customer_quotation_pdf' quote.quotation_number %}" target="_blank" class="btn btn-secondary" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+      <span class="material-symbols-outlined" style="font-size: 16px;">picture_as_pdf</span> Download Quote PDF
+    </a>
+
+    <!-- Accept Quote (Sent/Viewed state) -->
+    {% if quote.status == 'sent' or quote.status == 'viewed' %}
+      <a href="{% url 'customer_quotation_accept' quote.quotation_number %}" class="btn btn-primary" style="height: 40px; padding: 0 16px; border-radius: 50px; background-color: var(--color-success); border-color: var(--color-success);">
+        <span class="material-symbols-outlined" style="font-size: 16px;">check</span> Accept Offer
+      </a>
+      <a href="{% url 'customer_quotation_reject' quote.quotation_number %}" class="btn btn-danger" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+        <span class="material-symbols-outlined" style="font-size: 16px;">close</span> Reject Offer
+      </a>
+    {% endif %}
+
+    <!-- Convert Accepted Quote to Order -->
+    {% if quote.status == 'accepted' %}
+      <a href="{% url 'customer_quotation_convert' quote.quotation_number %}" class="btn btn-primary" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+        <span class="material-symbols-outlined" style="font-size: 16px;">shopping_cart</span> Convert to Order
+      </a>
+    {% endif %}
+
+    <!-- Contact sales desk -->
+    <a href="{% url 'customer_tickets' %}" class="btn btn-secondary" style="height: 40px; padding: 0 16px; border-radius: 50px;">
+      <span class="material-symbols-outlined" style="font-size: 16px;">mail</span> Contact Sales Desk
+    </a>
+  </div>
+</div>
+
+<div class="split-layout">
+  
+  <!-- Left Side: Main summary & items -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Status notice banner -->
+    <div class="status-notice-card {% if quote.status == 'converted' or quote.status == 'accepted' %}accepted{% elif quote.status == 'rejected' %}rejected{% elif quote.status == 'sent' or quote.status == 'viewed' %}pending{% else %}draft{% endif %}">
+      <span class="material-symbols-outlined" style="font-size: 24px; flex-shrink: 0;">
+        {% if quote.status == 'converted' or quote.status == 'accepted' %}check_circle{% elif quote.status == 'rejected' %}cancel{% else %}info{% endif %}
+      </span>
+      <div>
+        <h4 style="font-weight: 700;">Quotation Status: {{ quote.get_status_display }}</h4>
+        <p style="margin-top: 4px; font-size: 12.5px;">
+          {% if quote.status == 'draft' %}This quote is currently a draft and is undergoing pricing reviews by our corporate analysts.
+          {% elif quote.status == 'sent' or quote.status == 'viewed' %}Our sales managers have finalized custom discount layers. Please accept or reject this commercial offer.
+          {% elif quote.status == 'accepted' %}You accepted this quote. Please click 'Convert to Order' above to checkout.
+          {% elif quote.status == 'rejected' %}This quote has been marked as rejected. Contact your Account Executive to request a revised proposal.
+          {% elif quote.status == 'converted' %}This quote has been converted into a procurement order. Check order details to track shipment/invoicing.
+          {% endif %}
+        </p>
+      </div>
+    </div>
+
+    <!-- Items details card -->
+    <div class="card" style="padding: 0; overflow: hidden;">
+      <div style="padding: 20px 24px; border-bottom: 1px solid var(--color-border); background-color: var(--color-bg-main);">
+        <h3 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">Quoted Solutions & Quantities</h3>
+      </div>
+      
+      <div class="divide-y divide-slate-100" style="background-color: var(--color-bg-card);">
+        {% for item in quote.items.all %}
+          <div style="padding: 24px; display: flex; align-items: center; justify-content: space-between; gap: 16px; font-size: 13px;">
+            <div style="display: flex; align-items: center; gap: 16px;">
+              <div class="item-thumb-placeholder">
+                {{ item.product_name|slice:":2"|upper }}
+              </div>
+              <div>
+                <h4 style="font-weight: 700; font-size: 14.5px; color: var(--color-text-dark);">
+                  {% if item.product %}
+                    {{ item.product.name }}
+                  {% else %}
+                    {{ item.product_name }}
+                  {% endif %}
+                </h4>
+                <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 2px;">
+                  Billing Cycle: <span style="font-weight: 600; text-transform: capitalize;">{{ item.duration }}</span>
+                  {% if item.variant_name %}
+                    | Option: <span style="font-weight: 600; color: var(--color-pink-primary);">{{ item.variant_name }}</span>
+                  {% endif %}
+                </p>
+                {% if item.product.sku %}
+                  <p style="font-size: 11px; color: var(--color-text-muted); font-family: monospace;">SKU: {{ item.product.sku }}</p>
+                {% endif %}
+                
+                <!-- Included Add-ons -->
+                {% if item.addons.all %}
+                  <div style="margin-top: 8px; padding-left: 8px; border-left: 2px solid var(--color-border); font-size: 11px; color: var(--color-text-muted);">
+                    <span style="font-weight: 600; display: block; margin-bottom: 2px;">Included Add-ons:</span>
+                    {% for addon in item.addons.all %}
+                      <div>&bull; {{ addon.name }} (x{{ addon.quantity }})</div>
+                    {% endfor %}
+                  </div>
+                {% endif %}
+              </div>
+            </div>
+            
+            <div style="text-align: right;">
+              <span style="display: block; font-weight: 700; color: var(--color-text-dark);">{{ quote.currency }} {{ item.price }}</span>
+              <span style="display: block; color: var(--color-text-muted); margin-top: 2px;">Qty: {{ item.quantity }}</span>
+              <span style="display: block; font-weight: 700; color: var(--color-pink-primary); margin-top: 4px;">Total: {{ quote.currency }} {{ item.final_total }}</span>
+            </div>
+          </div>
+        {% endfor %}
+      </div>
+
+      <!-- Financial calculations -->
+      <div style="padding: 24px; border-top: 1px solid var(--color-border); background-color: var(--color-bg-main);">
+        <div class="financial-row">
+          <span>Subtotal</span>
+          <span style="font-weight: 600; color: var(--color-text-dark);">{{ quote.currency }} {{ quote.subtotal }}</span>
+        </div>
+        
+        {% if quote.item_discount > 0 %}
+          <div class="financial-row" style="color: var(--color-danger);">
+            <span>Item-Level Discounts</span>
+            <span style="font-weight: 600;">-{{ quote.currency }} {{ quote.item_discount }}</span>
+          </div>
+        {% endif %}
+
+        {% if quote.overall_discount_val > 0 %}
+          <div class="financial-row" style="color: var(--color-danger);">
+            <span>Overall Discount ({{ quote.overall_discount_type|title }})</span>
+            <span style="font-weight: 600;">
+              -{% if quote.overall_discount_type == 'percentage' %}{{ quote.overall_discount_val }}%{% else %}{{ quote.currency }} {{ quote.overall_discount_val }}{% endif %}
+            </span>
+          </div>
+        {% endif %}
+        
+        <div class="financial-row">
+          <span>VAT / Commercial Tax</span>
+          <span style="font-weight: 600; color: var(--color-text-dark);">{{ quote.currency }} {{ quote.tax }}</span>
+        </div>
+        <hr style="border: 0; border-top: 1px solid var(--color-border); margin: 12px 0;">
+        <div style="display: flex; justify-content: space-between; align-items: center; padding-top: 4px;">
+          <span style="font-weight: 700; color: var(--color-text-dark);">Total Quoted Pricing</span>
+          <span style="font-family: var(--font-display); font-size: 20px; font-weight: 900; color: var(--color-pink-primary);">{{ quote.currency }} {{ quote.total }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Notes & Comments -->
+    {% if quote.customer_notes or quote.terms_conditions %}
+      <div class="card" style="display: flex; flex-direction: column; gap: 16px;">
+        <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); border-bottom: 1px solid var(--color-border); padding-bottom: 10px;">Proposal Terms & Correspondence</h3>
+        
+        {% if quote.terms_conditions %}
+          <div style="padding: 14px; background-color: var(--color-bg-main); border-radius: var(--radius-md); border: 1px solid var(--color-border); font-size: 12.5px;">
+            <span style="font-weight: 700; color: var(--color-text-dark);">Terms & Conditions:</span>
+            <p style="color: var(--color-text-muted); mt-1; whitespace-pre-wrap; margin-top: 4px;">{{ quote.terms_conditions }}</p>
+          </div>
+        {% endif %}
+
+        {% if quote.customer_notes %}
+          <div style="padding: 14px; background-color: rgba(37, 99, 235, 0.05); border-radius: var(--radius-md); border: 1px solid rgba(37, 99, 235, 0.1); font-size: 12.5px; color: #2563eb;">
+            <span style="font-weight: 700;">Notes from Corporate Desk:</span>
+            <p style="margin-top: 4px; whitespace-pre-wrap;">{{ quote.customer_notes }}</p>
+          </div>
+        {% endif %}
+      </div>
+    {% endif %}
+
+  </div>
+
+  <!-- Right Side: Billing info & Validity -->
+  <div style="display: flex; flex-direction: column; gap: 24px;">
+    
+    <!-- Validity metadata -->
+    <div class="card" style="display: flex; flex-direction: column; gap: 12px; font-size: 13px;">
+      <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); border-bottom: 1px solid var(--color-border); padding-bottom: 10px; margin-bottom: 4px;">Proposal Validity</h3>
+      
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--color-text-muted); font-weight: 500;">Valid From:</span>
+        <span style="font-weight: 700; color: var(--color-text-dark);">{{ quote.created_at|date:"M d, Y" }}</span>
+      </div>
+      
+      <div style="display: flex; justify-content: space-between;">
+        <span style="color: var(--color-text-muted); font-weight: 500;">Expires On:</span>
+        <span style="font-weight: 700; color: var(--color-danger);">{{ quote.valid_until|date:"M d, Y"|default:"N/A" }}</span>
+      </div>
+    </div>
+
+    <!-- Addresses Snapshot -->
+    {% if quote.shipping_address %}
+      <div class="card">
+        <h3 style="font-family: var(--font-display); font-size: 15px; font-weight: 700; color: var(--color-text-dark); border-bottom: 1px solid var(--color-border); padding-bottom: 10px; margin-bottom: 16px;">Address Parameters</h3>
+        
+        <div>
+          <span style="font-size: 11px; font-weight: 700; color: var(--color-text-muted); text-transform: uppercase;">Registered Shipping Location</span>
+          <div class="address-badge">
+            <p style="font-weight: 700; color: var(--color-text-dark);">{{ quote.shipping_address.full_name }}</p>
+            <p style="font-size: 12px; color: var(--color-text-muted); margin-top: 4px; line-height: 1.4;">
+              {{ quote.shipping_address.address_line1 }}<br>
+              {{ quote.shipping_address.city }}, {{ quote.shipping_address.state }} - {{ quote.shipping_address.postal_code }}
+            </p>
+          </div>
+        </div>
+      </div>
+    {% endif %}
+
+    <!-- Sales Executive profile -->
+    <div class="executive-badge p-6 rounded-2xl shadow-sm space-y-4" style="display: flex; flex-direction: column; gap: 14px;">
+      <h3 style="font-family: var(--font-display); font-size: 14px; font-weight: 700; color: #ffffff; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 1px solid rgba(255,255,255,0.08); padding-bottom: 8px; margin-bottom: 2px;">Account Executive</h3>
+      <div style="display: flex; align-items: center; gap: 12px;">
+        <div style="width: 40px; height: 40px; border-radius: 50%; background-color: var(--color-pink-primary); display: flex; align-items: center; justify-content: center; font-weight: 700; color: #ffffff; font-family: var(--font-display);">
+          S
+        </div>
+        <div>
+          <p style="font-weight: 700; color: #ffffff; font-size: 13.5px;">Sarah Jones</p>
+          <p style="font-size: 11px; color: #94a3b8; margin-top: 2px;">Corporate Accounts Manager</p>
+        </div>
+      </div>
+      <p style="font-size: 12px; color: #94a3b8; line-height: 1.5; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 12px;">
+        For custom pricing revisions, contract SLA clauses, or co-branded deal packaging, contact Sarah directly.
+      </p>
+    </div>
+
+  </div>
+
+</div>
+{% endblock %}

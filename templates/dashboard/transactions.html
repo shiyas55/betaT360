@@ -1,0 +1,128 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block title %}All Transactions — Techno360 Admin{% endblock %}
+
+{% block extra_css %}
+<style>
+  .page-header { display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:28px; flex-wrap:wrap; gap:12px; }
+  .page-title { font-family:var(--font-display); font-size:22px; font-weight:800; color:var(--color-text-dark); margin:0 0 4px; }
+  .page-subtitle { font-size:13px; color:var(--color-text-muted); }
+  .filter-bar { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); padding:18px 20px; margin-bottom:20px; display:flex; flex-wrap:wrap; gap:12px; align-items:flex-end; }
+  .filter-group { display:flex; flex-direction:column; gap:5px; min-width:140px; flex:1; }
+  .filter-label { font-size:11px; font-weight:600; color:var(--color-text-muted); text-transform:uppercase; letter-spacing:0.4px; }
+  .filter-input, .filter-select { padding:8px 12px; border:1px solid var(--color-border); border-radius:var(--radius-sm); font-size:13px; background:var(--color-bg-main); color:var(--color-text-dark); font-family:var(--font-body); outline:none; transition:border-color 0.2s; }
+  .filter-input:focus, .filter-select:focus { border-color:var(--color-pink-primary); }
+  .filter-actions { display:flex; gap:8px; align-items:flex-end; }
+  .table-card { background:var(--color-bg-card); border:1px solid var(--color-border); border-radius:var(--radius-md); box-shadow:var(--shadow-sm); overflow:hidden; }
+  .table-card-header { padding:18px 20px; border-bottom:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:12px; }
+  .table-card-title { font-family:var(--font-display); font-size:16px; font-weight:700; color:var(--color-text-dark); }
+  .table-wrap { overflow-x:auto; }
+  table.aw-table { width:100%; border-collapse:collapse; min-width:1000px; }
+  .aw-table thead tr { border-bottom:2px solid var(--color-border); }
+  .aw-table th { padding:11px 10px; font-size:11px; font-weight:700; text-transform:uppercase; letter-spacing:0.5px; color:var(--color-text-muted); text-align:left; white-space:nowrap; }
+  .aw-table tr { border-bottom:1px solid var(--color-border); transition:background 0.15s; }
+  .aw-table tr:hover { background:var(--color-bg-main); }
+  .aw-table tr:last-child { border-bottom:none; }
+  .pagination-bar { padding:14px 20px; border-top:1px solid var(--color-border); display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; }
+  .pagination-controls { display:flex; gap:6px; }
+  .btn-primary { background:var(--color-pink-primary); color:#fff; border:none; padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:600; cursor:pointer; font-family:var(--font-body); display:inline-flex; align-items:center; gap:6px; transition:background 0.2s; }
+  .btn-primary:hover { background:var(--color-pink-hover); }
+  .btn-outline { background:none; border:1px solid var(--color-border); padding:9px 18px; border-radius:var(--radius-sm); font-size:13px; font-weight:500; cursor:pointer; color:var(--color-text-dark); display:inline-flex; align-items:center; gap:6px; transition:all 0.2s; text-decoration:none; }
+  .btn-outline:hover { border-color:var(--color-pink-primary); color:var(--color-pink-primary); }
+  .btn-sm { padding:6px 12px; font-size:12px; }
+  @media(max-width:768px) { .filter-bar { flex-direction:column; } .filter-group { min-width:unset; } }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="page-header">
+  <div>
+    <h1 class="page-title">All Transactions</h1>
+    <p class="page-subtitle">Complete transaction history across all user and vendor wallets.</p>
+  </div>
+  <div style="display:flex;gap:10px;flex-wrap:wrap">
+    <a href="{% url 'admin_wallet' %}" class="btn-outline btn-sm">
+      <span class="material-symbols-outlined" style="font-size:16px">arrow_back</span> Wallet Management
+    </a>
+    <a href="{% url 'admin_withdrawals' %}" class="btn-primary btn-sm">
+      <span class="material-symbols-outlined" style="font-size:16px">payments</span> Withdrawals
+    </a>
+  </div>
+</div>
+
+<!-- Filter Bar -->
+<div class="filter-bar">
+  <div class="filter-group" style="flex:2;min-width:200px">
+    <label class="filter-label">Search</label>
+    <input id="txf-search" class="filter-input" placeholder="Transaction ID or user name…" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Transaction Type</label>
+    <select id="txf-type" class="filter-select">
+      <option value="all">All Types</option>
+      <option>Product Earning</option>
+      <option>Referral Earning</option>
+      <option>Admin Credit</option>
+      <option>Admin Debit</option>
+      <option>Withdrawal</option>
+      <option>Refund</option>
+      <option>Commission</option>
+      <option>Adjustment</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">Status</label>
+    <select id="txf-status" class="filter-select">
+      <option value="all">All Statuses</option>
+      <option value="completed">Completed</option>
+      <option value="pending">Pending</option>
+      <option value="failed">Failed</option>
+      <option value="cancelled">Cancelled</option>
+      <option value="reversed">Reversed</option>
+    </select>
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">From Date</label>
+    <input id="txf-from" class="filter-input" type="date" />
+  </div>
+  <div class="filter-group">
+    <label class="filter-label">To Date</label>
+    <input id="txf-to" class="filter-input" type="date" />
+  </div>
+  <div class="filter-actions">
+    <button id="txf-apply" class="btn-primary btn-sm">
+      <span class="material-symbols-outlined" style="font-size:15px">filter_list</span> Apply
+    </button>
+    <button id="txf-reset" class="btn-outline btn-sm">Reset</button>
+  </div>
+</div>
+
+<!-- Transactions Table -->
+<div class="table-card">
+  <div class="table-card-header">
+    <span class="table-card-title">Transaction Records</span>
+    <span id="tx-page-info" style="font-size:13px;color:var(--color-text-muted)"></span>
+  </div>
+  <div class="table-wrap">
+    <table class="aw-table">
+      <thead>
+        <tr>
+          <th>Txn ID</th><th>Wallet ID</th><th>User</th><th>Type</th>
+          <th>Tx Type</th><th>Description</th><th>Credit</th><th>Debit</th>
+          <th>Balance After</th><th>Date & Time</th><th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="tx-tbody">
+        <tr><td colspan="11" style="text-align:center;padding:40px;color:var(--color-text-muted)">Loading…</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="pagination-bar">
+    <span class="pagination-info" id="tx-page-info"></span>
+    <div class="pagination-controls" id="tx-pagination"></div>
+  </div>
+</div>
+
+<script src="{% static 'dashboard/js/admin-wallet-referral.js' %}"></script>
+{% endblock %}

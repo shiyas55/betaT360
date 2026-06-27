@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Tax Invoice </title>
+  <style>
+    body {
+      font-family: 'Inter', sans-serif;
+      color: #333;
+      padding: 20px;
+      line-height: 1.4;
+      font-size: 13px;
+    }
+    .invoice-container {
+      max-width: 800px;
+      margin: 0 auto;
+      border: 1px solid #ddd;
+      padding: 30px;
+      border-radius: 8px;
+      background: #fff;
+    }
+    .header {
+      display: flex;
+      justify-content: space-between;
+      border-bottom: 2px solid var(--primary-blue, #0052ff);
+      padding-bottom: 20px;
+      margin-bottom: 20px;
+    }
+    .header h1 {
+      margin: 0;
+      font-size: 20px;
+      font-weight: 800;
+      color: #0052ff;
+      letter-spacing: -0.5px;
+    }
+    .header p {
+      margin: 4px 0 0 0;
+      font-size: 11px;
+      color: #666;
+    }
+    .meta-box {
+      text-align: right;
+    }
+    .meta-box h2 {
+      margin: 0;
+      font-size: 16px;
+      font-weight: 800;
+      color: #333;
+    }
+    .meta-box p {
+      margin: 3px 0;
+      font-size: 12px;
+      color: #555;
+    }
+    .addresses {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 30px;
+      margin-bottom: 30px;
+    }
+    .address-card h3 {
+      margin: 0 0 8px 0;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #888;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+    .address-card p {
+      margin: 3px 0;
+      color: #444;
+      font-size: 12px;
+    }
+    .table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-bottom: 30px;
+    }
+    .table th {
+      background-color: #f8f9fa;
+      padding: 10px;
+      font-weight: 700;
+      font-size: 11px;
+      text-transform: uppercase;
+      color: #666;
+      border-bottom: 1px solid #ddd;
+    }
+    .table td {
+      padding: 12px 10px;
+      border-bottom: 1px solid #eee;
+      vertical-align: top;
+    }
+    .totals {
+      display: flex;
+      justify-content: space-between;
+      margin-top: 20px;
+      align-items: start;
+    }
+    .payment-details {
+      max-width: 400px;
+      font-size: 11px;
+      color: #666;
+    }
+    .payment-details strong {
+      color: #333;
+    }
+    .totals-table {
+      width: 280px;
+      border-collapse: collapse;
+    }
+    .totals-table td {
+      padding: 6px 0;
+      font-size: 12px;
+      color: #555;
+    }
+    .totals-table tr.grand-total td {
+      font-weight: 800;
+      font-size: 14px;
+      color: #333;
+      border-top: 1px solid #ddd;
+      padding-top: 10px;
+    }
+    .signature-area {
+      margin-top: 50px;
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 50px;
+      text-align: center;
+    }
+    .signature-box {
+      border-top: 1px dashed #aaa;
+      padding-top: 10px;
+      font-size: 11px;
+      color: #666;
+      font-weight: 600;
+    }
+    .no-print-btn {
+      position: fixed;
+      right: 20px;
+      top: 20px;
+      background: #0052ff;
+      color: #fff;
+      border: none;
+      padding: 10px 18px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 12px;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+    }
+    @media print {
+      body {
+        padding: 0;
+      }
+      .invoice-container {
+        border: none;
+        padding: 0;
+      }
+      .no-print-btn {
+        display: none;
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <button class="no-print-btn" onclick="window.print()">Print Invoice</button>
+
+  <div class="invoice-container">
+    
+    <!-- Invoice Header -->
+    <div class="header">
+      <div>
+        <h1>TECHNOSTORE360</h1>
+        <p>Empowering Diversity in Technology</p>
+        <p style="margin-top: 8px;">Kinfra Tech Park, Kakkanchery, Kerala, India</p>
+        <p>sales@technostore360.com | GSTIN: 32AABCT3600C1Z8</p>
+      </div>
+      <div class="meta-box">
+        <h2>TAX INVOICE</h2>
+        <p><strong>Invoice No:</strong> </p>
+        <p><strong>Date:</strong> </p>
+        <p><strong>Status:</strong> </p>
+      </div>
+    </div>
+
+    <!-- Billing and Shipping Info -->
+    <div class="addresses">
+      <div class="address-card">
+        <h3>Billed To (Client details)</h3>
+        <p><strong></strong></p>
+        <p></p>
+        <p></p>
+        <p>,  - </p>
+        <p>Phone: </p>
+      </div>
+      <div class="address-card">
+        <h3>Shipped To (Setup Target)</h3>
+        <p><strong></strong></p>
+        <p></p>
+        <p></p>
+        <p>,  - </p>
+        <p>Phone: </p>
+      </div>
+    </div>
+
+    <!-- Items Table -->
+    <table class="table">
+      <thead>
+        <tr>
+          <th style="text-align: left;">Product Item / SKU</th>
+          <th style="text-align: right;">Unit Price</th>
+          <th style="text-align: center; width: 80px;">Qty</th>
+          <th style="text-align: right; width: 120px;">Total</th>
+        </tr>
+      </thead>
+      <tbody>
+        
+          <tr>
+            <td style="text-align: left;">
+              <strong></strong><br>
+              <span style="font-size: 10px; color: #888;">SKU Code:  | Brand:  | Plan: </span>
+            </td>
+            <td style="text-align: right;">INR </td>
+            <td style="text-align: center;"></td>
+            <td style="text-align: right;">INR </td>
+          </tr>
+        
+      </tbody>
+    </table>
+
+    <!-- Totals Area -->
+    <div class="totals">
+      <div class="payment-details">
+        <p><strong>Payment Method:</strong> </p>
+        <p><strong>Payment status:</strong> </p>
+        <p style="margin-top: 10px; font-weight: bold; color: #444;">Wire route pathway (Bank transfer choice):</p>
+        <p>Bank: HDFC Bank B2B Hub, Branch: Kakkanchery</p>
+        <p>A/c Number: 50200063370621 | IFSC: HDFC0003600</p>
+      </div>
+      
+      <div>
+        <table class="totals-table">
+          <tr>
+            <td>Subtotal:</td>
+            <td style="text-align: right;">INR </td>
+          </tr>
+          
+            <tr>
+              <td style="color: #ef4444;">Discount coupon:</td>
+              <td style="text-align: right; color: #ef4444;">- INR </td>
+            </tr>
+          
+          <tr>
+            <td>GST (18% B2B tax):</td>
+            <td style="text-align: right;">INR </td>
+          </tr>
+          <tr>
+            <td>B2B Transit:</td>
+            <td style="text-align: right;">
+              
+                INR 
+              
+                FREE
+              
+            </td>
+          </tr>
+          <tr class="grand-total">
+            <td>Grand Total:</td>
+            <td style="text-align: right;">INR </td>
+          </tr>
+        </table>
+      </div>
+    </div>
+
+    <!-- Signatures -->
+    <div class="signature-area">
+      <div class="signature-box" style="margin-top: 40px;">
+        Authorized Signatory<br>
+        <span style="font-size: 9px; font-weight: normal; color: #999;">TechnoStore360 Operations Desk</span>
+      </div>
+      <div class="signature-box" style="margin-top: 40px;">
+        Customer Acceptance<br>
+        <span style="font-size: 9px; font-weight: normal; color: #999;">Client Authorized Seal & Signature</span>
+      </div>
+    </div>
+
+  </div>
+
+<script src="/static/js/prototype.js"></script>
+</body>
+</html>

@@ -1,0 +1,1870 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Support Desk - TechnoStore360</title>
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Outfit:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+
+  <!-- Material Symbols -->
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@24,400,0,0"
+    rel="stylesheet" />
+
+  <!-- Tailwind CSS with Forms and Container Queries plugins -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <script>
+    if (typeof tailwind !== 'undefined') {
+      tailwind.config = {
+        theme: {
+          extend: {
+            colors: {
+              'accent-pink': '#e21a61',
+              'navy-900': '#0f172a',
+              'navy-950': '#0b132b',
+              'accent-blue': '#2563eb'
+            }
+          }
+        }
+      }
+    }
+  </script>
+
+  <style>
+    :root {
+      --font-body: 'Inter', sans-serif;
+      --font-display: 'Outfit', sans-serif;
+
+      /* Colors matching Admin Theme */
+      --color-sidebar-bg: #0b132b;
+      --color-sidebar-text: #94a3b8;
+      --color-sidebar-active-bg: rgba(226, 26, 97, 0.12);
+      --color-sidebar-active-text: #ffffff;
+
+      --color-bg-main: #f3f4f6;
+      --color-bg-card: #ffffff;
+      --color-border: #e5e7eb;
+
+      --color-pink-primary: #e21a61;
+      --color-pink-hover: #c4124e;
+      --color-pink-light: #fdf2f8;
+
+      --color-text-dark: #1f2937;
+      --color-text-muted: #9ca3af;
+      --color-success: #10b981;
+      --color-warning: #f59e0b;
+      --color-danger: #ef4444;
+
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 18px;
+
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.02), 0 1px 2px rgba(0, 0, 0, 0.01);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.03), 0 2px 4px -1px rgba(0, 0, 0, 0.02);
+      --sidebar-width: 250px;
+    }
+
+    /* Dark Mode Theme Overrides */
+    html[data-theme="dark"] {
+      --color-bg-main: #0b0f19;
+      --color-bg-card: #111827;
+      --color-border: #1f2937;
+      --color-text-dark: #f3f4f6;
+      --color-text-muted: #9ca3af;
+      --color-sidebar-bg: #030712;
+      --color-sidebar-text: #9ca3af;
+      --color-sidebar-active-bg: rgba(226, 26, 97, 0.2);
+      --color-pink-light: rgba(226, 26, 97, 0.15);
+      --color-success: #34d399;
+      --color-warning: #fbbf24;
+      --color-danger: #f87171;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.2), 0 1px 2px rgba(0, 0, 0, 0.1);
+      --shadow-md: 0 4px 6px -1px rgba(0, 0, 0, 0.25), 0 2px 4px -1px rgba(0, 0, 0, 0.2);
+    }
+
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    body {
+      font-family: var(--font-body);
+      background-color: var(--color-bg-main);
+      color: var(--color-text-dark);
+      min-height: 100vh;
+      display: flex;
+      transition: background-color 0.3s, color 0.3s;
+    }
+
+    /* Form UI/UX Styles */
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      margin-bottom: 16px;
+    }
+    
+    .form-group label {
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      margin-bottom: 2px;
+    }
+    
+    .form-control,
+    input[type="text"]:not(.search-input-top):not(.switch input),
+    input[type="email"]:not(.switch input),
+    input[type="password"]:not(.switch input),
+    input[type="number"]:not(.switch input),
+    input[type="tel"]:not(.switch input),
+    select:not(.catalog-sort-select),
+    textarea {
+      width: 100% !important;
+      padding: 10px 14px !important;
+      font-size: 14px !important;
+      font-family: var(--font-body) !important;
+      border: 1px solid var(--color-border) !important;
+      border-radius: var(--radius-sm) !important;
+      outline: none !important;
+      background-color: var(--color-bg-card) !important;
+      color: var(--color-text-dark) !important;
+      transition: border-color 0.2s, box-shadow 0.2s !important;
+      box-sizing: border-box !important;
+    }
+    
+    .form-control:focus,
+    input[type="text"]:not(.search-input-top):not(.switch input):focus,
+    input[type="email"]:not(.switch input):focus,
+    input[type="password"]:not(.switch input):focus,
+    input[type="number"]:not(.switch input):focus,
+    input[type="tel"]:not(.switch input):focus,
+    select:not(.catalog-sort-select):focus,
+    textarea:focus {
+      border-color: var(--color-pink-primary) !important;
+      box-shadow: 0 0 0 3px rgba(226, 26, 97, 0.15) !important;
+      outline: none !important;
+    }
+    
+    /* File input custom styling */
+    input[type="file"].form-control {
+      padding: 8px 12px !important;
+      cursor: pointer !important;
+    }
+    
+    input[type="file"].form-control::file-selector-button {
+      background-color: var(--color-pink-primary) !important;
+      color: white !important;
+      border: none !important;
+      padding: 4px 12px !important;
+      border-radius: 4px !important;
+      cursor: pointer !important;
+      font-size: 12px !important;
+      font-weight: 600 !important;
+      margin-right: 8px !important;
+      transition: background-color 0.2s !important;
+    }
+    
+    input[type="file"].form-control::file-selector-button:hover {
+      background-color: var(--color-pink-hover) !important;
+    }
+    
+    /* Custom Checkboxes UI/UX */
+    input[type="checkbox"]:not(.switch input) {
+      appearance: checkbox !important;
+      -webkit-appearance: checkbox !important;
+      width: 18px !important;
+      height: 18px !important;
+      border: 1.5px solid var(--color-border) !important;
+      border-radius: 4px !important;
+      accent-color: var(--color-pink-primary) !important;
+      cursor: pointer !important;
+      background: var(--color-bg-card) !important;
+      transition: all 0.2s !important;
+      margin-top: 1px !important;
+      display: inline-block !important;
+    }
+    
+    input[type="checkbox"]:not(.switch input):hover {
+      border-color: var(--color-pink-primary) !important;
+    }
+    
+    /* Primary buttons */
+    .btn {
+      display: inline-flex !important;
+      align-items: center !important;
+      justify-content: center !important;
+      padding: 10px 20px !important;
+      border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+      font-size: 14px !important;
+      cursor: pointer !important;
+      transition: all 0.2s ease !important;
+      border: none !important;
+      outline: none !important;
+    }
+    
+    .btn-primary {
+      background-color: var(--color-pink-primary) !important;
+      color: #ffffff !important;
+    }
+    
+    .btn-primary:hover {
+      background-color: var(--color-pink-hover) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    .btn-secondary {
+      background-color: var(--color-bg-main) !important;
+      color: var(--color-text-dark) !important;
+      border: 1px solid var(--color-border) !important;
+    }
+    
+    .btn-secondary:hover {
+      background-color: var(--color-border) !important;
+      transform: translateY(-1px) !important;
+    }
+
+    /* Outlined fixed Sidebar styling */
+    aside.admin-sidebar {
+      background-color: var(--color-sidebar-bg);
+      width: var(--sidebar-width);
+      position: fixed;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      z-index: 110;
+      display: flex;
+      flex-direction: column;
+      padding: 24px 16px;
+      transition: width 0.3s cubic-bezier(0.4, 0, 0.2, 1), transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    .sidebar-header {
+      display: flex;
+      flex-direction: column;
+      margin-bottom: 24px;
+      padding-left: 12px;
+      transition: all 0.3s;
+    }
+
+    .sidebar-header .logo-container {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+
+    .sidebar-header .logo-text {
+      font-family: var(--font-display);
+      font-size: 20px;
+      font-weight: 800;
+      color: #ffffff;
+      letter-spacing: -0.5px;
+    }
+
+    .sidebar-header .logo-text span {
+      color: var(--color-pink-primary);
+    }
+
+    .sidebar-header .sub-logo {
+      font-size: 11px;
+      color: var(--color-sidebar-text);
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .sidebar-menu {
+      list-style: none;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      flex-grow: 1;
+      overflow-y: auto;
+      padding-right: 4px;
+    }
+
+    /* Scrollbar */
+    .sidebar-menu::-webkit-scrollbar {
+      width: 4px;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-track {
+      background: transparent;
+    }
+
+    .sidebar-menu::-webkit-scrollbar-thumb {
+      background: rgba(255, 255, 255, 0.1);
+      border-radius: 2px;
+    }
+
+    .menu-section-title {
+      font-size: 11px;
+      text-transform: uppercase;
+      color: var(--color-sidebar-text);
+      font-weight: 700;
+      letter-spacing: 1px;
+      margin: 14px 0 6px 12px;
+      opacity: 0.8;
+    }
+
+    .menu-item a {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 10px 14px;
+      color: var(--color-sidebar-text);
+      text-decoration: none;
+      font-size: 13.5px;
+      font-weight: 500;
+      border-radius: var(--radius-md);
+      transition: all 0.2s ease;
+      white-space: nowrap;
+    }
+
+    .menu-item a:hover {
+      background-color: rgba(255, 255, 255, 0.05);
+      color: #ffffff;
+    }
+
+    .menu-item.active a {
+      background-color: var(--color-sidebar-active-bg);
+      color: var(--color-sidebar-active-text);
+      border-left: 3px solid var(--color-pink-primary);
+    }
+
+    .menu-item a .material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    .sidebar-footer {
+      border-top: 1px solid rgba(255, 255, 255, 0.1);
+      padding-top: 12px;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    /* Collapsed Sidebar overrides */
+    body.sidebar-collapsed {
+      --sidebar-width: 80px;
+    }
+
+    body.sidebar-collapsed .sidebar-header {
+      padding-left: 0;
+      align-items: center;
+    }
+
+    body.sidebar-collapsed .sidebar-header .logo-text span:not(.logo-mini) {
+      display: none;
+    }
+
+    body.sidebar-collapsed .sidebar-header .logo-mini {
+      display: inline-block;
+      font-size: 22px;
+      color: var(--color-pink-primary);
+      font-weight: 900;
+    }
+
+    body.sidebar-collapsed .logo-mini-wrap {
+      display: flex;
+      justify-content: center;
+      width: 100%;
+    }
+
+    body.sidebar-collapsed .sidebar-header .sub-logo {
+      display: none;
+    }
+
+    body.sidebar-collapsed .menu-item a span:not(.material-symbols-outlined) {
+      opacity: 0;
+      display: none;
+    }
+
+    body.sidebar-collapsed .menu-section-title {
+      display: none;
+    }
+
+    body.sidebar-collapsed .menu-item a {
+      justify-content: center;
+      padding: 10px;
+    }
+
+    body.sidebar-collapsed .sidebar-footer a span:not(.material-symbols-outlined) {
+      display: none;
+    }
+
+    /* Content Wrapper */
+    .content-wrapper {
+      margin-left: var(--sidebar-width);
+      flex-grow: 1;
+      min-width: 0;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      transition: margin-left 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Top Navbar */
+    .top-navbar {
+      height: 70px;
+      background-color: var(--color-bg-card);
+      border-bottom: 1px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 0 40px;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      transition: background-color 0.3s, border-color 0.3s;
+    }
+
+    .navbar-left {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      flex-grow: 1;
+      max-width: 480px;
+    }
+
+    .search-bar-wrapper {
+      position: relative;
+      width: 100%;
+    }
+
+    .search-bar-wrapper .search-icon {
+      position: absolute;
+      left: 14px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: var(--color-text-muted);
+      font-size: 20px;
+    }
+
+    .search-input-top {
+      width: 100%;
+      background-color: var(--color-bg-main);
+      border: 1px solid transparent;
+      border-radius: var(--radius-sm);
+      padding: 10px 16px 10px 42px;
+      font-size: 14px;
+      outline: none;
+      font-family: var(--font-body);
+      color: var(--color-text-dark);
+      transition: all 0.2s;
+    }
+
+    .search-input-top:focus {
+      background-color: var(--color-bg-card);
+      border-color: var(--color-pink-primary);
+    }
+
+    .navbar-right {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+    }
+
+    .nav-icon-btn {
+      color: var(--color-text-dark);
+      background: none;
+      border: none;
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      position: relative;
+      padding: 8px;
+      border-radius: 50%;
+      transition: background-color 0.2s;
+    }
+
+    .nav-icon-btn:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .nav-icon-btn .badge-dot {
+      width: 8px;
+      height: 8px;
+      background-color: var(--color-pink-primary);
+      border-radius: 50%;
+      position: absolute;
+      top: 6px;
+      right: 6px;
+      border: 2px solid var(--color-bg-card);
+    }
+
+    .user-avatar-btn {
+      width: 36px;
+      height: 36px;
+      border-radius: 50%;
+      background-color: var(--color-pink-primary);
+      border: 2px solid var(--color-border);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 700;
+      color: #ffffff;
+      cursor: pointer;
+      box-shadow: var(--shadow-sm);
+      font-family: var(--font-display);
+    }
+
+    .user-name-top {
+      font-size: 13.5px;
+      font-weight: 600;
+      color: var(--color-text-dark);
+      text-align: right;
+    }
+
+    .user-role-top {
+      font-size: 11px;
+      color: var(--color-text-muted);
+      text-transform: uppercase;
+      font-weight: 600;
+      letter-spacing: 0.5px;
+    }
+
+    /* Dropdowns Styles */
+    .dropdown-container {
+      position: relative;
+    }
+
+    .dropdown-menu {
+      display: none;
+      position: absolute;
+      right: 0;
+      top: 100%;
+      margin-top: 8px;
+      background-color: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      box-shadow: var(--shadow-md);
+      z-index: 250;
+      overflow: hidden;
+      animation: dropdownFadeIn 0.2s ease;
+    }
+
+    @keyframes dropdownFadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .dropdown-menu.show {
+      display: block;
+    }
+
+    .user-dropdown {
+      min-width: 220px;
+    }
+
+    .user-dropdown-header {
+      padding: 16px;
+      background-color: var(--color-bg-main);
+      border-bottom: 1px solid var(--color-border);
+    }
+
+    .user-dropdown-name {
+      font-weight: 600;
+      font-size: 14px;
+      color: var(--color-text-dark);
+    }
+
+    .user-dropdown-email {
+      font-size: 12px;
+      color: var(--color-text-muted);
+      margin-top: 2px;
+    }
+
+    .dropdown-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 16px;
+      color: var(--color-text-dark);
+      text-decoration: none;
+      font-size: 13.5px;
+      transition: background-color 0.2s;
+      border: none;
+      background: transparent;
+      width: 100%;
+      text-align: left;
+      cursor: pointer;
+    }
+
+    .dropdown-item:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .dropdown-item span.material-symbols-outlined {
+      font-size: 18px;
+      color: var(--color-text-muted);
+    }
+
+    .dropdown-divider {
+      border: 0;
+      border-top: 1px solid var(--color-border);
+    }
+
+    .text-danger {
+      color: var(--color-danger) !important;
+    }
+
+    .text-danger span {
+      color: var(--color-danger) !important;
+    }
+
+    /* Notifications Dropdown */
+    .notifications-dropdown {
+      width: 320px;
+    }
+
+    .dropdown-header {
+      padding: 12px 16px;
+      font-weight: 700;
+      font-family: var(--font-display);
+      font-size: 14px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-dark);
+    }
+
+    .dropdown-body {
+      max-height: 280px;
+      overflow-y: auto;
+    }
+
+    .notification-item {
+      display: flex;
+      gap: 12px;
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--color-border);
+      transition: background-color 0.2s;
+    }
+
+    .notification-item:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .notification-item .info-icon {
+      color: var(--color-pink-primary);
+      font-size: 20px;
+    }
+
+    .notification-item .success-icon {
+      color: var(--color-success);
+      font-size: 20px;
+    }
+
+    .notification-content {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .notification-text {
+      font-size: 12.5px;
+      color: var(--color-text-dark);
+      line-height: 1.4;
+    }
+
+    .notification-time {
+      font-size: 10px;
+      color: var(--color-text-muted);
+    }
+
+    .dropdown-footer {
+      padding: 10px;
+      text-align: center;
+      border-top: 1px solid var(--color-border);
+      background-color: var(--color-bg-main);
+    }
+
+    .dropdown-footer a {
+      font-size: 12px;
+      font-weight: 600;
+      color: var(--color-pink-primary);
+      text-decoration: none;
+    }
+
+    /* Layout Main Panel */
+    main.admin-main {
+      padding: 40px;
+      flex-grow: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 32px;
+      overflow-y: auto;
+    }
+
+    /* Mobile Toggle Button */
+    .toggle-btn {
+      background: none;
+      border: none;
+      color: var(--color-text-dark);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 6px;
+      border-radius: 6px;
+    }
+
+    .toggle-btn:hover {
+      background-color: var(--color-bg-main);
+    }
+
+    .desktop-only-btn {
+      display: flex;
+    }
+
+    /* Typography & Utilities */
+    h1.page-title {
+      font-family: var(--font-display);
+      font-size: 28px;
+      font-weight: 700;
+      color: var(--color-text-dark);
+      letter-spacing: -0.5px;
+    }
+
+    .subtitle {
+      font-size: 14px;
+      color: var(--color-text-muted);
+      margin-top: 4px;
+    }
+
+    .header-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 16px;
+    }
+
+    .card {
+      background: var(--color-bg-card);
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-lg);
+      padding: 24px;
+      box-shadow: var(--shadow-sm);
+      transition: background-color 0.3s, border-color 0.3s, box-shadow 0.3s;
+    }
+
+    /* Responsive styles */
+    @media (max-width: 991px) {
+      aside.admin-sidebar {
+        transform: translateX(-100%);
+        width: 250px !important;
+      }
+
+      aside.admin-sidebar.open {
+        transform: translateX(0);
+      }
+
+      .content-wrapper {
+        margin-left: 0 !important;
+      }
+
+      .top-navbar {
+        padding: 0 20px;
+      }
+
+      main.admin-main {
+        padding: 24px 20px;
+      }
+
+      .desktop-only-btn {
+        display: none;
+      }
+    }
+
+    /* Alert message styles */
+    .alert-container {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+
+    .alert {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 14px 20px;
+      border-radius: var(--radius-md);
+      font-size: 13.5px;
+      font-weight: 600;
+      box-shadow: var(--shadow-sm);
+      animation: dropdownFadeIn 0.25s ease;
+    }
+
+    .alert-success {
+      background-color: rgba(16, 185, 129, 0.1);
+      color: var(--color-success);
+      border: 1px solid rgba(16, 185, 129, 0.2);
+    }
+
+    .alert-error {
+      background-color: rgba(239, 68, 68, 0.1);
+      color: var(--color-danger);
+      border: 1px solid rgba(239, 68, 68, 0.2);
+    }
+
+    .alert span.material-symbols-outlined {
+      font-size: 20px;
+    }
+
+    /* Fallback Utility classes for mapping Tailwind CSS CDN directly into CSS Variables */
+    .bg-white {
+      background-color: var(--color-bg-card) !important;
+    }
+
+    .bg-slate-50 {
+      background-color: var(--color-bg-main) !important;
+    }
+
+    .bg-slate-100 {
+      background-color: var(--color-bg-main) !important;
+    }
+
+    .bg-slate-50\/50 {
+      background-color: rgba(0, 0, 0, 0.02) !important;
+    }
+
+    html[data-theme="dark"] .bg-slate-50\/50 {
+      background-color: rgba(255, 255, 255, 0.02) !important;
+    }
+
+    .bg-slate-50\/70 {
+      background-color: rgba(0, 0, 0, 0.03) !important;
+    }
+
+    html[data-theme="dark"] .bg-slate-50\/70 {
+      background-color: rgba(255, 255, 255, 0.03) !important;
+    }
+
+    .text-slate-400 {
+      color: var(--color-text-muted) !important;
+    }
+
+    .text-slate-500 {
+      color: var(--color-text-muted) !important;
+    }
+
+    .text-slate-600 {
+      color: var(--color-text-muted) !important;
+    }
+
+    .text-slate-700 {
+      color: var(--color-text-dark) !important;
+    }
+
+    .text-navy-900 {
+      color: var(--color-text-dark) !important;
+    }
+
+    .text-navy-950 {
+      color: var(--color-text-dark) !important;
+    }
+
+    .border-slate-200 {
+      border-color: var(--color-border) !important;
+    }
+
+    .border-slate-100 {
+      border-color: var(--color-border) !important;
+    }
+
+    /* Flexbox Layout Utilities */
+    .flex {
+      display: flex !important;
+    }
+
+    .flex-col {
+      flex-direction: column !important;
+    }
+
+    .flex-row {
+      flex-direction: row !important;
+    }
+
+    .items-center {
+      align-items: center !important;
+    }
+
+    .items-start {
+      align-items: flex-start !important;
+    }
+
+    .items-end {
+      align-items: flex-end !important;
+    }
+
+    .justify-between {
+      justify-content: space-between !important;
+    }
+
+    .justify-center {
+      justify-content: center !important;
+    }
+
+    .flex-grow {
+      flex-grow: 1 !important;
+    }
+
+    .flex-1 {
+      flex: 1 1 0% !important;
+    }
+
+    .flex-wrap {
+      flex-wrap: wrap !important;
+    }
+
+    /* Spacing & Utilities */
+    .space-y-4>*+* {
+      margin-top: 16px !important;
+    }
+
+    .space-y-6>*+* {
+      margin-top: 24px !important;
+    }
+
+    .space-y-8>*+* {
+      margin-top: 32px !important;
+    }
+
+    .space-x-3>*+* {
+      margin-left: 12px !important;
+    }
+
+    .gap-2 {
+      gap: 8px !important;
+    }
+
+    .gap-3 {
+      gap: 12px !important;
+    }
+
+    .gap-4 {
+      gap: 16px !important;
+    }
+
+    .gap-6 {
+      gap: 24px !important;
+    }
+
+    .p-2 {
+      padding: 8px !important;
+    }
+
+    .p-3 {
+      padding: 12px !important;
+    }
+
+    .p-4 {
+      padding: 16px !important;
+    }
+
+    .p-5 {
+      padding: 20px !important;
+    }
+
+    .p-6 {
+      padding: 24px !important;
+    }
+
+    .px-2.5 {
+      padding-left: 10px !important;
+      padding-right: 10px !important;
+    }
+
+    .py-0.5 {
+      padding-top: 2px !important;
+      padding-bottom: 2px !important;
+    }
+
+    .px-3 {
+      padding-left: 12px !important;
+      padding-right: 12px !important;
+    }
+
+    .py-1.5 {
+      padding-top: 6px !important;
+      padding-bottom: 6px !important;
+    }
+
+    .px-4 {
+      padding-left: 16px !important;
+      padding-right: 16px !important;
+    }
+
+    .py-2 {
+      padding-top: 8px !important;
+      padding-bottom: 8px !important;
+    }
+
+    .px-6 {
+      padding-left: 24px !important;
+      padding-right: 24px !important;
+    }
+
+    .py-3 {
+      padding-top: 12px !important;
+      padding-bottom: 12px !important;
+    }
+
+    .py-4 {
+      padding-top: 16px !important;
+      padding-bottom: 16px !important;
+    }
+
+    .mt-1 {
+      margin-top: 4px !important;
+    }
+
+    .mt-2 {
+      margin-top: 8px !important;
+    }
+
+    .mt-3 {
+      margin-top: 12px !important;
+    }
+
+    .mt-4 {
+      margin-top: 16px !important;
+    }
+
+    .mb-4 {
+      margin-bottom: 16px !important;
+    }
+
+    .mb-6 {
+      margin-bottom: 24px !important;
+    }
+
+    .mr-1.5 {
+      margin-right: 6px !important;
+    }
+
+    /* Rounding */
+    .rounded-lg {
+      border-radius: var(--radius-sm) !important;
+    }
+
+    .rounded-xl {
+      border-radius: var(--radius-md) !important;
+    }
+
+    .rounded-2xl {
+      border-radius: 14px !important;
+    }
+
+    /* 14px rounded corners */
+    .rounded-3xl {
+      border-radius: 18px !important;
+    }
+
+    .rounded-full {
+      border-radius: 9999px !important;
+    }
+
+    /* Grid System Utilities */
+    .grid {
+      display: grid !important;
+    }
+
+    .grid-cols-1 {
+      grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+    }
+
+    .grid-cols-2 {
+      grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    }
+
+    .grid-cols-3 {
+      grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+    }
+
+    .grid-cols-4 {
+      grid-template-columns: repeat(4, minmax(0, 1fr)) !important;
+    }
+
+    .grid-cols-6 {
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+    }
+
+    @media (max-width: 1024px) {
+      .lg\:grid-cols-6 {
+        grid-template-columns: repeat(3, minmax(0, 1fr)) !important;
+      }
+
+      .lg\:grid-cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .lg\:grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      }
+
+      .lg\:col-span-2 {
+        grid-column: span 1 / span 1 !important;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .md\:grid-cols-3 {
+        grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+      }
+
+      .md\:grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      }
+
+      .md\:p-8 {
+        padding: 32px !important;
+      }
+    }
+
+    @media (max-width: 640px) {
+      .grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      }
+
+      .sm\:grid-cols-2 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      }
+
+      .lg\:grid-cols-6 {
+        grid-template-columns: repeat(1, minmax(0, 1fr)) !important;
+      }
+    }
+
+    /* Borders, Shadows and Trims */
+    .border {
+      border: 1px solid var(--color-border) !important;
+    }
+
+    .border-b {
+      border-bottom: 1px solid var(--color-border) !important;
+    }
+
+    .border-t {
+      border-top: 1px solid var(--color-border) !important;
+    }
+
+    .shadow-sm {
+      box-shadow: var(--shadow-sm) !important;
+    }
+
+    .shadow-md {
+      box-shadow: var(--shadow-md) !important;
+    }
+
+    .shadow-lg {
+      box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02) !important;
+    }
+
+    .overflow-hidden {
+      overflow: hidden !important;
+    }
+
+    .overflow-x-auto {
+      overflow-x: auto !important;
+    }
+
+    .transition {
+      transition: all 0.3s ease !important;
+    }
+
+    /* Table modifications */
+    .table-container {
+      overflow-x: auto;
+      border: 1px solid var(--color-border);
+      border-radius: var(--radius-md);
+      background-color: var(--color-bg-card);
+      transition: border-color 0.3s;
+    }
+
+    table {
+      width: 100%;
+      border-collapse: collapse;
+    }
+
+    th {
+      background-color: var(--color-bg-main);
+      color: var(--color-text-muted);
+      font-weight: 600;
+      padding: 14px 18px;
+      border-bottom: 1px solid var(--color-border);
+      text-transform: uppercase;
+      font-size: 11px;
+      letter-spacing: 0.5px;
+    }
+
+    td {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--color-border);
+      color: var(--color-text-dark);
+      vertical-align: middle;
+    }
+
+    tr:last-child td {
+      border-bottom: none;
+    }
+
+    tr:hover td {
+      background-color: rgba(243, 244, 246, 0.3);
+    }
+
+    html[data-theme="dark"] tr:hover td {
+      background-color: rgba(255, 255, 255, 0.02);
+    }
+  </style>
+  
+<style>
+  .ticket-stats-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 20px;
+    margin-bottom: 24px;
+  }
+  
+  .stat-card-mini {
+    background: var(--color-bg-card);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-md);
+    padding: 20px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: var(--shadow-sm);
+    transition: all 0.3s ease;
+  }
+  
+  .stat-card-mini:hover {
+    transform: translateY(-2px);
+    box-shadow: var(--shadow-md);
+  }
+  
+  .stat-icon-wrap {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-main);
+  }
+  
+  .stat-icon-wrap span {
+    font-size: 24px;
+  }
+  
+  .stat-icon-wrap.primary { color: var(--color-pink-primary); background-color: rgba(226, 26, 97, 0.1); }
+  .stat-icon-wrap.success { color: var(--color-success); background-color: rgba(16, 185, 129, 0.1); }
+  .stat-icon-wrap.pending { color: var(--color-warning); background-color: rgba(245, 158, 11, 0.1); }
+
+  .ticket-priority-badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 3px 8px;
+    font-size: 10.5px;
+    font-weight: 700;
+    border-radius: 4px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .ticket-priority-badge.high { background-color: rgba(239, 68, 68, 0.1); color: var(--color-danger); border: 1px solid rgba(239, 68, 68, 0.2); }
+  .ticket-priority-badge.medium { background-color: rgba(245, 158, 11, 0.1); color: var(--color-warning); border: 1px solid rgba(245, 158, 11, 0.2); }
+  .ticket-priority-badge.low { background-color: var(--color-bg-main); color: var(--color-text-muted); border: 1px solid var(--color-border); }
+
+  .ticket-status-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 10px;
+    font-size: 11px;
+    font-weight: 600;
+    border-radius: 50px;
+    text-transform: uppercase;
+  }
+
+  .ticket-status-badge.open { background-color: rgba(37, 99, 235, 0.1); color: #2563eb; }
+  .ticket-status-badge.in_progress { background-color: rgba(162, 28, 175, 0.1); color: #a21caf; }
+  .ticket-status-badge.resolved { background-color: rgba(16, 185, 129, 0.1); color: var(--color-success); }
+  .ticket-status-badge.closed { background-color: var(--color-bg-main); color: var(--color-text-muted); }
+
+  .action-link-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 700;
+    color: var(--color-pink-primary);
+    text-decoration: none;
+    transition: all 0.2s;
+  }
+
+  .action-link-btn:hover {
+    color: var(--color-pink-hover);
+    text-decoration: underline;
+  }
+
+  /* Modal styling */
+  .modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background-color: rgba(15, 23, 42, 0.4);
+    backdrop-filter: blur(8px);
+    z-index: 200;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    transition: all 0.3s ease;
+  }
+  
+  .modal-card {
+    background: var(--color-bg-card);
+    border-radius: var(--radius-lg);
+    width: 100%;
+    max-width: 550px;
+    box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+    border: 1px solid var(--color-border);
+    animation: modalSlide 0.25s cubic-bezier(0.34, 1.56, 0.64, 1);
+    overflow: hidden;
+  }
+  
+  .modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--color-border);
+    background-color: var(--color-bg-main);
+  }
+  
+  .modal-body {
+    padding: 24px;
+    max-height: 70vh;
+    overflow-y: auto;
+  }
+  
+  .modal-footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+    padding: 18px 24px;
+    background-color: var(--color-bg-main);
+    border-top: 1px solid var(--color-border);
+  }
+
+  @keyframes modalSlide {
+    from {
+      transform: translateY(30px) scale(0.96);
+      opacity: 0;
+    }
+    to {
+      transform: translateY(0) scale(1);
+      opacity: 1;
+    }
+  }
+</style>
+
+</head>
+
+<body>
+
+  <!-- Sidebar -->
+  <aside class="admin-sidebar" id="admin-sidebar">
+    <div class="sidebar-header">
+      <div class="logo-mini-wrap">
+        <span class="logo-mini" style="display: none;">T360</span>
+      </div>
+      <div class="logo-container">
+        <span class="logo-text">TECHNO<span>360</span></span>
+      </div>
+      <div class="sub-logo">Client Dashboard</div>
+    </div>
+
+    <ul class="sidebar-menu">
+      <div class="menu-section-title">Client Center</div>
+      <li class="menu-item active">
+        <a href="customer_dashboard.html">
+          <span class="material-symbols-outlined">dashboard</span>
+          <span>Dashboard</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="customer_profile.html">
+          <span class="material-symbols-outlined">person</span>
+          <span>Profile</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="customer_addresses.html">
+          <span class="material-symbols-outlined">home_pin</span>
+          <span>Addresses</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Procurement</div>
+      <li
+        class="menu-item active">
+        <a href="customer_orders.html">
+          <span class="material-symbols-outlined">shopping_bag</span>
+          <span>Orders</span>
+        </a>
+      </li>
+      <li
+        class="menu-item active">
+        <a href="customer_quotations.html">
+          <span class="material-symbols-outlined">description</span>
+          <span>Quotations</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="customer_subscriptions.html">
+          <span class="material-symbols-outlined">autorenew</span>
+          <span>Subscriptions</span>
+        </a>
+      </li>
+
+      <div class="menu-section-title">Favorites & Tools</div>
+      <li class="menu-item active">
+        <a href="customer_wishlist.html">
+          <span class="material-symbols-outlined">favorite</span>
+          <span>Wishlist</span>
+        </a>
+      </li>
+
+
+      <div class="menu-section-title">Help desk</div>
+
+      <li class="menu-item active">
+        <a href="customer_notifications.html">
+          <span class="material-symbols-outlined">notifications</span>
+          <span>Notifications</span>
+        </a>
+      </li>
+      <li class="menu-item active">
+        <a href="customer_settings.html">
+          <span class="material-symbols-outlined">settings</span>
+          <span>Settings</span>
+        </a>
+      </li>
+    </ul>
+
+    <div class="sidebar-footer">
+      <li class="menu-item" style="list-style:none;">
+        <a href="home.html" style="color:var(--color-sidebar-text);">
+          <span class="material-symbols-outlined">storefront</span>
+          <span>Go to Storefront</span>
+        </a>
+      </li>
+      <li class="menu-item" style="list-style:none;">
+        <a href="logout.html" style="color:#f87171;">
+          <span class="material-symbols-outlined">logout</span>
+          <span>Sign Out</span>
+        </a>
+      </li>
+    </div>
+  </aside>
+
+  <!-- Content Wrapper -->
+  <div class="content-wrapper">
+    <!-- Top Navbar -->
+    <header class="top-navbar">
+      <div class="navbar-left">
+        <!-- Sidebar Toggle -->
+        <button class="toggle-btn desktop-only-btn" onclick="toggleSidebarCollapse()" title="Toggle Sidebar">
+          <span class="material-symbols-outlined" id="collapse-icon">menu_open</span>
+        </button>
+        <button class="toggle-btn mobile-only-btn" id="mobile-toggle-btn">
+          <span class="material-symbols-outlined" style="font-size: 28px;">menu</span>
+        </button>
+        <div class="search-bar-wrapper">
+          <form method="GET" action="customer_orders.html">
+            <span class="material-symbols-outlined search-icon">search</span>
+            <input type="text" name="search" class="search-input-top" placeholder="Search orders, invoices, tickets...">
+          </form>
+        </div>
+      </div>
+
+      <div class="navbar-right">
+        <!-- Dark Mode Toggle Button -->
+        <button class="nav-icon-btn" onclick="toggleDarkMode()" title="Toggle Dark Mode">
+          <span class="material-symbols-outlined" id="dark-mode-icon">dark_mode</span>
+        </button>
+
+        <!-- Notifications Dropdown -->
+        <div class="dropdown-container">
+          <button type="button" class="nav-icon-btn" onclick="toggleDropdownMenu(event, 'notifications-dropdown')"
+            title="Notifications">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="badge-dot"></span>
+          </button>
+          <div class="dropdown-menu notifications-dropdown" id="notifications-dropdown">
+            <div class="dropdown-header">Latest Notifications</div>
+            <div class="dropdown-body">
+              <div class="notification-item">
+                <span class="material-symbols-outlined info-icon">info</span>
+                <div class="notification-content">
+                  <div class="notification-text">Welcome to your TechnoStore360 customer dashboard!</div>
+                  <div class="notification-time">Just now</div>
+                </div>
+              </div>
+            </div>
+            <div class="dropdown-footer">
+              <a href="customer_notifications.html">View All Notifications</a>
+            </div>
+          </div>
+        </div>
+
+        <div style="width: 1px; height: 24px; background-color: var(--color-border); margin: 0 4px;"></div>
+
+        <!-- User Profile Dropdown -->
+        <div class="dropdown-container" style="display: flex; align-items: center; gap: 12px;">
+          <div class="user-name-top" style="cursor: pointer;" onclick="toggleDropdownMenu(event, 'user-dropdown')">
+            <span style="display: block;"> </span>
+            <span class="user-role-top" style="display: block;"></span>
+          </div>
+          <div class="user-avatar-btn" onclick="toggleDropdownMenu(event, 'user-dropdown')">
+            <span></span>
+          </div>
+
+          <div class="dropdown-menu user-dropdown" id="user-dropdown">
+            <div class="user-dropdown-header">
+              <div class="user-dropdown-name"> </div>
+              <div class="user-dropdown-email"></div>
+            </div>
+            <a href="customer_profile.html" class="dropdown-item">
+              <span class="material-symbols-outlined">person</span>
+              My Profile
+            </a>
+            <a href="customer_addresses.html" class="dropdown-item">
+              <span class="material-symbols-outlined">home_pin</span>
+              Addresses
+            </a>
+            <a href="customer_settings.html" class="dropdown-item">
+              <span class="material-symbols-outlined">settings</span>
+              Settings
+            </a>
+            <hr class="dropdown-divider">
+            <a href="logout.html" class="dropdown-item text-danger">
+              <span class="material-symbols-outlined">logout</span>
+              Sign Out
+            </a>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Workspace Container -->
+    <main class="admin-main">
+      
+      <div class="alert-container">
+        
+        <div class="alert alert-successalert-error">
+          <span class="material-symbols-outlined">
+            check_circleerror
+          </span>
+          
+        </div>
+        
+      </div>
+      
+
+      
+<div class="mb-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+  <div>
+    <span class="text-xs font-semibold text-slate-400 uppercase tracking-wider">Help Desk</span>
+    <h1 class="page-title">Support Tickets</h1>
+    <p class="subtitle">Open support tickets to communicate with sales executives and technical staff.</p>
+  </div>
+  <button onclick="openTicketModal()" class="btn btn-primary" style="height: 42px; padding: 0 20px; border-radius: 50px;">
+    <span class="material-symbols-outlined" style="font-size: 18px;">add</span>
+    Create Support Ticket
+  </button>
+</div>
+
+<!-- Support stats grid -->
+<div class="ticket-stats-grid">
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap primary">
+      <span class="material-symbols-outlined">support_agent</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Total Tickets</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-total-tickets"></div>
+    </div>
+  </div>
+  
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap pending">
+      <span class="material-symbols-outlined">hourglass_empty</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Open & Active</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-active-tickets">0</div>
+    </div>
+  </div>
+  
+  <div class="stat-card-mini">
+    <div class="stat-icon-wrap success">
+      <span class="material-symbols-outlined">done_all</span>
+    </div>
+    <div>
+      <div style="font-size: 12px; color: var(--color-text-muted); font-weight: 500;">Resolved Closed</div>
+      <div style="font-size: 20px; font-weight: 700; font-family: var(--font-display); margin-top: 2px;" id="client-resolved-tickets">0</div>
+    </div>
+  </div>
+</div>
+
+<!-- Support Tickets Table -->
+<div class="table-container mb-8 shadow-sm">
+  <table id="client-tickets-table">
+    <thead>
+      <tr>
+        <th>Ticket ID</th>
+        <th>Subject</th>
+        <th>Created Date</th>
+        <th>Priority</th>
+        <th>Status</th>
+        <th style="text-align: right;">Actions</th>
+      </tr>
+    </thead>
+    <tbody class="divide-y divide-slate-100">
+      
+        <tr data-status="">
+          <td style="font-weight: 600; font-family: monospace; color: var(--color-text-dark);">#</td>
+          <td style="font-weight: 700; color: var(--color-text-dark); font-size: 14px;"></td>
+          <td></td>
+          <td>
+            <span class="ticket-priority-badge ">
+              
+            </span>
+          </td>
+          <td>
+            <span class="ticket-status-badge ">
+              
+            </span>
+          </td>
+          <td style="text-align: right;">
+            <a href="customer_ticket_detail.html" class="action-link-btn">
+              <span class="material-symbols-outlined" style="font-size: 16px;">forum</span>
+              Discuss / View
+            </a>
+          </td>
+        </tr>
+      
+        <!-- Empty State -->
+        <tr>
+          <td colspan="6" style="text-align: center; padding: 48px 0; color: var(--color-text-muted);">
+            <span class="material-symbols-outlined" style="font-size: 48px; color: var(--color-text-muted); margin-bottom: 12px;">support_agent</span>
+            <h4 style="font-family: var(--font-display); font-size: 16px; font-weight: 700; color: var(--color-text-dark);">No support tickets found</h4>
+            <p style="font-size: 13px; max-w-sm; margin: 6px auto 16px;">You don't have any support tickets open. If you have licensing issues, payment updates, or custom contract queries, feel free to open a ticket.</p>
+            <button onclick="openTicketModal()" class="btn btn-primary" style="padding: 8px 18px; font-size: 13px;">
+              Open Support Ticket
+            </button>
+          </td>
+        </tr>
+      
+    </tbody>
+  </table>
+</div>
+
+<!-- CREATE TICKET MODAL -->
+<div id="create-ticket-modal" class="modal-overlay" onclick="if(event.target === this) closeTicketModal()">
+  <div class="modal-card">
+    <div class="modal-header">
+      <h3 class="profile-card-title">Open Support Ticket</h3>
+      <span class="material-symbols-outlined" style="cursor: pointer; color: var(--color-text-muted);" onclick="closeTicketModal()">close</span>
+    </div>
+
+    <form method="POST" action="customer_ticket_create.html">
+      
+      <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-subject">Subject / Query Title *</label>
+          <input type="text" id="ticket-subject" name="subject" required placeholder="e.g. License activation error" class="form-control">
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-priority">Priority Level</label>
+          <select id="ticket-priority" name="priority" class="form-control">
+            <option value="low">Low - General query</option>
+            <option value="medium" selected>Medium - Product billing / account issue</option>
+            <option value="high">High - Software license / production server issue</option>
+          </select>
+        </div>
+
+        <div class="form-group" style="margin-bottom:0;">
+          <label for="ticket-description">Detailed Description *</label>
+          <textarea id="ticket-description" name="description" required rows="5" placeholder="Explain the problem or request in detail..." class="form-control"></textarea>
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" onclick="closeTicketModal()" class="btn btn-secondary">Cancel</button>
+        <button type="submit" class="btn btn-primary">Submit Ticket</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<script>
+  function openTicketModal() {
+    const modal = document.getElementById('create-ticket-modal');
+    if (modal) {
+      modal.style.display = 'flex';
+      document.body.style.overflow = 'hidden';
+    }
+  }
+  
+  function closeTicketModal() {
+    const modal = document.getElementById('create-ticket-modal');
+    if (modal) {
+      modal.style.display = 'none';
+      document.body.style.overflow = 'auto';
+    }
+  }
+
+  // Calculate ticket counts dynamically
+  document.addEventListener('DOMContentLoaded', () => {
+    const rows = document.querySelectorAll('#client-tickets-table tbody tr[data-status]');
+    
+    let activeCount = 0;
+    let resolvedCount = 0;
+
+    rows.forEach(row => {
+      const status = row.getAttribute('data-status');
+      if (status === 'open' || status === 'in_progress') {
+        activeCount++;
+      } else if (status === 'resolved' || status === 'closed') {
+        resolvedCount++;
+      }
+    });
+
+    document.getElementById('client-active-tickets').textContent = activeCount;
+    document.getElementById('client-resolved-tickets').textContent = resolvedCount;
+  });
+</script>
+
+    </main>
+  </div>
+
+  <script>
+      // Theme Loader
+      (function () {
+        const currentTheme = localStorage.getItem('admin-theme') || 'light';
+        if (currentTheme === 'dark') {
+          document.documentElement.setAttribute('data-theme', 'dark');
+          const icon = document.getElementById('dark-mode-icon');
+          if (icon) icon.textContent = 'light_mode';
+        }
+      })();
+
+    // Sidebar State Loader
+    (function () {
+      const isCollapsed = localStorage.getItem('sidebar-collapsed') === 'true';
+      if (isCollapsed && window.innerWidth >= 992) {
+        document.body.classList.add('sidebar-collapsed');
+        const icon = document.getElementById('collapse-icon');
+        if (icon) icon.textContent = 'menu';
+      }
+    })();
+
+    // Mobile Sidebar Toggler
+    const toggleBtn = document.getElementById('mobile-toggle-btn');
+    const sidebar = document.getElementById('admin-sidebar');
+
+    if (toggleBtn && sidebar) {
+      toggleBtn.addEventListener('click', (e) => {
+        sidebar.classList.toggle('open');
+        e.stopPropagation();
+      });
+
+      document.addEventListener('click', (e) => {
+        if (!sidebar.contains(e.target) && e.target !== toggleBtn) {
+          sidebar.classList.remove('open');
+        }
+      });
+    }
+
+    // Toggle Desktop Sidebar Collapse
+    function toggleSidebarCollapse() {
+      document.body.classList.toggle('sidebar-collapsed');
+      const isCollapsed = document.body.classList.contains('sidebar-collapsed');
+      localStorage.setItem('sidebar-collapsed', isCollapsed);
+
+      const icon = document.getElementById('collapse-icon');
+      if (icon) {
+        icon.textContent = isCollapsed ? 'menu' : 'menu_open';
+      }
+    }
+
+    // Toggle Dark Mode
+    function toggleDarkMode() {
+      const htmlEl = document.documentElement;
+      const currentTheme = htmlEl.getAttribute('data-theme');
+      const icon = document.getElementById('dark-mode-icon');
+
+      if (currentTheme === 'dark') {
+        htmlEl.removeAttribute('data-theme');
+        localStorage.setItem('admin-theme', 'light');
+        if (icon) icon.textContent = 'dark_mode';
+      } else {
+        htmlEl.setAttribute('data-theme', 'dark');
+        localStorage.setItem('admin-theme', 'dark');
+        if (icon) icon.textContent = 'light_mode';
+      }
+    }
+
+    // Toggle Dropdown Menus
+    function toggleDropdownMenu(event, id) {
+      event.stopPropagation();
+      document.querySelectorAll('.dropdown-menu').forEach(el => {
+        if (el.id !== id) {
+          el.classList.remove('show');
+        }
+      });
+
+      const menu = document.getElementById(id);
+      if (menu) {
+        menu.classList.toggle('show');
+      }
+    }
+
+    // Close all open dropdowns when clicking outside
+    document.addEventListener('click', function (event) {
+      document.querySelectorAll('.dropdown-menu').forEach(menu => {
+        if (!menu.contains(event.target)) {
+          menu.classList.remove('show');
+        }
+      });
+    });
+  </script>
+  
+<script src="/static/js/prototype.js"></script>
+</body>
+
+</html>

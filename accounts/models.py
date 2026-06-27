@@ -4,6 +4,15 @@ from django.db.models.signals import post_save
 from django.dispatch import receiver
 
 class User(AbstractUser):
+    USER_TYPE_CHOICES = (
+        ('customer', 'Customer'),
+        ('business_customer', 'Business Customer'),
+        ('reseller', 'Reseller'),
+        ('vendor', 'Vendor'),
+        ('sales_executive', 'Sales Executive'),
+        ('administrator', 'Administrator'),
+    )
+    user_type = models.CharField(max_length=30, choices=USER_TYPE_CHOICES, default='customer')
     is_customer = models.BooleanField(default=True)
     is_product_manager = models.BooleanField(default=False)
     is_order_manager = models.BooleanField(default=False)
@@ -17,6 +26,8 @@ class Profile(models.Model):
     company_name = models.CharField(max_length=255, blank=True, null=True)
     phone_number = models.CharField(max_length=20, blank=True, null=True)
     profile_image = models.ImageField(upload_to='profiles/', blank=True, null=True)
+    tax_id = models.CharField(max_length=50, blank=True, null=True, verbose_name="GST / Tax ID")
+    notification_preferences = models.JSONField(default=dict, blank=True, help_text="User preferences for email, whatsapp, etc.")
     notes = models.TextField(blank=True, null=True)
 
     def __str__(self):
@@ -49,6 +60,7 @@ class Address(models.Model):
     country = models.CharField(max_length=100, default='India')
     postal_code = models.CharField(max_length=20)
     address_type = models.CharField(max_length=20, choices=ADDRESS_TYPES, default='shipping')
+    address_label = models.CharField(max_length=50, default='Office', help_text="e.g. Home, Office, Branch")
     is_default = models.BooleanField(default=False)
 
     def save(self, *args, **kwargs):

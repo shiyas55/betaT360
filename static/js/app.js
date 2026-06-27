@@ -2,7 +2,17 @@
 
 // 1. Mobile Navigation Toggle
 function toggleMobileNav() {
+  // Close filters if open
+  const filterSidebar = document.querySelector('.filter-sidebar');
+  const filterBackdrop = document.getElementById('filter-backdrop');
+  if (filterSidebar && filterSidebar.classList.contains('active')) {
+    filterSidebar.classList.remove('active');
+    if (filterBackdrop) filterBackdrop.classList.remove('active');
+  }
+
   const panel = document.getElementById('mobile-nav-panel');
+  const btn = document.querySelector('.hamburger-button');
+  const header = document.getElementById('app-header');
   let backdrop = document.getElementById('mobile-nav-backdrop');
   if (!backdrop) {
     backdrop = document.createElement('div');
@@ -14,6 +24,8 @@ function toggleMobileNav() {
   
   if (panel) {
     const isActive = panel.classList.toggle('active');
+    if (btn) btn.classList.toggle('active', isActive);
+    if (header) header.classList.toggle('nav-open', isActive);
     backdrop.classList.toggle('active', isActive);
     document.body.classList.toggle('no-scroll', isActive);
   }
@@ -133,15 +145,38 @@ function toggleFaqAccordion(btn) {
 }
 
 // 6. Global Scroll Handler for Header and Back-to-Top Button
+let lastScrollY = window.scrollY;
+
 window.addEventListener('scroll', () => {
   const header = document.getElementById('app-header');
+  const currentScrollY = window.scrollY;
+
   if (header) {
-    if (window.scrollY > 20) {
+    // Toggle background styles on scroll
+    if (currentScrollY > 20) {
       header.classList.add('scrolled');
     } else {
       header.classList.remove('scrolled');
     }
+
+    // Hide header on scroll down, slide it back down on scroll up
+    if (currentScrollY > 100) {
+      if (currentScrollY > lastScrollY) {
+        // Scrolling down - hide top navbar
+        header.style.transform = 'translateY(-100%)';
+        header.style.transition = 'transform 0.3s ease-in-out';
+      } else {
+        // Scrolling up - slide top navbar down to stick
+        header.style.transform = 'translateY(0)';
+        header.style.transition = 'transform 0.3s ease-in-out';
+      }
+    } else {
+      // Near top of the page - reset transform
+      header.style.transform = 'translateY(0)';
+    }
   }
+  
+  lastScrollY = currentScrollY;
 
   const backToTop = document.getElementById('back-to-top-btn');
   if (backToTop) {
@@ -298,6 +333,18 @@ function animateCounters(counters) {
 
 // 3. Mobile Filters Toggle
 function toggleMobileFilters() {
+  // Close navigation menu if open
+  const navPanel = document.getElementById('mobile-nav-panel');
+  const navBtn = document.querySelector('.hamburger-button');
+  const navHeader = document.getElementById('app-header');
+  const navBackdrop = document.getElementById('mobile-nav-backdrop');
+  if (navPanel && navPanel.classList.contains('active')) {
+    navPanel.classList.remove('active');
+    if (navBtn) navBtn.classList.remove('active');
+    if (navHeader) navHeader.classList.remove('nav-open');
+    if (navBackdrop) navBackdrop.classList.remove('active');
+  }
+
   const sidebar = document.querySelector('.filter-sidebar');
   let backdrop = document.getElementById('filter-backdrop');
   if (!backdrop) {
