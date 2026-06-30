@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "outputDirectory": "staticfiles_build",
   "builds": [
     {
       "src": "technostore_project/wsgi.py",
