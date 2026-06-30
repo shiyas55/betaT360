@@ -107,7 +107,7 @@ STATIC_URL = '/static/'
 STATICFILES_DIRS = [
     BASE_DIR / 'static',
 ]
-STATIC_ROOT = BASE_DIR / 'staticfiles_build'
+STATIC_ROOT = BASE_DIR / 'staticfiles_build' / 'static'
 
 # Media files (User uploads)
 MEDIA_URL = '/media/'

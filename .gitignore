@@ -13,3 +13,6 @@ __pycache__/
 
 # Ignore OS files
 .DS_Store
+
+# Ignore Vercel build output
+staticfiles_build/
