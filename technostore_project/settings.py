@@ -73,9 +73,23 @@ WSGI_APPLICATION = 'technostore_project.wsgi.application'
 
 # Database
 # Use django-environ to read database URL (sqlite by default, psycopg2 PostgreSQL support ready)
-DATABASES = {
-    'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
-}
+IS_VERCEL = os.environ.get('VERCEL') == '1'
+
+if IS_VERCEL and not os.environ.get('DATABASE_URL'):
+    # On Vercel, open SQLite in read-only mode to prevent read-write lock errors on read-only filesystem
+    DATABASES = {
+        'default': {
+            'ENGINE': 'django.db.backends.sqlite3',
+            'NAME': f'file:{BASE_DIR / "db.sqlite3"}?mode=ro',
+            'OPTIONS': {
+                'uri': True,
+            }
+        }
+    }
+else:
+    DATABASES = {
+        'default': env.db('DATABASE_URL', default=f'sqlite:///{BASE_DIR / "db.sqlite3"}')
+    }
 
 # User Model Configuration
 AUTH_USER_MODEL = 'accounts.User'
