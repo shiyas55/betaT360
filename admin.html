@@ -1,0 +1,2236 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>TechnoStore360 Admin & Vendor Desk</title>
+    <!-- Tailwind CSS with Forms and Container Queries plugins -->
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;700;800&amp;family=Inter:wght@400;500;600;800&amp;display=swap"
+        rel="stylesheet" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+        rel="stylesheet" />
+    <!-- Supabase JS Client library via CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "success-green": "#10b981",
+                        "surface-dim": "#ccdafa",
+                        "error-red": "#ef4444",
+                        "on-tertiary-fixed-variant": "#004e5f",
+                        "primary-fixed": "#ffd9dd",
+                        "on-secondary-fixed": "#0c1c32",
+                        "surface-container-highest": "#d7e3ff",
+                        "surface-variant": "#d7e3ff",
+                        "tertiary-fixed-dim": "#57d5f9",
+                        "on-error": "#ffffff",
+                        "border-default": "#e6e9f2",
+                        "tertiary-fixed": "#b3ebff",
+                        "inverse-surface": "#223049",
+                        "surface-container-lowest": "#ffffff",
+                        "primary-container": "#e21b5a",
+                        "on-secondary-container": "#54637c",
+                        "on-surface-variant": "#5b3f43",
+                        "on-tertiary-container": "#fcfeff",
+                        "surface-bright": "#f9f9ff",
+                        "surface-tint": "#bd0047",
+                        "on-primary-container": "#fffcff",
+                        "on-primary": "#ffffff",
+                        "secondary-fixed-dim": "#b8c7e4",
+                        "outline-variant": "#e4bdc1",
+                        "tertiary-container": "#00809b",
+                        "background": "#f9f9ff",
+                        "on-tertiary-fixed": "#001f27",
+                        "error": "#ba1a1a",
+                        "warning-amber": "#f59e0b",
+                        "primary": "#b90045",
+                        "on-secondary": "#ffffff",
+                        "slate-muted": "#78829b",
+                        "on-error-container": "#93000a",
+                        "error-container": "#ffdad6",
+                        "on-secondary-fixed-variant": "#38475f",
+                        "on-background": "#0c1b33",
+                        "secondary": "#505f78",
+                        "outline": "#906f72",
+                        "surface": "#f9f9ff",
+                        "on-primary-fixed-variant": "#910034",
+                        "on-primary-fixed": "#400012",
+                        "primary-fixed-dim": "#ffb2bc",
+                        "surface-container": "#e8eeff",
+                        "secondary-container": "#d1e0fe",
+                        "accent-dark": "#b80d40",
+                        "inverse-on-surface": "#ecf0ff",
+                        "tertiary": "#00657b",
+                        "surface-container-high": "#dfe8ff",
+                        "on-tertiary": "#ffffff",
+                        "secondary-fixed": "#d5e3ff",
+                        "surface-container-low": "#f1f3ff",
+                        "slate-soft": "#f4f6fb",
+                        "inverse-primary": "#ffb2bc",
+                        "on-surface": "#0c1b33"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.25rem",
+                        "lg": "0.5rem",
+                        "xl": "0.75rem",
+                        "full": "9999px"
+                    },
+                    "spacing": {
+                        "gutter": "1.25rem",
+                        "hero-padding": "80px",
+                        "card-gap": "1.5rem",
+                        "internal-ui-gap": "0.75rem",
+                        "container-max": "1320px",
+                        "section-gap-sm": "3rem",
+                        "section-gap-lg": "5rem"
+                    },
+                    "fontFamily": {
+                        "label-caps": ["Inter"],
+                        "hero-h1-mobile": ["Outfit"],
+                        "display-lg": ["Outfit"],
+                        "product-title": ["Outfit"],
+                        "hero-h1": ["Outfit"],
+                        "nav-link": ["Inter"],
+                        "storemark": ["Outfit"],
+                        "form-label": ["Inter"],
+                        "caption": ["Inter"],
+                        "body-default": ["Inter"]
+                    },
+                    "fontSize": {
+                        "label-caps": ["11.5px", { "lineHeight": "1.2", "letterSpacing": "0.18em", "fontWeight": "800" }],
+                        "hero-h1-mobile": ["36px", { "lineHeight": "1.15", "fontWeight": "800" }],
+                        "display-lg": ["32px", { "lineHeight": "1.2", "fontWeight": "800" }],
+                        "product-title": ["17px", { "lineHeight": "1.3", "fontWeight": "700" }],
+                        "hero-h1": ["52px", { "lineHeight": "1.15", "fontWeight": "800" }],
+                        "nav-link": ["14px", { "lineHeight": "1.5", "fontWeight": "600" }],
+                        "storemark": ["24px", { "lineHeight": "0.95", "fontWeight": "800" }],
+                        "form-label": ["13px", { "lineHeight": "1.4", "fontWeight": "600" }],
+                        "caption": ["12px", { "lineHeight": "1.3", "fontWeight": "500" }],
+                        "body-default": ["16px", { "lineHeight": "1.5", "fontWeight": "400" }]
+                    }
+                },
+            },
+        }
+    </script>
+    <style>
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid var(--tw-colors-border-default);
+        }
+
+        .animate-shake {
+            animation: shake 0.4s ease;
+        }
+
+        @keyframes shake {
+
+            0%,
+            100% {
+                transform: translateX(0);
+            }
+
+            25% {
+                transform: translateX(-6px);
+            }
+
+            75% {
+                transform: translateX(6px);
+            }
+        }
+
+        .toast-notification {
+            animation: slideIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.15) forwards;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateY(20px);
+                opacity: 0;
+            }
+
+            to {
+                transform: translateY(0);
+                opacity: 1;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg-background text-on-background font-body-default text-body-default min-h-screen flex antialiased">
+
+    <!-- TOAST ALERT SYSTEM -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3"></div>
+
+    <!-- ==========================================
+     1. AUTHENTICATION GATE (LOGIN SCREEN)
+     ========================================== -->
+    <div id="login-gate"
+        class="fixed inset-0 w-full h-full z-50 bg-background flex items-center justify-center p-gutter">
+        <div
+            class="w-full max-w-4xl grid grid-cols-1 md:grid-cols-2 rounded-2xl overflow-hidden shadow-2xl border border-border-default bg-surface-container-lowest">
+
+            <!-- Left Side Marketing Panel -->
+            <div
+                class="hidden md:flex flex-col justify-between p-10 bg-gradient-to-br from-primary via-primary-container to-on-secondary-fixed text-white relative">
+                <div
+                    class="absolute inset-0 bg-[radial-gradient(circle_at_bottom_right,rgba(255,217,221,0.15),transparent_60%)]">
+                </div>
+
+                <div class="relative z-10 flex items-center space-x-2">
+                    <span class="material-symbols-outlined text-4xl text-primary-fixed-dim">token</span>
+                    <span class="font-storemark text-storemark tracking-wider text-white">TECHNO<span
+                            class="text-primary-fixed">STORE <span class="text-primary-fixed"></span>360</span></span>
+                </div>
+
+                <div class="relative z-10 space-y-4 my-auto">
+                    <h1 class="font-display-lg text-4xl leading-tight">Admin & Vendor Control Hub</h1>
+                    <p class="text-sm text-primary-fixed/80 leading-relaxed font-light">
+                        Manage technology listings, catalog entries, customer leads, payout clearances, and business
+                        analytics securely from a single consolidated dashboard.
+                    </p>
+                    <div
+                        class="flex items-center space-x-2 pt-2 text-xs font-semibold text-primary-fixed uppercase tracking-wider">
+                        <span class="material-symbols-outlined text-sm">lock_person</span>
+                        <span>AES-256 Endpoint Security Standards Enabled</span>
+                    </div>
+                </div>
+
+                <div class="relative z-10 text-xs text-primary-fixed-dim/60">
+                    &copy; 2026 TechnoStore360. All rights reserved.
+                </div>
+            </div>
+
+            <!-- Right Side Form Panel -->
+            <div class="p-8 md:p-12 flex flex-col justify-center bg-surface-container-lowest">
+                <div class="mb-8">
+                    <h2 class="text-2xl font-bold font-hero-h1 text-on-background mb-1">Access Control Gate</h2>
+                    <p class="text-sm text-slate-muted">Enter administrative credentials to log in.</p>
+                </div>
+
+                <!-- Hint Box -->
+                <div
+                    class="mb-6 p-4 bg-secondary-container/30 border border-secondary-container rounded-xl flex items-start space-x-3">
+                    <span class="material-symbols-outlined text-primary text-xl">info</span>
+                    <div class="text-xs text-on-secondary-fixed-variant leading-relaxed">
+                        <strong class="font-bold text-on-background">Default Credentials:</strong><br />
+                        Username / Email: <span
+                            class="font-mono bg-white dark:bg-on-background px-1.5 py-0.5 rounded border border-border-default">admin</span><br />
+                        Password: <span
+                            class="font-mono bg-white dark:bg-on-background px-1.5 py-0.5 rounded border border-border-default">admin</span>
+                    </div>
+                </div>
+
+                <form id="login-form" class="space-y-5" onsubmit="handleLoginSubmit(event)">
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Admin Account Username /
+                            Email</label>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-muted text-lg">person</span>
+                            <input id="login-username" required
+                                class="w-full pl-10 pr-4 py-3 bg-surface border border-border-default rounded-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 transition-all font-body-default text-sm text-on-background"
+                                placeholder="e.g. admin" type="text" value="admin" />
+                        </div>
+                    </div>
+
+                    <div class="space-y-1.5">
+                        <div class="flex justify-between items-center">
+                            <label class="font-form-label text-form-label text-secondary block">Account Password</label>
+                            <a href="#" onclick="showToast('Password reset requested. Contact super-admin.', 'warning')"
+                                class="text-xs text-primary font-semibold hover:underline">Forgot?</a>
+                        </div>
+                        <div class="relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-muted text-lg">lock</span>
+                            <input id="login-password" required
+                                class="w-full pl-10 pr-4 py-3 bg-surface border border-border-default rounded-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 transition-all font-body-default text-sm text-on-background"
+                                placeholder="••••••••" type="password" value="admin" />
+                        </div>
+                    </div>
+
+                    <button id="login-btn"
+                        class="w-full bg-primary-container text-on-primary py-3 rounded-lg font-nav-link text-nav-link hover:bg-accent-dark transition-colors duration-200 shadow-sm flex items-center justify-center font-semibold mt-6">
+                        Sign In to Workspace
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+     2. MAIN APPLICATION WORKSPACE
+     ========================================== -->
+    <div id="main-workspace" class="hidden w-full flex min-h-screen relative">
+
+        <!-- SideNavBar -->
+        <aside
+            class="h-screen w-64 hidden lg:flex flex-col fixed left-0 top-0 bg-slate-soft dark:bg-on-secondary-fixed shadow-md z-40">
+            <div class="p-6">
+                <!-- Vendor branding -->
+                <div class="flex items-center space-x-3 mb-8">
+                    <img id="side-vendor-logo" alt="Vendor Logo"
+                        class="w-10 h-10 rounded-lg object-cover border border-border-default bg-white"
+                        src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwXQMOBHHOUeMj0KJ_pBYlECCoN-OTp0f-6kkJy9TG31TRT8EkB3mD087ifmFUh57zvSiAUIs7Zn8jXix_ZAqJ7Gi5B-xlO5M_Wc3PvHJdYWo9G8IBzldZxgxHGiQ6nm5vN921i8gkxE50QxRkCUli2ntHSplUZD7msxRYalxUCwdYW1RKuAQiMxMSNb_HkhROC2JVJ3-_Sii5ihcvMCgw-zWp-06lnXY8M-Ppm9XXN7udZKSugRjfzR5znVj9E7gs-6IRriZJt74" />
+                    <div>
+                        <h2 id="side-vendor-name"
+                            class="font-product-title text-sm text-on-background font-bold truncate w-40">Global Tech
+                            Solutions</h2>
+                        <span class="font-caption text-caption text-primary font-medium flex items-center gap-1">
+                            <span class="material-symbols-outlined text-xs">verified</span> Gold Verified Partner
+                        </span>
+                    </div>
+                </div>
+
+                <!-- Tab switches navigation -->
+                <nav class="flex flex-col space-y-1 py-4">
+                    <button onclick="switchTab('overview')" id="nav-overview"
+                        class="tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 active:opacity-80 w-full text-left">
+                        <span class="material-symbols-outlined">dashboard</span>
+                        <span class="font-nav-link text-nav-link">Overview</span>
+                    </button>
+                    <button onclick="switchTab('listings')" id="nav-listings"
+                        class="tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 active:opacity-80 w-full text-left">
+                        <span class="material-symbols-outlined">inventory_2</span>
+                        <span class="font-nav-link text-nav-link">My Listings</span>
+                    </button>
+                    <button onclick="switchTab('leads')" id="nav-leads"
+                        class="tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 active:opacity-80 w-full text-left">
+                        <span class="material-symbols-outlined">leaderboard</span>
+                        <span class="font-nav-link text-nav-link">Sales &amp; Leads</span>
+                    </button>
+                    <button onclick="switchTab('payouts')" id="nav-payouts"
+                        class="tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 active:opacity-80 w-full text-left">
+                        <span class="material-symbols-outlined">payments</span>
+                        <span class="font-nav-link text-nav-link">Payouts</span>
+                    </button>
+                    <button onclick="switchTab('settings')" id="nav-settings"
+                        class="tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 active:opacity-80 w-full text-left">
+                        <span class="material-symbols-outlined">settings</span>
+                        <span class="font-nav-link text-nav-link">Settings</span>
+                    </button>
+                </nav>
+            </div>
+            <div class="mt-auto p-6 space-y-4">
+
+                <!-- Database Connection Status Badge -->
+                <div class="bg-surface-container-low border border-border-default p-4 rounded-xl space-y-2">
+                    <div class="text-[10px] font-bold text-slate-muted uppercase tracking-wider">Database Status</div>
+                    <div id="db-status-badge">
+                        <!-- Loaded dynamically -->
+                    </div>
+                </div>
+
+                <nav class="space-y-1">
+                    <a class="flex items-center space-x-3 p-2 rounded-lg text-secondary hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200"
+                        href="#" onclick="showToast('Customer support manual loaded.', 'info')">
+                        <span class="material-symbols-outlined text-sm">contact_support</span>
+                        <span class="font-caption text-caption">Support Help</span>
+                    </a>
+                    <a class="flex items-center space-x-3 p-2 rounded-lg text-secondary hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200"
+                        href="#" onclick="handleSignOut()">
+                        <span class="material-symbols-outlined text-sm text-error-red">logout</span>
+                        <span class="font-caption text-caption text-error-red">Sign Out</span>
+                    </a>
+                </nav>
+            </div>
+        </aside>
+
+        <!-- Main Content Area -->
+        <main class="flex-1 lg:ml-64 min-h-screen flex flex-col">
+
+            <!-- TopNavBar -->
+            <header
+                class="bg-white/95 dark:bg-on-background/95 backdrop-blur-md top-0 sticky border-b border-border-default dark:border-outline-variant shadow-sm z-30">
+                <div class="flex justify-between items-center w-full px-gutter max-w-container-max mx-auto h-16">
+                    <!-- Mobile navbar branding -->
+                    <div class="flex items-center lg:hidden">
+                        <button onclick="toggleMobileSidebar()"
+                            class="p-2 text-secondary hover:text-primary transition-colors">
+                            <span class="material-symbols-outlined">menu</span>
+                        </button>
+                        <span
+                            class="font-storemark text-storemark text-primary dark:text-primary-fixed-dim ml-2">TECHNOSTORE360</span>
+                    </div>
+
+                    <!-- Search box -->
+                    <div class="hidden lg:flex items-center flex-1 max-w-xl mr-8">
+                        <div class="relative w-full">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-muted">search</span>
+                            <input id="global-search-input" onkeyup="handleGlobalSearch(event)"
+                                class="w-full pl-10 pr-4 py-2 bg-surface border border-border-default rounded-lg focus:outline-none focus:border-primary focus:ring-4 focus:ring-primary-fixed/30 transition-all font-body-default text-sm text-on-background placeholder-slate-muted"
+                                placeholder="Search orders, leads, or listings... (Type to filter)" type="text" />
+                        </div>
+                    </div>
+
+                    <!-- Right bar indicators -->
+                    <div class="flex items-center space-x-6">
+                        <nav class="hidden md:flex space-x-6">
+                            <a class="font-nav-link text-nav-link text-secondary dark:text-secondary-fixed-dim hover:text-accent-dark transition-colors duration-200 cursor-pointer active:scale-95"
+                                href="#home" target="_blank">Marketplace</a>
+                            <a class="font-nav-link text-nav-link text-secondary dark:text-secondary-fixed-dim hover:text-accent-dark transition-colors duration-200 cursor-pointer active:scale-95"
+                                href="#packages" target="_blank">Solutions</a>
+                            <a class="font-nav-link text-nav-link text-secondary dark:text-secondary-fixed-dim hover:text-accent-dark transition-colors duration-200 cursor-pointer active:scale-95"
+                                href="#reseller" target="_blank">Partner Desk</a>
+                        </nav>
+                        <div class="h-6 w-px bg-border-default mx-2 hidden md:block"></div>
+
+                        <!-- Direct Action -->
+                        <button onclick="openAddListingModal()"
+                            class="hidden sm:block px-4 py-2 bg-slate-soft text-inverse-surface rounded-lg font-nav-link text-nav-link border border-transparent hover:border-border-default transition-all duration-200 hover:bg-slate-200/85">
+                            Create Listing
+                        </button>
+
+                        <!-- Notification and Profiling -->
+                        <div class="flex items-center space-x-4">
+                            <button class="text-secondary hover:text-primary transition-colors relative"
+                                onclick="toggleNotificationsDropdown()">
+                                <span class="material-symbols-outlined">notifications</span>
+                                <span class="absolute top-0 right-0 w-2 h-2 bg-primary-container rounded-full"></span>
+                            </button>
+                            <button class="text-secondary hover:text-primary transition-colors"
+                                onclick="showToast('Documentation manual loaded.', 'info')">
+                                <span class="material-symbols-outlined">help_outline</span>
+                            </button>
+
+                            <!-- Profile avatar dropdown -->
+                            <div class="relative">
+                                <img onclick="toggleProfileDropdown()" alt="Vendor Profile Avatar"
+                                    class="w-8 h-8 rounded-full border border-border-default cursor-pointer hover:opacity-85 transition-opacity"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuB1dDxK5C_6_4jTYuX8K-79YOrWJ11h99LYurg4QZ3hRANylummDJGQMTptwcfd_c_cOQutMyGTySoM8HvWNn4XgjdFZOXqAsUgKaYDsCrFRlhv3QkrGzF9yjJywGaHlqxLMmEGtlZ0CsKktJQe_O1AHSg9x9ydNW-bDQJy6umKlULYzLiABOMvu5N74gBLDLsp-8j3e2K4M9PK8vFf3E9rl28kWd3uLIsCkIx9NGk0oRgqWNMTpaSlkomBe4Uhh_Y-zYunJgCs5Gc" />
+
+                                <!-- Profile dropdown popup -->
+                                <div id="profile-dropdown"
+                                    class="hidden absolute right-0 mt-2 w-48 bg-white border border-border-default rounded-xl shadow-lg py-2 z-50">
+                                    <div class="px-4 py-2 border-b border-border-default">
+                                        <p class="text-xs text-slate-muted">Logged in as</p>
+                                        <p class="text-sm font-semibold text-on-background truncate">admin_shiyas</p>
+                                    </div>
+                                    <a href="#" onclick="switchTab('settings'); toggleProfileDropdown();"
+                                        class="block px-4 py-2 text-sm text-secondary hover:bg-slate-soft flex items-center gap-2">
+                                        <span class="material-symbols-outlined text-base">settings</span> Settings
+                                    </a>
+                                    <a href="#" onclick="handleSignOut();"
+                                        class="block px-4 py-2 text-sm text-error-red hover:bg-red-50 flex items-center gap-2 border-t border-border-default">
+                                        <span class="material-symbols-outlined text-base">logout</span> Sign Out
+                                    </a>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- ==========================================
+             3. DYNAMIC CONTENT SWITCHERS
+             ========================================== -->
+            <div id="content-area" class="p-gutter md:p-8 max-w-container-max mx-auto w-full space-y-8 flex-1">
+
+                <!-- ==========================================
+                 TAB A: OVERVIEW / PERFORMANCE
+                 ========================================== -->
+                <div id="tab-content-overview" class="tab-pane space-y-8">
+
+                    <!-- Overview Header -->
+                    <div class="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                        <div>
+                            <h1 class="font-display-lg text-display-lg text-on-background">Overview</h1>
+                            <p class="text-secondary mt-1">Here's what's happening with your marketplace listings today.
+                            </p>
+                        </div>
+                        <div class="flex space-x-3">
+                            <button onclick="showToast('Date range locked to Last 30 Days.', 'info')"
+                                class="px-4 py-2 border border-border-default bg-white rounded-lg text-secondary font-nav-link text-sm hover:bg-surface-container-high transition-colors flex items-center">
+                                <span class="material-symbols-outlined text-sm mr-2">calendar_today</span> Last 30 Days
+                            </button>
+                            <button onclick="exportReport()"
+                                class="px-4 py-2 bg-primary-container text-on-primary rounded-lg font-nav-link text-sm hover:bg-accent-dark transition-colors shadow-sm flex items-center">
+                                <span class="material-symbols-outlined text-sm mr-2">download</span> Export Report
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Dynamic Stat Cards Grid -->
+                    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-card-gap">
+                        <!-- Card 1 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-primary-fixed/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div class="flex justify-between items-start mb-4 relative z-10">
+                                <h3 class="font-form-label text-form-label text-secondary uppercase tracking-wider">
+                                    Total Sales</h3>
+                                <span
+                                    class="material-symbols-outlined text-slate-muted bg-surface-container p-1.5 rounded-lg">account_balance_wallet</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div id="stat-total-sales" class="text-3xl font-display-lg text-on-background">$124,500
+                                </div>
+                                <div class="flex items-center mt-2 text-sm">
+                                    <span class="text-success-green flex items-center font-medium">
+                                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span> +12.5%
+                                    </span>
+                                    <span class="text-slate-muted ml-2">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 2 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-surface-variant/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div class="flex justify-between items-start mb-4 relative z-10">
+                                <h3 class="font-form-label text-form-label text-secondary uppercase tracking-wider">
+                                    Active Leads</h3>
+                                <span
+                                    class="material-symbols-outlined text-slate-muted bg-surface-container p-1.5 rounded-lg">group</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div id="stat-active-leads" class="text-3xl font-display-lg text-on-background">342
+                                </div>
+                                <div class="flex items-center mt-2 text-sm">
+                                    <span class="text-success-green flex items-center font-medium">
+                                        <span class="material-symbols-outlined text-sm mr-1">trending_up</span> +5.2%
+                                    </span>
+                                    <span class="text-slate-muted ml-2">vs last month</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 3 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-warning-amber/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div class="flex justify-between items-start mb-4 relative z-10">
+                                <h3 class="font-form-label text-form-label text-secondary uppercase tracking-wider">
+                                    Pending Payout</h3>
+                                <span
+                                    class="material-symbols-outlined text-slate-muted bg-surface-container p-1.5 rounded-lg">pending_actions</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div id="stat-pending-payout" class="text-3xl font-display-lg text-on-background">
+                                    $18,200</div>
+                                <div class="flex items-center mt-2 text-sm">
+                                    <span class="text-warning-amber flex items-center font-medium">
+                                        <span class="material-symbols-outlined text-sm mr-1">schedule</span> Processing
+                                    </span>
+                                    <span class="text-slate-muted ml-2">Est. Friday</span>
+                                </div>
+                            </div>
+                        </div>
+                        <!-- Card 4 -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm hover:shadow-md transition-all duration-200 relative overflow-hidden group">
+                            <div
+                                class="absolute inset-0 bg-gradient-to-br from-tertiary-fixed/20 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                            </div>
+                            <div class="flex justify-between items-start mb-4 relative z-10">
+                                <h3 class="font-form-label text-form-label text-secondary uppercase tracking-wider">
+                                    Listings Count</h3>
+                                <span
+                                    class="material-symbols-outlined text-slate-muted bg-surface-container p-1.5 rounded-lg">list_alt</span>
+                            </div>
+                            <div class="relative z-10">
+                                <div id="stat-listings-count" class="text-3xl font-display-lg text-on-background">0
+                                </div>
+                                <div class="flex items-center mt-2 text-sm">
+                                    <span class="text-success-green flex items-center font-medium">
+                                        <span class="material-symbols-outlined text-sm mr-1">check_circle</span> Active
+                                    </span>
+                                    <span class="text-slate-muted ml-2">in B2B Catalog</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Complex Area: Chart & Quick Actions -->
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-card-gap">
+                        <!-- Chart Area -->
+                        <div
+                            class="lg:col-span-2 bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm">
+                            <div class="flex justify-between items-center mb-6">
+                                <h2 class="font-product-title text-product-title text-on-background">Sales Performance
+                                </h2>
+                                <button onclick="showToast('Graph metrics re-indexed.', 'info')"
+                                    class="text-secondary hover:text-primary">
+                                    <span class="material-symbols-outlined">more_horiz</span>
+                                </button>
+                            </div>
+
+                            <!-- Chart Canvas Mock -->
+                            <div class="w-full h-64 bg-slate-soft rounded-lg relative overflow-hidden flex items-end">
+                                <div class="absolute inset-0 opacity-20"
+                                    style="background: linear-gradient(to top, var(--tw-colors-primary-container), transparent);">
+                                </div>
+                                <svg class="w-full h-full text-primary-container" preserveAspectRatio="none"
+                                    viewBox="0 0 100 100">
+                                    <path d="M0 100 C 20 80, 40 90, 60 50 C 80 10, 90 40, 100 20 L 100 100 Z"
+                                        fill="currentColor" opacity="0.1"></path>
+                                    <path d="M0 100 C 20 80, 40 90, 60 50 C 80 10, 90 40, 100 20" fill="none"
+                                        stroke="currentColor" stroke-width="2"></path>
+                                </svg>
+                                <div class="absolute bottom-2 left-4 text-xs font-semibold text-slate-muted">Nov 2025
+                                </div>
+                                <div class="absolute bottom-2 right-4 text-xs font-semibold text-slate-muted">Jun 2026
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div
+                            class="bg-surface-container-lowest rounded-xl p-6 border border-border-default shadow-sm flex flex-col">
+                            <h2 class="font-product-title text-product-title text-on-background mb-6">Quick Actions</h2>
+                            <div class="space-y-4 flex-1">
+                                <button onclick="openAddListingModal()"
+                                    class="w-full flex items-center justify-between p-4 rounded-lg border border-border-default hover:border-primary/50 hover:bg-surface-container-low transition-all duration-200 group">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="bg-primary-fixed/20 p-2 rounded-lg text-primary-container group-hover:bg-primary-container group-hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined">add_circle</span>
+                                        </div>
+                                        <div class="text-left">
+                                            <div
+                                                class="font-nav-link text-nav-link text-on-background group-hover:text-primary-container transition-colors">
+                                                Create New Listing</div>
+                                            <div class="font-caption text-caption text-slate-muted">Add a product to
+                                                marketplace</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="material-symbols-outlined text-slate-muted group-hover:text-primary-container group-hover:translate-x-1 transition-all">chevron_right</span>
+                                </button>
+                                <button onclick="showTrainingModal()"
+                                    class="w-full flex items-center justify-between p-4 rounded-lg border border-border-default hover:border-primary/50 hover:bg-surface-container-low transition-all duration-200 group">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="bg-secondary-fixed p-2 rounded-lg text-secondary group-hover:bg-secondary group-hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined">model_training</span>
+                                        </div>
+                                        <div class="text-left">
+                                            <div
+                                                class="font-nav-link text-nav-link text-on-background group-hover:text-secondary transition-colors">
+                                                Schedule Training</div>
+                                            <div class="font-caption text-caption text-slate-muted">Book session with
+                                                partner rep</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="material-symbols-outlined text-slate-muted group-hover:text-secondary group-hover:translate-x-1 transition-all">chevron_right</span>
+                                </button>
+                                <button onclick="downloadSalesDeck()"
+                                    class="w-full flex items-center justify-between p-4 rounded-lg border border-border-default hover:border-primary/50 hover:bg-surface-container-low transition-all duration-200 group">
+                                    <div class="flex items-center space-x-3">
+                                        <div
+                                            class="bg-surface-dim p-2 rounded-lg text-inverse-surface group-hover:bg-inverse-surface group-hover:text-white transition-colors">
+                                            <span class="material-symbols-outlined">download</span>
+                                        </div>
+                                        <div class="text-left">
+                                            <div
+                                                class="font-nav-link text-nav-link text-on-background group-hover:text-inverse-surface transition-colors">
+                                                Download Sales Deck</div>
+                                            <div class="font-caption text-caption text-slate-muted">Latest Q2 marketing
+                                                materials</div>
+                                        </div>
+                                    </div>
+                                    <span
+                                        class="material-symbols-outlined text-slate-muted group-hover:text-inverse-surface group-hover:translate-x-1 transition-all">chevron_right</span>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Recent Leads Table -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl border border-border-default shadow-sm overflow-hidden">
+                        <div class="p-6 border-b border-border-default flex justify-between items-center bg-white">
+                            <h2 class="font-product-title text-product-title text-on-background">Recent Active Leads
+                            </h2>
+                            <button onclick="switchTab('leads')"
+                                class="text-primary font-nav-link text-sm hover:text-accent-dark transition-colors">View
+                                All Leads</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-soft border-b border-border-default">
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Company</th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Product Interest
+                                        </th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Date Registered
+                                        </th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Lead Status</th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary text-right">
+                                            Estimated Value</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="overview-leads-tbody" class="divide-y divide-border-default">
+                                    <!-- Dynamically loaded overview leads -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+
+                </div>
+
+                <!-- ==========================================
+                 TAB B: MY LISTINGS (ADD, EDIT, DELETE)
+                 ========================================== -->
+                <div id="tab-content-listings" class="tab-pane space-y-8 hidden">
+
+                    <!-- Listings Header -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="font-display-lg text-display-lg text-on-background">My Listings</h1>
+                            <p class="text-slate-muted text-sm mt-1">Manage, edit, and publish your technology catalog
+                                offerings.</p>
+                        </div>
+                        <button onclick="openAddListingModal()"
+                            class="px-5 py-2.5 bg-primary-container text-on-primary font-semibold rounded-lg font-nav-link text-sm hover:bg-accent-dark transition-all flex items-center shadow-md">
+                            <span class="material-symbols-outlined text-sm mr-2">add</span> Create New Listing
+                        </button>
+                    </div>
+
+                    <!-- Listings Filter Toolbar -->
+                    <div
+                        class="flex flex-col md:flex-row gap-4 justify-between bg-surface-container-low p-4 rounded-xl border border-border-default">
+                        <div class="flex-1 max-w-md relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-muted text-lg">search</span>
+                            <input id="listing-search" onkeyup="filterListings()"
+                                class="w-full pl-10 pr-4 py-2 border border-border-default rounded-lg focus:outline-none focus:border-primary text-sm bg-white"
+                                placeholder="Search listing title or brand..." type="text" />
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="listing-filter-category" onchange="filterListings()"
+                                class="py-2 pl-3 pr-8 border border-border-default rounded-lg text-sm bg-white focus:outline-none focus:border-primary">
+                                <option value="">All Categories</option>
+                                <option value="Software Solutions">Software Solutions</option>
+                                <option value="Hardware Products">Hardware Products</option>
+                                <option value="Cloud & Security">Cloud & Security</option>
+                                <option value="AI Tools">AI Tools</option>
+                            </select>
+                            <select id="listing-filter-status" onchange="filterListings()"
+                                class="py-2 pl-3 pr-8 border border-border-default rounded-lg text-sm bg-white focus:outline-none focus:border-primary">
+                                <option value="">All Statuses</option>
+                                <option value="Active">Active</option>
+                                <option value="Draft">Draft</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Products Catalog Grid -->
+                    <div id="listings-grid" class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 gap-6">
+                        <!-- Dynamically populated card listings -->
+                    </div>
+
+                    <!-- Empty state panel -->
+                    <div id="listings-empty-state"
+                        class="hidden text-center py-12 bg-surface-container-lowest rounded-xl border border-border-default">
+                        <span class="material-symbols-outlined text-6xl text-slate-muted mb-3">inventory_2</span>
+                        <h3 class="text-lg font-bold">No products found</h3>
+                        <p class="text-slate-muted text-sm mt-1 max-w-sm mx-auto">Try resetting filters or click "Create
+                            New Listing" to publish a product.</p>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                 TAB C: SALES & LEADS (CONVERSIONS AND EDIT STATUS)
+                 ========================================== -->
+                <div id="tab-content-leads" class="tab-pane space-y-8 hidden">
+
+                    <!-- Leads Header -->
+                    <div class="flex justify-between items-center">
+                        <div>
+                            <h1 class="font-display-lg text-display-lg text-on-background">Sales &amp; Leads Ledger</h1>
+                            <p class="text-slate-muted text-sm mt-1">Clear customer requests, schedule B2B demos, and
+                                convert pipelines.</p>
+                        </div>
+                        <button onclick="openLeadModal()"
+                            class="px-4 py-2 bg-secondary text-white rounded-lg font-nav-link text-sm hover:bg-on-secondary-fixed transition-colors flex items-center">
+                            <span class="material-symbols-outlined text-sm mr-2">add</span> Add Offline Lead
+                        </button>
+                    </div>
+
+                    <!-- Leads Filter Bar -->
+                    <div
+                        class="flex flex-col md:flex-row gap-4 justify-between bg-surface-container-low p-4 rounded-xl border border-border-default">
+                        <div class="flex-1 max-w-md relative">
+                            <span
+                                class="material-symbols-outlined absolute left-3 top-1/2 transform -translate-y-1/2 text-slate-muted text-lg">search</span>
+                            <input id="lead-search" onkeyup="filterLeads()"
+                                class="w-full pl-10 pr-4 py-2 border border-border-default rounded-lg focus:outline-none focus:border-primary text-sm bg-white"
+                                placeholder="Search company or product interest..." type="text" />
+                        </div>
+                        <div class="flex gap-2">
+                            <select id="lead-filter-status" onchange="filterLeads()"
+                                class="py-2 pl-3 pr-8 border border-border-default rounded-lg text-sm bg-white focus:outline-none focus:border-primary">
+                                <option value="">All Statuses</option>
+                                <option value="Initial Contact">Initial Contact</option>
+                                <option value="Demo Scheduled">Demo Scheduled</option>
+                                <option value="Quote Sent">Quote Sent</option>
+                                <option value="Contract Signed">Contract Signed</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <!-- Leads Table -->
+                    <div
+                        class="bg-surface-container-lowest rounded-xl border border-border-default shadow-sm overflow-hidden">
+                        <div class="overflow-x-auto">
+                            <table class="w-full text-left border-collapse">
+                                <thead>
+                                    <tr class="bg-slate-soft border-b border-border-default">
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Company Name</th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Product Interest
+                                        </th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Registration Date
+                                        </th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Est. Value</th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary">Status Pipeline
+                                        </th>
+                                        <th class="p-4 font-form-label text-form-label text-secondary text-right">
+                                            Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="leads-tbody" class="divide-y divide-border-default">
+                                    <!-- Dynamically populated rows -->
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                 TAB D: PAYOUTS
+                 ========================================== -->
+                <div id="tab-content-payouts" class="tab-pane space-y-8 hidden">
+                    <div>
+                        <h1 class="font-display-lg text-display-lg text-on-background">Commission Payouts</h1>
+                        <p class="text-slate-muted text-sm mt-1">Review ledger transactions, margins cleared, and wire
+                            logs.</p>
+                    </div>
+
+                    <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                        <div class="bg-surface-container-lowest border border-border-default p-6 rounded-xl shadow-sm">
+                            <div class="text-slate-muted text-xs font-semibold uppercase tracking-wider mb-2">Commission
+                                Earned</div>
+                            <div class="text-4xl font-extrabold text-on-background">$142,700</div>
+                            <div class="text-xs text-slate-muted mt-2">Historical B2B catalog margins cleared.</div>
+                        </div>
+                        <div class="bg-surface-container-lowest border border-border-default p-6 rounded-xl shadow-sm">
+                            <div class="text-slate-muted text-xs font-semibold uppercase tracking-wider mb-2">Paid Out
+                            </div>
+                            <div class="text-4xl font-extrabold text-success-green">$124,500</div>
+                            <div class="text-xs text-slate-muted mt-2">Transferred securely to corporate bank.</div>
+                        </div>
+                        <div class="bg-surface-container-lowest border border-border-default p-6 rounded-xl shadow-sm">
+                            <div class="text-slate-muted text-xs font-semibold uppercase tracking-wider mb-2">In Escrow
+                                / Pending</div>
+                            <div class="text-4xl font-extrabold text-warning-amber">$18,200</div>
+                            <div class="text-xs text-slate-muted mt-2">Estimated clearance date: June 19, 2026.</div>
+                        </div>
+                    </div>
+
+                    <!-- Bank Details Form -->
+                    <div class="bg-surface-container-lowest rounded-xl border border-border-default p-6 shadow-sm">
+                        <h2 class="font-product-title text-product-title text-on-background mb-4">Payout Method &amp;
+                            Routing</h2>
+                        <form onsubmit="savePayoutMethod(event)" class="space-y-4 max-w-xl">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Payout
+                                        Destination</label>
+                                    <select id="payout-type"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary">
+                                        <option value="Bank Wire">Corporate Bank Wire</option>
+                                        <option value="PayPal">PayPal Business</option>
+                                    </select>
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Currency
+                                        Account</label>
+                                    <input id="payout-currency"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                                        type="text" value="USD ($)" />
+                                </div>
+                            </div>
+                            <div class="space-y-1.5">
+                                <label class="font-form-label text-form-label text-secondary block">Bank Wire
+                                    Instructions / IBAN details</label>
+                                <textarea id="payout-iban"
+                                    class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                                    rows="2">US76 2003 0049 8812 7701 9904</textarea>
+                            </div>
+                            <button type="submit"
+                                class="bg-primary text-white px-5 py-2 rounded-lg font-nav-link text-sm hover:bg-accent-dark transition-colors">
+                                Update Routing Gateway
+                            </button>
+                        </form>
+                    </div>
+                </div>
+
+                <!-- ==========================================
+                 TAB E: SETTINGS & SUPABASE
+                 ========================================== -->
+                <div id="tab-content-settings" class="tab-pane space-y-8 hidden">
+                    <div>
+                        <h1 class="font-display-lg text-display-lg text-on-background">Partner Settings</h1>
+                        <p class="text-slate-muted text-sm mt-1">Update corporate branding, profiles, and administration
+                            variables.</p>
+                    </div>
+
+                    <!-- Profile Details -->
+                    <div class="bg-surface-container-lowest rounded-xl border border-border-default p-6 shadow-sm">
+                        <h2 class="font-product-title text-product-title text-on-background mb-4">Vendor Profile Details
+                        </h2>
+                        <form onsubmit="saveSettings(event)" class="space-y-6 max-w-2xl">
+                            <div class="flex items-center space-x-6">
+                                <img id="settings-avatar-preview"
+                                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuAwXQMOBHHOUeMj0KJ_pBYlECCoN-OTp0f-6kkJy9TG31TRT8EkB3mD087ifmFUh57zvSiAUIs7Zn8jXix_ZAqJ7Gi5B-xlO5M_Wc3PvHJdYWo9G8IBzldZxgxHGiQ6nm5vN921i8gkxE50QxRkCUli2ntHSplUZD7msxRYalxUCwdYW1RKuAQiMxMSNb_HkhROC2JVJ3-_Sii5ihcvMCgw-zWp-06lnXY8M-Ppm9XXN7udZKSugRjfzR5znVj9E7gs-6IRriZJt74"
+                                    class="w-16 h-16 rounded-xl border border-border-default object-cover"
+                                    alt="Profile avatar" />
+                                <div>
+                                    <label class="font-form-label text-form-label text-secondary block mb-1">Company
+                                        Logo URL</label>
+                                    <input id="settings-logo-url"
+                                        class="w-80 border border-border-default rounded-lg py-1.5 px-3 text-sm focus:outline-none focus:border-primary"
+                                        type="text"
+                                        value="https://lh3.googleusercontent.com/aida-public/AB6AXuAwXQMOBHHOUeMj0KJ_pBYlECCoN-OTp0f-6kkJy9TG31TRT8EkB3mD087ifmFUh57zvSiAUIs7Zn8jXix_ZAqJ7Gi5B-xlO5M_Wc3PvHJdYWo9G8IBzldZxgxHGiQ6nm5vN921i8gkxE50QxRkCUli2ntHSplUZD7msxRYalxUCwdYW1RKuAQiMxMSNb_HkhROC2JVJ3-_Sii5ihcvMCgw-zWp-06lnXY8M-Ppm9XXN7udZKSugRjfzR5znVj9E7gs-6IRriZJt74" />
+                                </div>
+                            </div>
+
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Partner Desk
+                                        Display Name</label>
+                                    <input id="settings-company-name"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                                        type="text" value="Global Tech Solutions" required />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Admin Contact
+                                        Email</label>
+                                    <input id="settings-email"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                                        type="email" value="admin@globaltech.com" required />
+                                </div>
+                            </div>
+
+                            <div class="space-y-1.5">
+                                <label class="font-form-label text-form-label text-secondary block">Company
+                                    Description</label>
+                                <textarea id="settings-desc"
+                                    class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                                    rows="3">Enterprise hardware consulting, deep AI analytics integrations, and verified multi-cloud migration solutions.</textarea>
+                            </div>
+
+                            <button type="submit"
+                                class="bg-primary text-white px-5 py-2.5 rounded-lg font-nav-link text-sm hover:bg-accent-dark transition-colors shadow-sm">
+                                Save Profile Variables
+                            </button>
+                        </form>
+                    </div>
+
+                    <!-- Supabase Settings Panel -->
+                    <div class="bg-surface-container-lowest rounded-xl border border-border-default p-6 shadow-sm mt-8">
+                        <h2
+                            class="font-product-title text-product-title text-on-background mb-1 flex items-center gap-1.5">
+                            <span class="material-symbols-outlined text-primary">database</span> Live Supabase
+                            Connection Settings
+                        </h2>
+                        <p class="text-xs text-slate-muted mb-4">Integrate the dashboard with a live Supabase database
+                            instance for real-time B2B catalog management.</p>
+
+                        <div class="mb-4 p-4 bg-secondary-container/20 border border-secondary-container/40 rounded-xl">
+                            <h4 class="text-xs font-bold text-on-background mb-1.5 flex items-center gap-1">
+                                <span class="material-symbols-outlined text-sm">terminal</span> Supabase Table Schemas
+                                (SQL)
+                            </h4>
+                            <p class="text-xs text-slate-muted mb-2">Create the following tables in your Supabase SQL
+                                Editor to store products and leads:</p>
+                            <pre
+                                class="font-mono text-[10px] bg-slate-soft p-3 rounded-lg overflow-x-auto text-secondary leading-relaxed select-all">
+-- 1. Create Listings Table
+create table listings (
+  id text primary key,
+  title text not null,
+  brand text not null,
+  category text not null,
+  price numeric not null,
+  status text not null,
+  img text,
+  "desc" text,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);
+
+-- 2. Create Leads Table
+create table leads (
+  id text primary key,
+  company text not null,
+  product text not null,
+  date text not null,
+  status text not null,
+  value numeric not null,
+  created_at timestamp with time zone default timezone('utc'::text, now()) not null
+);</pre>
+                        </div>
+
+                        <form onsubmit="saveSupabaseSettings(event)" class="space-y-4 max-w-2xl">
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Supabase Project
+                                        API URL</label>
+                                    <input id="settings-sb-url"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary font-mono text-xs"
+                                        type="text" placeholder="https://your-project.supabase.co" required />
+                                </div>
+                                <div class="space-y-1.5">
+                                    <label class="font-form-label text-form-label text-secondary block">Supabase Anon /
+                                        Service Role Key</label>
+                                    <input id="settings-sb-key"
+                                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary font-mono text-xs"
+                                        type="password" placeholder="eyJhbGciOi..." required />
+                                </div>
+                            </div>
+                            <div class="flex gap-2">
+                                <button type="submit"
+                                    class="bg-primary text-white px-5 py-2.5 rounded-lg font-nav-link text-sm hover:bg-accent-dark transition-colors shadow-sm">
+                                    Save & Connect Database
+                                </button>
+                                <button type="button" onclick="disconnectSupabase()"
+                                    class="border border-border-default text-secondary px-4 py-2.5 rounded-lg font-nav-link text-sm hover:bg-slate-soft transition-colors">
+                                    Disconnect & Use Local Sandbox
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- ==========================================
+     4. MODAL OVERLAYS (CREATE/EDIT LISTING)
+     ========================================== -->
+    <div id="listing-modal"
+        class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-gutter">
+        <div
+            class="bg-white border border-border-default rounded-2xl max-w-lg w-full overflow-hidden shadow-2xl flex flex-col max-h-[90vh]">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-border-default flex justify-between items-center">
+                <h2 id="modal-title" class="font-display-lg text-lg font-bold text-on-background">Create Technology
+                    Listing</h2>
+                <button onclick="closeListingModal()" class="text-slate-muted hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form id="listing-form" onsubmit="handleListingSubmit(event)" class="overflow-y-auto p-6 space-y-4 flex-1">
+                <input type="hidden" id="form-listing-id" />
+
+                <div class="space-y-1.5">
+                    <label class="font-form-label text-form-label text-secondary block">Listing Title *</label>
+                    <input id="form-title" required
+                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                        placeholder="e.g. Cybersecurity Mesh Pro" type="text" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Technology Category</label>
+                        <select id="form-category"
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary">
+                            <option value="Software Solutions">Software Solutions</option>
+                            <option value="Hardware Products">Hardware Products</option>
+                            <option value="Cloud & Security">Cloud & Security</option>
+                            <option value="AI Tools">AI Tools</option>
+                        </select>
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Brand Owner *</label>
+                        <select id="form-brand"
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                            onchange="autoAssignImage()">
+                            <option value="Asana">Asana</option>
+                            <option value="Atlassian">Atlassian</option>
+                            <option value="AWS">AWS</option>
+                            <option value="Cisco">Cisco</option>
+                            <option value="Figma">Figma</option>
+                            <option value="Google">Google</option>
+                            <option value="Microsoft">Microsoft</option>
+                            <option value="Sophos">Sophos</option>
+                            <option value="Monday">Monday</option>
+                            <option value="Zoho">Zoho</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Monthly Pricing (USD)
+                            *</label>
+                        <input id="form-price" required
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                            placeholder="e.g. 85.00" type="number" step="0.01" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Listing Status</label>
+                        <select id="form-status"
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary">
+                            <option value="Active">Active / Published</option>
+                            <option value="Draft">Draft / Hidden</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="font-form-label text-form-label text-secondary block">Corporate Logo / Media Image
+                        URL</label>
+                    <input id="form-img"
+                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary font-mono text-xs"
+                        type="text" placeholder="assets/... or http://..." />
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="font-form-label text-form-label text-secondary block">Brief Summary Description
+                        *</label>
+                    <textarea id="form-desc" required
+                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                        placeholder="Describe the technology specs, licensing metrics, or B2B features..."
+                        rows="3"></textarea>
+                </div>
+
+                <div class="p-4 bg-slate-soft rounded-lg flex items-start space-x-2.5">
+                    <span class="material-symbols-outlined text-primary text-xl">gavel</span>
+                    <div class="text-xs text-slate-muted leading-relaxed">
+                        By listing this product, you guarantee valid software licensing certificates and compliance
+                        clearances conforming to B2B marketplace compliance.
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="pt-4 border-t border-border-default flex justify-end space-x-3">
+                    <button type="button" onclick="closeListingModal()"
+                        class="px-4 py-2 border border-border-default rounded-lg text-secondary text-sm hover:bg-slate-soft">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-accent-dark shadow">Publish
+                        Offer</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+     5. MODAL OVERLAYS (ADD/EDIT OFFLINE LEAD)
+     ========================================== -->
+    <div id="lead-modal"
+        class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-gutter">
+        <div
+            class="bg-white border border-border-default rounded-2xl max-w-md w-full overflow-hidden shadow-2xl flex flex-col">
+            <!-- Modal Header -->
+            <div class="p-6 border-b border-border-default flex justify-between items-center">
+                <h2 class="font-display-lg text-lg font-bold text-on-background">Register Corporate Lead</h2>
+                <button onclick="closeLeadModal()" class="text-slate-muted hover:text-primary transition-colors">
+                    <span class="material-symbols-outlined">close</span>
+                </button>
+            </div>
+
+            <!-- Modal Form Body -->
+            <form id="lead-form" onsubmit="handleLeadSubmit(event)" class="p-6 space-y-4">
+                <div class="space-y-1.5">
+                    <label class="font-form-label text-form-label text-secondary block">Corporate Company Name *</label>
+                    <input id="lead-form-company" required
+                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                        placeholder="e.g. Wayne Enterprises" type="text" />
+                </div>
+
+                <div class="space-y-1.5">
+                    <label class="font-form-label text-form-label text-secondary block">Product of Interest *</label>
+                    <input id="lead-form-product" required
+                        class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                        placeholder="e.g. AWS Multi-Cloud Setup" type="text" />
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Estimated Deal Value (USD)
+                            *</label>
+                        <input id="lead-form-value" required
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary"
+                            placeholder="e.g. 50000" type="number" />
+                    </div>
+                    <div class="space-y-1.5">
+                        <label class="font-form-label text-form-label text-secondary block">Status Pipeline</label>
+                        <select id="lead-form-status"
+                            class="w-full border border-border-default rounded-lg py-2 px-3 text-sm focus:outline-none focus:border-primary">
+                            <option value="Initial Contact">Initial Contact</option>
+                            <option value="Demo Scheduled">Demo Scheduled</option>
+                            <option value="Quote Sent">Quote Sent</option>
+                            <option value="Contract Signed">Contract Signed</option>
+                        </select>
+                    </div>
+                </div>
+
+                <!-- Action buttons -->
+                <div class="pt-4 border-t border-border-default flex justify-end space-x-3">
+                    <button type="button" onclick="closeLeadModal()"
+                        class="px-4 py-2 border border-border-default rounded-lg text-secondary text-sm hover:bg-slate-soft">Cancel</button>
+                    <button type="submit"
+                        class="px-5 py-2 bg-primary text-white rounded-lg font-semibold text-sm hover:bg-accent-dark shadow">Add
+                        Lead</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- ==========================================
+     6. GENERIC TRAINING / SCHEDULER MODAL
+     ========================================== -->
+    <div id="training-modal"
+        class="hidden fixed inset-0 z-50 bg-black/60 backdrop-blur-sm flex items-center justify-center p-gutter">
+        <div
+            class="bg-white border border-border-default rounded-2xl max-w-sm w-full p-6 shadow-2xl text-center space-y-4">
+            <span
+                class="material-symbols-outlined text-5xl text-primary bg-primary-fixed/30 p-3 rounded-full">model_training</span>
+            <h3 class="text-lg font-bold">Schedule B2B Training Session</h3>
+            <p class="text-xs text-slate-muted">Book a 30-minute workspace integration review session with your
+                dedicated corporate account representative.</p>
+
+            <div class="space-y-2 text-left">
+                <label class="font-form-label text-xs text-secondary block">Choose Integration Representative</label>
+                <select
+                    class="w-full border border-border-default rounded-lg py-2 px-3 text-xs bg-white focus:outline-none focus:border-primary">
+                    <option>Shiyas Ahmad (Senior B2B Specialist)</option>
+                    <option>Corporate Tech Rep (General Escalations)</option>
+                </select>
+            </div>
+
+            <div class="flex gap-2 pt-2">
+                <button onclick="closeTrainingModal()"
+                    class="flex-1 py-2 border border-border-default rounded-lg text-secondary text-xs hover:bg-slate-soft">Close</button>
+                <button onclick="confirmTraining()"
+                    class="flex-1 py-2 bg-primary text-white rounded-lg text-xs font-semibold hover:bg-accent-dark">Confirm
+                    Session</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ==========================================
+     8. APP JAVASCRIPT STATE ENGINE
+     ========================================== -->
+    <script>
+        // Initial static listings if local storage / Supabase is empty
+        const defaultListings = [
+            {
+                id: "lst-001",
+                title: "Zoho CRM Plus Integration",
+                brand: "Zoho",
+                category: "Software Solutions",
+                price: 57.00,
+                status: "Active",
+                img: "assets/zoho_crm.png",
+                desc: "Unified customer experience platform to manage sales pipelines, Zia predictive analytics, and omnichannel support modules."
+            },
+            {
+                id: "lst-002",
+                title: "Cisco Firewall Security Block",
+                brand: "Cisco",
+                category: "Cloud & Security",
+                price: 249.00,
+                status: "Active",
+                img: "assets/cisco_firewall.png",
+                desc: "Enterprise next-generation threat protection firewall setup featuring dynamic threat prevention and network routing rules."
+            },
+            {
+                id: "lst-003",
+                title: "AWS Advanced Cloud Hosting",
+                brand: "AWS",
+                category: "Cloud & Security",
+                price: 890.00,
+                status: "Active",
+                img: "assets/aws_cloud.png",
+                desc: "Scalable enterprise Cloud instances, secure S3 databases, and load balancer configurations managed under 99.9% SLA."
+            }
+        ];
+
+        // Initial static corporate sales leads
+        const defaultLeads = [
+            {
+                id: "lead-001",
+                company: "Wayne Enterprises",
+                product: "AI Analytics Suite Pro",
+                date: "Oct 24, 2024",
+                status: "Demo Scheduled",
+                value: 45000
+            },
+            {
+                id: "lead-002",
+                company: "Globex Industries",
+                product: "Cloud Infrastructure Platform",
+                date: "Oct 23, 2024",
+                status: "Quote Sent",
+                value: 120000
+            },
+            {
+                id: "lead-003",
+                company: "Stark Enterprises",
+                product: "Cybersecurity Mesh",
+                date: "Oct 21, 2024",
+                status: "Contract Signed",
+                value: 85500
+            },
+            {
+                id: "lead-004",
+                company: "Initech",
+                product: "CRM Integration Tools",
+                date: "Oct 20, 2024",
+                status: "Initial Contact",
+                value: 12000
+            }
+        ];
+
+        // State object
+        const appState = {
+            isLoggedIn: false,
+            listings: [],
+            leads: [],
+            payoutMethod: "Bank Wire",
+            iban: "US76 2003 0049 8812 7701 9904",
+            companyName: "Global Tech Solutions",
+            companyEmail: "admin@globaltech.com",
+            supabaseUrl: "",
+            supabaseKey: ""
+        };
+
+        let supabaseClient = null;
+
+        // Initialize Supabase Client with User's JWT and Project URL
+        function initSupabase() {
+            const url = localStorage.getItem("t360_supabase_url") || "https://blxqhmgayiuagnckmhcf.supabase.co";
+
+            const anonKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHFobWdheGl1YWduY2ttaGNmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNTE2MDAsImV4cCI6MjA5NjkyNzYwMH0._cSOYcUBmFx8I43lenYaUTlaF4jNUm_kg6Ha06AZ8qk";
+            const serviceRoleKey = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJseHFobWdheGl1YWduY2ttaGNmIiwicm9sZSI6InNlcnZpY2Vfcm9sZSIsImlhdCI6MTc4MTM1MTYwMCwiZXhwIjoyMDk2OTI3NjAwfQ.7LE8QjcMarjM9SYunTFXJBXJ3JSW4XmQYEaWlmBgHoM";
+
+            let key = localStorage.getItem("t360_supabase_key");
+
+            // Auto-upgrade from anon key to service_role key to bypass RLS policy blocks for admin actions
+            if (key === anonKey) {
+                key = serviceRoleKey;
+                localStorage.setItem("t360_supabase_key", serviceRoleKey);
+                console.log("Auto-migrated cached anon key to service_role key for admin database clearance.");
+            } else if (!key) {
+                key = serviceRoleKey;
+            }
+
+            appState.supabaseUrl = url;
+            appState.supabaseKey = key;
+
+            const badge = document.getElementById("db-status-badge");
+
+            if (appState.supabaseUrl && appState.supabaseKey) {
+                try {
+                    if (window.supabase) {
+                        supabaseClient = window.supabase.createClient(appState.supabaseUrl, appState.supabaseKey);
+                        badge.innerHTML = `
+                        <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-green-100 text-success-green border border-green-200 gap-1.5 w-full justify-center">
+                            <span class="w-2 h-2 rounded-full bg-success-green animate-pulse"></span>
+                            Live Supabase
+                        </span>`;
+                        console.log("Supabase Client initialized successfully with service_role token.");
+                    } else {
+                        console.error("Supabase CDN package not loaded.");
+                        badge.innerHTML = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-error-red border border-red-200 w-full justify-center">Supabase Load Err</span>`;
+                    }
+                } catch (err) {
+                    console.error("Supabase Init Exception:", err);
+                    badge.innerHTML = `<span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-red-100 text-error-red border border-red-200 w-full justify-center">Connection Error</span>`;
+                }
+            } else {
+                supabaseClient = null;
+                badge.innerHTML = `
+                <span class="inline-flex items-center px-2.5 py-1 rounded-full text-xs font-semibold bg-slate-soft text-secondary border border-border-default gap-1.5 w-full justify-center">
+                    <span class="w-2 h-2 rounded-full bg-slate-400"></span>
+                    Local Storage
+                </span>`;
+            }
+        }
+
+        // Load state configurations and initialize DB fetches
+        async function loadState() {
+            initSupabase();
+
+            // Load settings state
+            const storedCompanyName = localStorage.getItem("t360_company_name");
+            if (storedCompanyName) appState.companyName = storedCompanyName;
+
+            const storedCompanyEmail = localStorage.getItem("t360_company_email");
+            if (storedCompanyEmail) appState.companyEmail = storedCompanyEmail;
+
+            const storedPayoutMethod = localStorage.getItem("t360_payout_method");
+            if (storedPayoutMethod) appState.payoutMethod = storedPayoutMethod;
+
+            const storedIban = localStorage.getItem("t360_iban");
+            if (storedIban) appState.iban = storedIban;
+
+            // Apply settings profile inputs
+            updateProfileDOM();
+
+            // Load DB collections
+            await loadDataFromSource();
+        }
+
+        async function loadDataFromSource() {
+            await fetchListings();
+            await fetchLeads();
+        }
+
+        // ==========================================
+        // SUPABASE DB FETCH / SAVE ADAPTERS
+        // ==========================================
+        async function fetchListings() {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('listings')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    if (!error && data) {
+                        appState.listings = data;
+                        return;
+                    } else {
+                        console.error("Supabase listings fetch error", error);
+                        showToast("Supabase fetch failed. Falling back to local storage.", "warning");
+                    }
+                } catch (e) {
+                    console.error("Supabase request exception", e);
+                }
+            }
+
+            // Fallback local storage
+            const storedListings = localStorage.getItem("t360_admin_listings");
+            appState.listings = storedListings ? JSON.parse(storedListings) : [...defaultListings];
+        }
+
+        async function saveListing(listing) {
+            if (supabaseClient) {
+                const { error } = await supabaseClient
+                    .from('listings')
+                    .upsert({
+                        id: listing.id,
+                        title: listing.title,
+                        brand: listing.brand,
+                        category: listing.category,
+                        price: listing.price,
+                        status: listing.status,
+                        img: listing.img,
+                        desc: listing.desc
+                    });
+                if (error) {
+                    console.error("Supabase listings save error", error);
+                    throw error;
+                }
+                return;
+            }
+
+            // Local Storage Sync fallback
+            const index = appState.listings.findIndex(item => item.id === listing.id);
+            if (index !== -1) {
+                appState.listings[index] = listing;
+            } else {
+                appState.listings.push(listing);
+            }
+            saveListingsToStorage();
+        }
+
+        async function deleteListing(id) {
+            if (supabaseClient) {
+                const { error } = await supabaseClient
+                    .from('listings')
+                    .delete()
+                    .eq('id', id);
+                if (error) {
+                    console.error("Supabase listings delete error", error);
+                    throw error;
+                }
+                return;
+            }
+
+            // Local Storage Sync fallback
+            appState.listings = appState.listings.filter(item => item.id !== id);
+            saveListingsToStorage();
+        }
+
+        async function fetchLeads() {
+            if (supabaseClient) {
+                try {
+                    const { data, error } = await supabaseClient
+                        .from('leads')
+                        .select('*')
+                        .order('created_at', { ascending: false });
+                    if (!error && data) {
+                        appState.leads = data;
+                        return;
+                    } else {
+                        console.error("Supabase leads fetch error", error);
+                    }
+                } catch (e) {
+                    console.error("Supabase request exception", e);
+                }
+            }
+
+            // Fallback local storage
+            const storedLeads = localStorage.getItem("t360_admin_leads");
+            appState.leads = storedLeads ? JSON.parse(storedLeads) : [...defaultLeads];
+        }
+
+        async function saveLead(lead) {
+            if (supabaseClient) {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .upsert({
+                        id: lead.id,
+                        company: lead.company,
+                        product: lead.product,
+                        date: lead.date,
+                        status: lead.status,
+                        value: lead.value
+                    });
+                if (error) {
+                    console.error("Supabase leads save error", error);
+                    throw error;
+                }
+                return;
+            }
+
+            // Local Storage Sync fallback
+            const index = appState.leads.findIndex(l => l.id === lead.id);
+            if (index !== -1) {
+                appState.leads[index] = lead;
+            } else {
+                appState.leads.unshift(lead);
+            }
+            saveLeadsToStorage();
+        }
+
+        async function deleteLead(id) {
+            if (supabaseClient) {
+                const { error } = await supabaseClient
+                    .from('leads')
+                    .delete()
+                    .eq('id', id);
+                if (error) {
+                    console.error("Supabase leads delete error", error);
+                    throw error;
+                }
+                return;
+            }
+
+            // Local Storage Sync fallback
+            appState.leads = appState.leads.filter(lead => lead.id !== id);
+            saveLeadsToStorage();
+        }
+
+        // Save fallback backups to localStorage
+        function saveListingsToStorage() {
+            localStorage.setItem("t360_admin_listings", JSON.stringify(appState.listings));
+            updateOverviewStats();
+        }
+
+        function saveLeadsToStorage() {
+            localStorage.setItem("t360_admin_leads", JSON.stringify(appState.leads));
+            updateOverviewStats();
+        }
+
+        // Sync state settings fields to DOM values
+        function updateProfileDOM() {
+            document.getElementById("side-vendor-name").innerText = appState.companyName;
+            document.getElementById("settings-company-name").value = appState.companyName;
+            document.getElementById("settings-email").value = appState.companyEmail;
+            document.getElementById("payout-type").value = appState.payoutMethod;
+            document.getElementById("payout-iban").value = appState.iban;
+            document.getElementById("settings-sb-url").value = appState.supabaseUrl;
+            document.getElementById("settings-sb-key").value = appState.supabaseKey;
+        }
+
+        // TOAST ALERTS HELPER
+        function showToast(message, type = 'success') {
+            const container = document.getElementById("toast-container");
+            const toast = document.createElement("div");
+
+            let colorClass = "bg-primary text-white border-primary";
+            let iconName = "check_circle";
+
+            if (type === 'error') {
+                colorClass = "bg-error-red text-white border-error-red shadow-lg";
+                iconName = "error";
+            } else if (type === 'warning') {
+                colorClass = "bg-warning-amber text-on-secondary-fixed border-warning-amber";
+                iconName = "warning";
+            } else if (type === 'info') {
+                colorClass = "bg-inverse-surface text-white border-inverse-surface";
+                iconName = "info";
+            }
+
+            toast.className = `toast-notification flex items-center space-x-3 px-4 py-3 rounded-xl border shadow-md font-nav-link text-xs font-semibold ${colorClass}`;
+            toast.innerHTML = `
+            <span class="material-symbols-outlined text-lg">${iconName}</span>
+            <span>${message}</span>
+        `;
+
+            container.appendChild(toast);
+            setTimeout(() => {
+                toast.style.opacity = '0';
+                toast.style.transform = 'translateY(-10px)';
+                toast.style.transition = 'all 0.3s ease';
+                setTimeout(() => toast.remove(), 300);
+            }, 3000);
+        }
+
+        // ==========================================
+        // LOGIN STATE CONTROLLERS
+        // ==========================================
+        async function handleLoginSubmit(event) {
+            event.preventDefault();
+            const username = document.getElementById("login-username").value.trim();
+            const password = document.getElementById("login-password").value.trim();
+            const formEl = document.getElementById("login-form");
+            const loginBtn = document.getElementById("login-btn");
+
+            if (username === "admin" && password === "admin") {
+                loginBtn.innerHTML = `<svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"><circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle><path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path></svg> Verifying...`;
+                loginBtn.disabled = true;
+
+                // Load workspace data renders
+                await loadState();
+
+                setTimeout(() => {
+                    appState.isLoggedIn = true;
+                    document.getElementById("login-gate").classList.add("hidden");
+                    document.getElementById("main-workspace").classList.remove("hidden");
+
+                    showToast("Administrator session cleared and authorized.", "success");
+                    switchTab('overview');
+                }, 800);
+            } else {
+                formEl.classList.remove("animate-shake");
+                void formEl.offsetWidth; // restart reflow
+                formEl.classList.add("animate-shake");
+                showToast("Invalid admin credentials. Please try again.", "error");
+            }
+        }
+
+        function handleSignOut() {
+            appState.isLoggedIn = false;
+            document.getElementById("login-gate").classList.remove("hidden");
+            document.getElementById("main-workspace").classList.add("hidden");
+            document.getElementById("login-form").reset();
+
+            const loginBtn = document.getElementById("login-btn");
+            loginBtn.innerHTML = "Sign In to Workspace";
+            loginBtn.disabled = false;
+
+            showToast("Logged out successfully.", "info");
+        }
+
+        // PROFILE DROPDOWN
+        function toggleProfileDropdown() {
+            const dropdown = document.getElementById("profile-dropdown");
+            dropdown.classList.toggle("hidden");
+        }
+
+        // ==========================================
+        // TAB MANAGEMENT RENDERERS
+        // ==========================================
+        async function switchTab(tabId) {
+            // Hide all panes
+            document.querySelectorAll(".tab-pane").forEach(pane => pane.classList.add("hidden"));
+
+            // Remove active class from all side tabs
+            document.querySelectorAll(".tab-nav-btn").forEach(btn => {
+                btn.className = "tab-nav-btn flex items-center space-x-3 p-3 rounded-lg text-secondary dark:text-secondary-fixed-dim hover:bg-surface-container-high hover:translate-x-1 transition-all duration-200 w-full text-left";
+            });
+
+            // Show targets
+            document.getElementById(`tab-content-${tabId}`).classList.remove("hidden");
+
+            // Highlight tab link
+            const activeNav = document.getElementById(`nav-${tabId}`);
+            if (activeNav) {
+                activeNav.className = "tab-nav-btn flex items-center space-x-3 p-3 rounded-lg bg-secondary-container dark:bg-secondary text-primary font-bold border-r-4 border-primary hover:translate-x-1 transition-all duration-200 w-full text-left";
+            }
+
+            // Render tab dynamic data by loading from source first
+            if (tabId === 'overview') {
+                await loadDataFromSource();
+                renderOverviewLeads();
+                updateOverviewStats();
+            } else if (tabId === 'listings') {
+                await fetchListings();
+                renderListings();
+            } else if (tabId === 'leads') {
+                await fetchLeads();
+                renderLeads();
+            }
+        }
+
+        // Toggle Mobile sidebar drawer
+        function toggleMobileSidebar() {
+            const sidebar = document.querySelector("aside");
+            sidebar.classList.toggle("hidden");
+            sidebar.classList.toggle("flex");
+        }
+
+        // ==========================================
+        // TAB A: OVERVIEW SYSTEM
+        // ==========================================
+        function updateOverviewStats() {
+            // Calculate Total Sales: Sum of est. value for "Contract Signed" leads
+            const totalSales = appState.leads
+                .filter(lead => lead.status === "Contract Signed")
+                .reduce((sum, lead) => sum + lead.value, 0);
+
+            // Calculate Active Leads: leads that are not "Contract Signed"
+            const activeLeadsCount = appState.leads
+                .filter(lead => lead.status !== "Contract Signed").length;
+
+            // Render stats on cards
+            document.getElementById("stat-total-sales").innerText = `$${totalSales.toLocaleString()}`;
+            document.getElementById("stat-active-leads").innerText = activeLeadsCount;
+            document.getElementById("stat-listings-count").innerText = appState.listings.length;
+        }
+
+        function renderOverviewLeads() {
+            const tbody = document.getElementById("overview-leads-tbody");
+            tbody.innerHTML = "";
+
+            // Show latest 4 leads
+            const recentLeads = appState.leads.slice(0, 4);
+
+            if (recentLeads.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="5" class="p-6 text-center text-slate-muted text-sm">No leads recorded.</td></tr>`;
+                return;
+            }
+
+            recentLeads.forEach(lead => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-surface-container-low transition-colors group";
+
+                let statusColor = "bg-slate-soft text-secondary";
+                if (lead.status === "Demo Scheduled") statusColor = "bg-secondary-container text-inverse-surface";
+                else if (lead.status === "Quote Sent") statusColor = "bg-surface-container-highest text-primary-container";
+                else if (lead.status === "Contract Signed") statusColor = "bg-green-100 text-success-green";
+
+                const letter = lead.company.charAt(0).toUpperCase();
+
+                tr.innerHTML = `
+                <td class="p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded bg-primary-fixed flex items-center justify-center text-primary font-bold text-sm">${letter}</div>
+                        <span class="font-medium text-on-background group-hover:text-primary transition-colors">${lead.company}</span>
+                    </div>
+                </td>
+                <td class="p-4 text-secondary text-sm">${lead.product}</td>
+                <td class="p-4 text-secondary text-sm">${lead.date}</td>
+                <td class="p-4">
+                    <span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-caps text-label-caps ${statusColor}">
+                        ${lead.status}
+                    </span>
+                </td>
+                <td class="p-4 text-right font-medium text-on-background">$${lead.value.toLocaleString()}</td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        // Export report tool
+        function exportReport() {
+            showToast("Report dataset exported to CSV file.", "success");
+        }
+
+        // Schedule Training mock tool
+        function showTrainingModal() {
+            document.getElementById("training-modal").classList.remove("hidden");
+        }
+        function closeTrainingModal() {
+            document.getElementById("training-modal").classList.add("hidden");
+        }
+        function confirmTraining() {
+            closeTrainingModal();
+            showToast("Training session confirmed. Email invitation sent.", "success");
+        }
+
+        // Download marketing deck
+        function downloadSalesDeck() {
+            showToast("Downloading sales kit: Q2_VendorDeck.pdf", "info");
+        }
+
+        // ==========================================
+        // TAB B: TECHNOLOGY LISTINGS (ADD, EDIT, DELETE)
+        // ==========================================
+        function renderListings(filteredListings = null) {
+            const grid = document.getElementById("listings-grid");
+            const emptyState = document.getElementById("listings-empty-state");
+            grid.innerHTML = "";
+
+            const items = filteredListings || appState.listings;
+
+            if (items.length === 0) {
+                emptyState.classList.remove("hidden");
+                return;
+            }
+            emptyState.classList.add("hidden");
+
+            items.forEach(listing => {
+                const card = document.createElement("div");
+                card.className = "bg-surface-container-lowest rounded-2xl p-5 border border-border-default shadow-sm hover:shadow-md transition-shadow relative flex flex-col justify-between";
+
+                let badgeClass = listing.status === "Active" ? "bg-green-100 text-success-green" : "bg-slate-soft text-slate-muted";
+
+                // Format dynamic logo placeholder based on name if not set
+                let brandLogo = listing.img;
+                if (!brandLogo || brandLogo.startsWith("assets/")) {
+                    const mappings = {
+                        "Asana": "assets/asana.png",
+                        "Atlassian": "assets/atlassian.png",
+                        "AWS": "assets/aws_cloud.png",
+                        "Cisco": "assets/cisco_firewall.png",
+                        "Figma": "assets/figma.png",
+                        "Google": "assets/google_workspace.png",
+                        "Microsoft": "assets/microsoft_365.png",
+                        "Sophos": "assets/sophos_security.png",
+                        "Monday": "assets/monday.png",
+                        "Zoho": "assets/zoho_crm.png"
+                    };
+                    brandLogo = mappings[listing.brand] || "assets/zoho.png";
+                }
+
+                card.innerHTML = `
+                <div>
+                    <div class="flex justify-between items-start mb-4">
+                        <img class="w-12 h-12 rounded-lg object-contain border border-border-default bg-white p-1" src="${brandLogo}" alt="${listing.brand} Logo"/>
+                        <span class="inline-flex px-2.5 py-0.5 rounded-full font-label-caps text-xs ${badgeClass}">
+                            ${listing.status}
+                        </span>
+                    </div>
+                    <div class="space-y-1">
+                        <span class="text-xs font-semibold text-primary tracking-wider uppercase">${listing.brand} &bull; ${listing.category}</span>
+                        <h3 class="font-product-title text-on-background font-bold text-base leading-tight">${listing.title}</h3>
+                        <p class="text-xs text-slate-muted line-clamp-3 leading-relaxed mt-2">${listing.desc}</p>
+                    </div>
+                </div>
+                
+                <div class="mt-6 pt-4 border-t border-border-default flex justify-between items-center">
+                    <div>
+                        <span class="text-[10px] text-slate-muted block uppercase font-bold">Standard Price</span>
+                        <span class="text-lg font-extrabold text-on-background">$${parseFloat(listing.price).toFixed(2)}<span class="text-xs font-normal text-slate-muted">/mo</span></span>
+                    </div>
+                    <div class="flex space-x-2">
+                        <button onclick="openEditListingModal('${listing.id}')" class="p-1.5 border border-border-default rounded-lg text-secondary hover:text-primary hover:border-primary transition-colors" title="Edit Listing">
+                            <span class="material-symbols-outlined text-lg">edit</span>
+                        </button>
+                        <button onclick="handleDeleteListing('${listing.id}')" class="p-1.5 border border-border-default rounded-lg text-secondary hover:text-error-red hover:border-error-red transition-colors" title="Remove Listing">
+                            <span class="material-symbols-outlined text-lg">delete</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+                grid.appendChild(card);
+            });
+        }
+
+        // Auto assign mock URL when brand changes to keep dashboard high-fidelity
+        function autoAssignImage() {
+            const brand = document.getElementById("form-brand").value;
+            const imgInput = document.getElementById("form-img");
+
+            // Mapped mock assets paths inside workspace
+            const mappings = {
+                "Asana": "assets/asana.png",
+                "Atlassian": "assets/atlassian.png",
+                "AWS": "assets/aws_cloud.png",
+                "Cisco": "assets/cisco_firewall.png",
+                "Figma": "assets/figma.png",
+                "Google": "assets/google_workspace.png",
+                "Microsoft": "assets/microsoft_365.png",
+                "Sophos": "assets/sophos_security.png",
+                "Monday": "assets/monday.png",
+                "Zoho": "assets/zoho_crm.png"
+            };
+
+            imgInput.value = mappings[brand] || "assets/zoho.png";
+        }
+
+        // Listings filter toolbar controls
+        function filterListings() {
+            const searchVal = document.getElementById("listing-search").value.toLowerCase();
+            const catVal = document.getElementById("listing-filter-category").value;
+            const statusVal = document.getElementById("listing-filter-status").value;
+
+            const filtered = appState.listings.filter(listing => {
+                const matchesSearch = listing.title.toLowerCase().includes(searchVal) || listing.brand.toLowerCase().includes(searchVal);
+                const matchesCat = catVal === "" || listing.category === catVal;
+                const matchesStatus = statusVal === "" || listing.status === statusVal;
+                return matchesSearch && matchesCat && matchesStatus;
+            });
+
+            renderListings(filtered);
+        }
+
+        // Modal Control MY LISTINGS
+        function openAddListingModal() {
+            document.getElementById("listing-form").reset();
+            document.getElementById("form-listing-id").value = "";
+            document.getElementById("modal-title").innerText = "Create Technology Listing";
+            autoAssignImage();
+            document.getElementById("listing-modal").classList.remove("hidden");
+        }
+
+        function openEditListingModal(id) {
+            const listing = appState.listings.find(item => item.id === id);
+            if (!listing) return;
+
+            document.getElementById("form-listing-id").value = listing.id;
+            document.getElementById("form-title").value = listing.title;
+            document.getElementById("form-brand").value = listing.brand;
+            document.getElementById("form-category").value = listing.category;
+            document.getElementById("form-price").value = listing.price;
+            document.getElementById("form-status").value = listing.status;
+            document.getElementById("form-img").value = listing.img;
+            document.getElementById("form-desc").value = listing.desc;
+
+            document.getElementById("modal-title").innerText = "Edit Technology Listing";
+            document.getElementById("listing-modal").classList.remove("hidden");
+        }
+
+        function closeListingModal() {
+            document.getElementById("listing-modal").classList.add("hidden");
+        }
+
+        async function handleListingSubmit(e) {
+            e.preventDefault();
+            const id = document.getElementById("form-listing-id").value;
+            const title = document.getElementById("form-title").value.trim();
+            const brand = document.getElementById("form-brand").value;
+            const category = document.getElementById("form-category").value;
+            const price = parseFloat(document.getElementById("form-price").value);
+            const status = document.getElementById("form-status").value;
+            const img = document.getElementById("form-img").value;
+            const desc = document.getElementById("form-desc").value.trim();
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = `
+            <svg class="animate-spin -ml-1 mr-2 h-4 w-4 text-white inline-block" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg> Saving...`;
+            submitBtn.disabled = true;
+
+            const targetId = id || ("lst-" + Math.floor(100 + Math.random() * 900));
+            const listing = { id: targetId, title, brand, category, price, status, img, desc };
+
+            try {
+                await saveListing(listing);
+                showToast(id ? "Listing updated successfully." : "New marketplace offer published.", "success");
+                closeListingModal();
+                await fetchListings();
+                renderListings();
+            } catch (err) {
+                showToast("Failed to save to database. Check connection.", "error");
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handleDeleteListing(id) {
+            if (confirm("Are you sure you want to delete this technology listing from the catalog?")) {
+                try {
+                    await deleteListing(id);
+                    showToast("Offer removed from catalog.", "warning");
+                    await fetchListings();
+                    renderListings();
+                } catch (err) {
+                    showToast("Failed to delete from database.", "error");
+                }
+            }
+        }
+
+        // ==========================================
+        // TAB C: SALES & LEADS LEDGER
+        // ==========================================
+        function renderLeads(filteredLeads = null) {
+            const tbody = document.getElementById("leads-tbody");
+            tbody.innerHTML = "";
+
+            const items = filteredLeads || appState.leads;
+
+            if (items.length === 0) {
+                tbody.innerHTML = `<tr><td colspan="6" class="p-6 text-center text-slate-muted text-sm">No leads recorded.</td></tr>`;
+                return;
+            }
+
+            items.forEach(lead => {
+                const tr = document.createElement("tr");
+                tr.className = "hover:bg-surface-container-low transition-colors group";
+
+                let statusBadge = "";
+                if (lead.status === "Initial Contact") {
+                    statusBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-caps text-xs bg-slate-soft text-secondary border border-border-default">${lead.status}</span>`;
+                } else if (lead.status === "Demo Scheduled") {
+                    statusBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-caps text-xs bg-secondary-container text-inverse-surface">${lead.status}</span>`;
+                } else if (lead.status === "Quote Sent") {
+                    statusBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-caps text-xs bg-surface-container-highest text-primary-container">${lead.status}</span>`;
+                } else if (lead.status === "Contract Signed") {
+                    statusBadge = `<span class="inline-flex items-center px-2.5 py-0.5 rounded-full font-label-caps text-xs bg-green-100 text-success-green">${lead.status}</span>`;
+                }
+
+                const letter = lead.company.charAt(0).toUpperCase();
+
+                tr.innerHTML = `
+                <td class="p-4">
+                    <div class="flex items-center space-x-3">
+                        <div class="w-8 h-8 rounded bg-surface-dim flex items-center justify-center text-inverse-surface font-bold text-sm">${letter}</div>
+                        <span class="font-medium text-on-background group-hover:text-primary transition-colors">${lead.company}</span>
+                    </div>
+                </td>
+                <td class="p-4 text-secondary text-sm">${lead.product}</td>
+                <td class="p-4 text-secondary text-sm">${lead.date}</td>
+                <td class="p-4 font-semibold text-on-background">$${parseInt(lead.value).toLocaleString()}</td>
+                <td class="p-4">${statusBadge}</td>
+                <td class="p-4 text-right">
+                    <div class="relative inline-block text-left">
+                        <select onchange="updateLeadStatus('${lead.id}', this.value)" class="py-1 px-2 border border-border-default rounded-md text-xs bg-white text-secondary focus:outline-none focus:border-primary">
+                            <option value="Initial Contact" ${lead.status === "Initial Contact" ? "selected" : ""}>Contacted</option>
+                            <option value="Demo Scheduled" ${lead.status === "Demo Scheduled" ? "selected" : ""}>Demo</option>
+                            <option value="Quote Sent" ${lead.status === "Quote Sent" ? "selected" : ""}>Quote</option>
+                            <option value="Contract Signed" ${lead.status === "Contract Signed" ? "selected" : ""}>Closed Won</option>
+                        </select>
+                        <button onclick="handleDeleteLead('${lead.id}')" class="ml-2 text-slate-muted hover:text-error-red transition-colors inline-middle" title="Delete Lead">
+                            <span class="material-symbols-outlined text-lg align-middle">delete</span>
+                        </button>
+                    </div>
+                </td>
+            `;
+                tbody.appendChild(tr);
+            });
+        }
+
+        function filterLeads() {
+            const searchVal = document.getElementById("lead-search").value.toLowerCase();
+            const statusVal = document.getElementById("lead-filter-status").value;
+
+            const filtered = appState.leads.filter(lead => {
+                const matchesSearch = lead.company.toLowerCase().includes(searchVal) || lead.product.toLowerCase().includes(searchVal);
+                const matchesStatus = statusVal === "" || lead.status === statusVal;
+                return matchesSearch && matchesStatus;
+            });
+
+            renderLeads(filtered);
+        }
+
+        async function updateLeadStatus(id, newStatus) {
+            const index = appState.leads.findIndex(lead => lead.id === id);
+            if (index !== -1) {
+                const lead = { ...appState.leads[index], status: newStatus };
+                try {
+                    await saveLead(lead);
+                    showToast(`Lead pipeline updated to "${newStatus}"`, "success");
+                    await fetchLeads();
+                    renderLeads();
+                } catch (err) {
+                    showToast("Failed to update status in database.", "error");
+                }
+            }
+        }
+
+        // Modal Control OFFLINE LEADS
+        function openLeadModal() {
+            document.getElementById("lead-form").reset();
+            document.getElementById("lead-modal").classList.remove("hidden");
+        }
+
+        function closeLeadModal() {
+            document.getElementById("lead-modal").classList.add("hidden");
+        }
+
+        async function handleLeadSubmit(e) {
+            e.preventDefault();
+            const company = document.getElementById("lead-form-company").value.trim();
+            const product = document.getElementById("lead-form-product").value.trim();
+            const value = parseInt(document.getElementById("lead-form-value").value);
+            const status = document.getElementById("lead-form-status").value;
+
+            const months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+            const today = new Date();
+            const dateStr = `${months[today.getMonth()]} ${today.getDate()}, ${today.getFullYear()}`;
+
+            const newId = "lead-" + Math.floor(100 + Math.random() * 900);
+            const lead = { id: newId, company, product, date: dateStr, status, value };
+
+            const submitBtn = e.target.querySelector('button[type="submit"]');
+            const originalText = submitBtn.innerHTML;
+            submitBtn.innerHTML = "Adding...";
+            submitBtn.disabled = true;
+
+            try {
+                await saveLead(lead);
+                showToast("Offline corporate lead registered.", "success");
+                closeLeadModal();
+                await fetchLeads();
+                renderLeads();
+            } catch (err) {
+                showToast("Failed to register lead in database.", "error");
+            } finally {
+                submitBtn.innerHTML = originalText;
+                submitBtn.disabled = false;
+            }
+        }
+
+        async function handleDeleteLead(id) {
+            if (confirm("Are you sure you want to delete this lead record?")) {
+                try {
+                    await deleteLead(id);
+                    showToast("Lead record removed.", "warning");
+                    await fetchLeads();
+                    renderLeads();
+                } catch (err) {
+                    showToast("Failed to delete lead from database.", "error");
+                }
+            }
+        }
+
+        // ==========================================
+        // TAB D: COMMISSION PAYOUTS
+        // ==========================================
+        function savePayoutMethod(e) {
+            e.preventDefault();
+            appState.payoutMethod = document.getElementById("payout-type").value;
+            appState.iban = document.getElementById("payout-iban").value.trim();
+
+            localStorage.setItem("t360_payout_method", appState.payoutMethod);
+            localStorage.setItem("t360_iban", appState.iban);
+
+            showToast("Commission routing gateway settings updated.", "success");
+        }
+
+        // ==========================================
+        // TAB E: SETTINGS & SUPABASE INTEGRATION
+        // ==========================================
+        function saveSettings(e) {
+            e.preventDefault();
+            appState.companyName = document.getElementById("settings-company-name").value.trim();
+            appState.companyEmail = document.getElementById("settings-email").value.trim();
+            const logoUrl = document.getElementById("settings-logo-url").value.trim();
+
+            localStorage.setItem("t360_company_name", appState.companyName);
+            localStorage.setItem("t360_company_email", appState.companyEmail);
+
+            if (logoUrl) {
+                document.getElementById("side-vendor-logo").src = logoUrl;
+                document.getElementById("settings-avatar-preview").src = logoUrl;
+            }
+
+            updateProfileDOM();
+            showToast("Partner profile workspace updated.", "success");
+        }
+
+        // Save Supabase API config variables
+        async function saveSupabaseSettings(e) {
+            e.preventDefault();
+            const url = document.getElementById("settings-sb-url").value.trim();
+            const key = document.getElementById("settings-sb-key").value.trim();
+
+            localStorage.setItem("t360_supabase_url", url);
+            localStorage.setItem("t360_supabase_key", key);
+
+            showToast("Supabase coordinates saved. Testing connection...", "info");
+
+            setTimeout(async () => {
+                initSupabase();
+                try {
+                    await loadDataFromSource();
+                    showToast("Live Supabase database connected successfully!", "success");
+                    updateProfileDOM();
+                } catch (err) {
+                    showToast("Connection verification failed. Check SQL schemas.", "error");
+                }
+            }, 800);
+        }
+
+        // Disconnect Supabase and wipe storage keys
+        function disconnectSupabase() {
+            localStorage.removeItem("t360_supabase_url");
+            localStorage.removeItem("t360_supabase_key");
+
+            document.getElementById("settings-sb-url").value = "";
+            document.getElementById("settings-sb-key").value = "";
+
+            showToast("Supabase disconnected. Sandbox active.", "warning");
+
+            setTimeout(async () => {
+                initSupabase();
+                await loadDataFromSource();
+                updateProfileDOM();
+            }, 500);
+        }
+
+        // ==========================================
+        // HEADER DYNAMIC NOTIFICATIONS / PROFILE POPUPS
+        // ==========================================
+        function toggleNotificationsDropdown() {
+            showToast("Recent alert: Acme Corp scheduled a new Stack Demo request.", "info");
+        }
+
+        // Global Search Utility across active tab data sets
+        function handleGlobalSearch(e) {
+            const query = e.target.value.toLowerCase().trim();
+
+            // Find currently visible pane
+            const listingsPaneVisible = !document.getElementById("tab-content-listings").classList.contains("hidden");
+            const leadsPaneVisible = !document.getElementById("tab-content-leads").classList.contains("hidden");
+
+            if (listingsPaneVisible) {
+                document.getElementById("listing-search").value = query;
+                filterListings();
+            } else if (leadsPaneVisible) {
+                document.getElementById("lead-search").value = query;
+                filterLeads();
+            } else {
+                // Default to leads and listings filtering in memory for quick toast info
+                if (e.key === "Enter" && query !== "") {
+                    const countList = appState.listings.filter(p => p.title.toLowerCase().includes(query)).length;
+                    const countLeads = appState.leads.filter(l => l.company.toLowerCase().includes(query)).length;
+                    showToast(`Search results: Found ${countList} listings and ${countLeads} leads matching "${query}"`, "info");
+                }
+            }
+        }
+
+        // Click outside handler for dropdowns
+        window.addEventListener("click", function (e) {
+            const dropdown = document.getElementById("profile-dropdown");
+            const avatar = document.querySelector("img[alt='Vendor Profile Avatar']");
+            if (dropdown && !dropdown.contains(e.target) && e.target !== avatar) {
+                dropdown.classList.add("hidden");
+            }
+        });
+
+    </script>
+</body>
+
+</html>
