@@ -3,100 +3,181 @@
 
 {% block title %}Sign In - TechnoStore360{% endblock %}
 
-{% block content %}
-<div style="padding-top: 1rem;">
-  <div class="auth-container card" style="border-radius: var(--radius-lg); min-height: auto;">
+{% block extra_css %}
+<style>
+  /* Centered card layout */
+  .auth-container {
+    max-width: 900px;
+    margin: 0 auto;
+    box-shadow: var(--shadow-md);
+    border-radius: var(--radius-lg);
+    overflow: hidden;
+  }
 
-    <div class="auth-form-side" style="padding: 3rem 2rem;">
-      <div style="text-align: center; margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem; font-weight: 800; color: var(--slate-900);">Welcome to
-          TechnoStore360</h2>
-        <p style="color: var(--slate-50); font-size: 0.8rem;">Access B2B procurements, partner portals, and dashboards.
+  /* Segmented control role switcher */
+  .auth-role-tabs {
+    display: flex;
+    background-color: var(--slate-100);
+    padding: 4px;
+    border-radius: var(--radius-md);
+    margin-bottom: 1.5rem;
+    border: 1px solid var(--slate-200);
+  }
+
+  .auth-role-tab {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 8px 16px;
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--slate-500);
+    cursor: pointer;
+    border-radius: calc(var(--radius-md) - 2px);
+    transition: all 0.2s ease;
+    outline: none;
+    text-align: center;
+  }
+
+  .auth-role-tab:hover {
+    color: var(--slate-900);
+  }
+
+  .auth-role-tab.active {
+    background-color: var(--white);
+    color: var(--slate-900);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.06);
+  }
+
+  /* Input fields enhancements */
+  .form-input {
+    width: 100%;
+    padding: 0.75rem 1rem !important;
+    border: 1px solid var(--slate-200) !important;
+    border-radius: var(--radius-md) !important;
+    font-size: 0.825rem !important;
+    font-family: var(--font-body) !important;
+    background-color: var(--white) !important;
+    color: var(--slate-900) !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+
+  .form-input:focus {
+    border-color: var(--accent) !important;
+    box-shadow: 0 0 0 3px rgba(226, 27, 90, 0.15) !important;
+    outline: none !important;
+  }
+
+  .form-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    color: var(--slate-700);
+    margin-bottom: 0.35rem;
+    display: block;
+  }
+
+  /* Left split-screen padding adjustment */
+  .auth-form-side {
+    padding: 3rem 2.5rem !important;
+  }
+
+  /* Banner layout alignment */
+  .auth-banner-side {
+    padding: 3rem 2.5rem;
+    margin: 0 !important; /* Spans full height of grid column */
+    border-radius: 0 !important;
+  }
+
+  @media (max-width: 768px) {
+    .auth-banner-side {
+      display: none;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div style="padding-top: 2.5rem; padding-bottom: 2.5rem;">
+  <div class="auth-container card" style="min-height: auto;">
+
+    <!-- Left Column: Form -->
+    <div class="auth-form-side">
+      <div style="text-align: center; margin-bottom: 1.75rem;">
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.35rem; font-weight: 800; color: var(--slate-900); font-family: var(--font-heading);">
+          Welcome to TechnoStore360
+        </h2>
+        <p style="color: var(--slate-500); font-size: 0.8rem; font-weight: 500;">
+          Access B2B procurements, partner portals, and dashboards.
         </p>
       </div>
 
-      <div
-        style="display: flex; border: 1px solid var(--slate-200); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.5rem; background-color: var(--slate-50);">
-        <button type="button" class="btn btn-secondary btn-sm auth-role-tab active"
-          onclick="switchLoginRole('buyer', this)"
-          style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Buyer</button>
-        <button type="button" class="btn btn-secondary btn-sm auth-role-tab" onclick="switchLoginRole('manager', this)"
-          style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Manager
-          / Partner</button>
+      <!-- Segmented Control Role Picker -->
+      <div class="auth-role-tabs">
+        <button type="button" class="auth-role-tab active" onclick="switchLoginRole('buyer', this)">
+          Buyer
+        </button>
+        <button type="button" class="auth-role-tab" onclick="switchLoginRole('manager', this)">
+          Manager / Partner
+        </button>
       </div>
 
-      <form id="auth-main-form" method="POST"
-        action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+      <form id="auth-main-form" method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
         {% csrf_token %}
         <div class="form-group" style="margin-bottom: 1rem;">
-          <label class="form-label" id="auth-login-label"
-            style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Corporate
-            Email</label>
-          <input type="text" name="username" id="auth-login-input" required class="form-input"
-            placeholder="e.g. shiyas@company.com"
-            style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
+          <label class="form-label" id="auth-login-label">Corporate Email</label>
+          <input type="text" name="username" id="auth-login-input" required class="form-input" placeholder="e.g. shiyas@company.com">
         </div>
         <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label"
-            style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Password</label>
-          <input type="password" name="password" required class="form-input" placeholder="••••••••"
-            style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
+          <label class="form-label">Password</label>
+          <input type="password" name="password" required class="form-input" placeholder="••••••••">
         </div>
 
-        <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
-          <button type="submit" class="btn btn-primary btn-sm"
-            style="width: 100%; padding:0.6rem; font-size: 0.85rem; font-weight: 700;">Sign In</button>
-          <a href="{% url 'register' %}" class="btn btn-outline btn-sm"
-            style="width: 100%; padding:0.6rem; font-size: 0.85rem; text-align: center; text-decoration: none;">Create
-            Buyer Account</a>
+        <div style="display: flex; flex-direction: column; gap: 0.75rem; margin-bottom: 1rem;">
+          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding: 0.75rem; font-size: 0.85rem; font-weight: 700; border-radius: var(--radius-md);">
+            Sign In
+          </button>
+          <a href="{% url 'register' %}" class="btn btn-outline btn-sm" style="width: 100%; padding: 0.75rem; font-size: 0.85rem; font-weight: 600; text-align: center; text-decoration: none; border-radius: var(--radius-md);">
+            Create Buyer Account
+          </a>
         </div>
       </form>
-
-
-
-      <div class="auth-banner-side"
-        style="padding: 2.5rem; border-radius: var(--radius-lg); margin: 1rem; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--primary-blue) 0%, #002e99 100%); color: white;">
-        <div>
-          <span class="badge"
-            style="background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 0.65rem;">SECURE
-            GATEWAY</span>
-          <h3 style="color: white; font-size: 1.35rem; margin-top: 0.75rem; line-height: 1.2; font-weight: 800;">
-            Enterprise Grade Access</h3>
-          <p style="color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-top: 0.35rem; line-height: 1.4;">Protected
-            by military-grade encryption keys and B2B security protocols.</p>
-        </div>
-      </div>
-
     </div>
+
+    <!-- Right Column: Banner -->
+    <div class="auth-banner-side" style="background: linear-gradient(135deg, var(--primary-blue) 0%, #002e99 100%); color: white;">
+      <div>
+        <span class="badge" style="background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.25); font-size: 0.65rem; padding: 4px 8px; border-radius: 4px; font-weight: 700; letter-spacing: 0.5px;">
+          SECURE GATEWAY
+        </span>
+        <h3 style="color: white; font-size: 1.5rem; margin-top: 0.85rem; line-height: 1.25; font-weight: 800; font-family: var(--font-heading);">
+          Enterprise Grade Access
+        </h3>
+        <p style="color: rgba(255,255,255,0.85); font-size: 0.825rem; margin-top: 0.5rem; line-height: 1.45;">
+          Protected by military-grade encryption keys and B2B security protocols.
+        </p>
+      </div>
+    </div>
+
   </div>
-  {% endblock %}
+</div>
+{% endblock %}
 
-  {% block extra_js %}
-  <script>
-    function switchLoginRole(role, btn) {
-      btn.parentNode.querySelectorAll('.auth-role-tab').forEach(b => b.classList.remove('active'));
-      btn.classList.add('active');
+{% block extra_js %}
+<script>
+  function switchLoginRole(role, btn) {
+    btn.parentNode.querySelectorAll('.auth-role-tab').forEach(b => b.classList.remove('active'));
+    btn.classList.add('active');
 
-      const label = document.getElementById('auth-login-label');
-      const input = document.getElementById('auth-login-input');
+    const label = document.getElementById('auth-login-label');
+    const input = document.getElementById('auth-login-input');
 
-      if (role === 'manager') {
-        label.innerText = "Manager / Partner Login";
-        input.placeholder = "Username or Admin Email";
-      } else {
-        label.innerText = "Corporate Email";
-        input.placeholder = "e.g. shiyas@company.com";
-      }
+    if (role === 'manager') {
+      label.innerText = "Manager / Partner Login";
+      input.placeholder = "Username or Admin Email";
+    } else {
+      label.innerText = "Corporate Email";
+      input.placeholder = "e.g. shiyas@company.com";
     }
-
-    function fillLogin(user, pass, role) {
-      const inputUser = document.getElementById('auth-login-input');
-      const inputPass = document.querySelector('input[type="password"]');
-      const tab = document.querySelector(`.auth-role-tab[onclick*="${role}"]`);
-
-      if (tab) switchLoginRole(role, tab);
-      inputUser.value = user;
-      inputPass.value = pass;
-    }
-  </script>
-  {% endblock %}
+  }
+</script>
+{% endblock %}
