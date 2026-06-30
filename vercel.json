@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "outputDirectory": "staticfiles_build",
   "builds": [
     {
       "src": "technostore_project/wsgi.py",
@@ -9,7 +10,7 @@
       "src": "build_files.sh",
       "use": "@vercel/static-build",
       "config": {
-        "distDir": "staticfiles"
+        "distDir": "staticfiles_build"
       }
     }
   ],
