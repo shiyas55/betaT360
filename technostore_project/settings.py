@@ -47,7 +47,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'technostore_project.middleware.ExceptionDisplayMiddleware',
 ]
 
 ROOT_URLCONF = 'technostore_project.urls'
