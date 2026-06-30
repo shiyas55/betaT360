@@ -115,6 +115,7 @@ MEDIA_ROOT = BASE_DIR / 'media'
 
 # Session Cookie Configuration for Cart merging
 SESSION_COOKIE_AGE = 86400 * 30  # 30 days
+SESSION_ENGINE = 'django.contrib.sessions.backends.signed_cookies'
 
 # Authentication Redirect Config
 LOGIN_URL = 'login'
