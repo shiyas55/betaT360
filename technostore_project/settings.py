@@ -80,7 +80,7 @@ if IS_VERCEL and not os.environ.get('DATABASE_URL'):
     DATABASES = {
         'default': {
             'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': f'file:{BASE_DIR / "db.sqlite3"}?mode=ro',
+            'NAME': f'file://{BASE_DIR / "db.sqlite3"}?mode=ro',
             'OPTIONS': {
                 'uri': True,
             }
