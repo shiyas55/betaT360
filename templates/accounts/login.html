@@ -6,84 +6,97 @@
 {% block content %}
 <div style="padding-top: 1rem;">
   <div class="auth-container card" style="border-radius: var(--radius-lg); min-height: auto;">
-    
+
     <div class="auth-form-side" style="padding: 3rem 2rem;">
       <div style="text-align: center; margin-bottom: 1.5rem;">
-        <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem; font-weight: 800; color: var(--slate-900);">Welcome to TechnoStore360</h2>
-        <p style="color: var(--slate-50); font-size: 0.8rem;">Access B2B procurements, partner portals, and dashboards.</p>
+        <h2 style="font-size: 1.5rem; margin-bottom: 0.25rem; font-weight: 800; color: var(--slate-900);">Welcome to
+          TechnoStore360</h2>
+        <p style="color: var(--slate-50); font-size: 0.8rem;">Access B2B procurements, partner portals, and dashboards.
+        </p>
       </div>
 
-      <div style="display: flex; border: 1px solid var(--slate-200); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.5rem; background-color: var(--slate-50);">
-        <button type="button" class="btn btn-secondary btn-sm auth-role-tab active" onclick="switchLoginRole('buyer', this)" style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Buyer</button>
-        <button type="button" class="btn btn-secondary btn-sm auth-role-tab" onclick="switchLoginRole('manager', this)" style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Manager / Partner</button>
+      <div
+        style="display: flex; border: 1px solid var(--slate-200); border-radius: var(--radius-md); overflow: hidden; margin-bottom: 1.5rem; background-color: var(--slate-50);">
+        <button type="button" class="btn btn-secondary btn-sm auth-role-tab active"
+          onclick="switchLoginRole('buyer', this)"
+          style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Buyer</button>
+        <button type="button" class="btn btn-secondary btn-sm auth-role-tab" onclick="switchLoginRole('manager', this)"
+          style="flex: 1; border-radius: 0; background: none; border: none; font-size: 0.7rem; padding: 0.4rem;">Manager
+          / Partner</button>
       </div>
 
-      <form id="auth-main-form" method="POST" action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
+      <form id="auth-main-form" method="POST"
+        action="{% url 'login' %}{% if request.GET.next %}?next={{ request.GET.next }}{% endif %}">
         {% csrf_token %}
         <div class="form-group" style="margin-bottom: 1rem;">
-          <label class="form-label" id="auth-login-label" style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Corporate Email</label>
-          <input type="text" name="username" id="auth-login-input" required class="form-input" placeholder="e.g. shiyas@company.com" style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
+          <label class="form-label" id="auth-login-label"
+            style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Corporate
+            Email</label>
+          <input type="text" name="username" id="auth-login-input" required class="form-input"
+            placeholder="e.g. shiyas@company.com"
+            style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
         </div>
         <div class="form-group" style="margin-bottom: 1.5rem;">
-          <label class="form-label" style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Password</label>
-          <input type="password" name="password" required class="form-input" placeholder="••••••••" style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
+          <label class="form-label"
+            style="font-size: 0.75rem; font-weight: 600; color: var(--slate-700); margin-bottom: 0.25rem; display: block;">Password</label>
+          <input type="password" name="password" required class="form-input" placeholder="••••••••"
+            style="width: 100%; padding: 0.6rem; border: 1px solid var(--slate-200); border-radius: var(--radius-md); font-size: 0.8rem;">
         </div>
-        
+
         <div style="display: flex; flex-direction: column; gap: 0.5rem; margin-bottom: 1rem;">
-          <button type="submit" class="btn btn-primary btn-sm" style="width: 100%; padding:0.6rem; font-size: 0.85rem; font-weight: 700;">Sign In</button>
-          <a href="{% url 'register' %}" class="btn btn-outline btn-sm" style="width: 100%; padding:0.6rem; font-size: 0.85rem; text-align: center; text-decoration: none;">Create Buyer Account</a>
+          <button type="submit" class="btn btn-primary btn-sm"
+            style="width: 100%; padding:0.6rem; font-size: 0.85rem; font-weight: 700;">Sign In</button>
+          <a href="{% url 'register' %}" class="btn btn-outline btn-sm"
+            style="width: 100%; padding:0.6rem; font-size: 0.85rem; text-align: center; text-decoration: none;">Create
+            Buyer Account</a>
         </div>
       </form>
-      
-      <!-- Quick Demo logins for B2B testing -->
-      <div style="margin-top: 1.5rem; border-top: 1px dashed var(--slate-200); padding-top: 1rem;">
-        <h4 style="font-size: 0.75rem; font-weight: 700; color: var(--slate-500); margin-bottom: 0.5rem;">Demo Accounts:</h4>
-        <div style="display: flex; gap: 0.25rem; flex-wrap: wrap;">
-          <button onclick="fillLogin('customer', 'customer123', 'buyer')" class="btn btn-outline btn-xs" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">Customer (Buyer)</button>
-          <button onclick="fillLogin('product_mgr', 'pm123', 'manager')" class="btn btn-outline btn-xs" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">Product Manager</button>
-          <button onclick="fillLogin('admin', 'admin', 'manager')" class="btn btn-outline btn-xs" style="font-size: 0.65rem; padding: 0.2rem 0.4rem;">Super Admin</button>
+
+
+
+      <div class="auth-banner-side"
+        style="padding: 2.5rem; border-radius: var(--radius-lg); margin: 1rem; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--primary-blue) 0%, #002e99 100%); color: white;">
+        <div>
+          <span class="badge"
+            style="background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 0.65rem;">SECURE
+            GATEWAY</span>
+          <h3 style="color: white; font-size: 1.35rem; margin-top: 0.75rem; line-height: 1.2; font-weight: 800;">
+            Enterprise Grade Access</h3>
+          <p style="color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-top: 0.35rem; line-height: 1.4;">Protected
+            by military-grade encryption keys and B2B security protocols.</p>
         </div>
       </div>
-    </div>
 
-    <div class="auth-banner-side" style="padding: 2.5rem; border-radius: var(--radius-lg); margin: 1rem; display: flex; align-items: flex-end; background: linear-gradient(135deg, var(--primary-blue) 0%, #002e99 100%); color: white;">
-      <div>
-        <span class="badge" style="background-color: rgba(255,255,255,0.15); color: white; border: 1px solid rgba(255,255,255,0.2); font-size: 0.65rem;">SECURE GATEWAY</span>
-        <h3 style="color: white; font-size: 1.35rem; margin-top: 0.75rem; line-height: 1.2; font-weight: 800;">Enterprise Grade Access</h3>
-        <p style="color: rgba(255,255,255,0.8); font-size: 0.8rem; margin-top: 0.35rem; line-height: 1.4;">Protected by military-grade encryption keys and B2B security protocols.</p>
-      </div>
     </div>
-
   </div>
-</div>
-{% endblock %}
+  {% endblock %}
 
-{% block extra_js %}
-<script>
-  function switchLoginRole(role, btn) {
-    btn.parentNode.querySelectorAll('.auth-role-tab').forEach(b => b.classList.remove('active'));
-    btn.classList.add('active');
+  {% block extra_js %}
+  <script>
+    function switchLoginRole(role, btn) {
+      btn.parentNode.querySelectorAll('.auth-role-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
 
-    const label = document.getElementById('auth-login-label');
-    const input = document.getElementById('auth-login-input');
+      const label = document.getElementById('auth-login-label');
+      const input = document.getElementById('auth-login-input');
 
-    if (role === 'manager') {
-      label.innerText = "Manager / Partner Login";
-      input.placeholder = "Username or Admin Email";
-    } else {
-      label.innerText = "Corporate Email";
-      input.placeholder = "e.g. shiyas@company.com";
+      if (role === 'manager') {
+        label.innerText = "Manager / Partner Login";
+        input.placeholder = "Username or Admin Email";
+      } else {
+        label.innerText = "Corporate Email";
+        input.placeholder = "e.g. shiyas@company.com";
+      }
     }
-  }
 
-  function fillLogin(user, pass, role) {
-    const inputUser = document.getElementById('auth-login-input');
-    const inputPass = document.querySelector('input[type="password"]');
-    const tab = document.querySelector(`.auth-role-tab[onclick*="${role}"]`);
-    
-    if (tab) switchLoginRole(role, tab);
-    inputUser.value = user;
-    inputPass.value = pass;
-  }
-</script>
-{% endblock %}
+    function fillLogin(user, pass, role) {
+      const inputUser = document.getElementById('auth-login-input');
+      const inputPass = document.querySelector('input[type="password"]');
+      const tab = document.querySelector(`.auth-role-tab[onclick*="${role}"]`);
+
+      if (tab) switchLoginRole(role, tab);
+      inputUser.value = user;
+      inputPass.value = pass;
+    }
+  </script>
+  {% endblock %}
